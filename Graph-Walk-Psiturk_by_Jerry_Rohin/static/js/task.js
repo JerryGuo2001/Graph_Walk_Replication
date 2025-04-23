@@ -343,8 +343,11 @@ var directmemory_phase = {
   stimulus_duration:6500,//5 second for now, we will discuss it 
   trial_duration:6500,//5 second for now 
   on_load: function() {
+    let directResp = false
     document.addEventListener('keydown', function(event) {
+      if (directResp) return;
       if (['1', '2', '3'].includes(event.key)) {
+        directResp = true
         var selected_choice = event.key;
         var image_ids = ['img1', 'img2', 'img3'];
         image_ids.forEach(function(id) {
@@ -357,6 +360,8 @@ var directmemory_phase = {
         if (selected_image) {
           selected_image.style.border = '5px solid black';
         }
+      
+      
       }})
     setTimeout(function() {
       for(let i = 0;i<document.getElementsByClassName('bottom').length;i++){
@@ -419,8 +424,12 @@ var shortestpath_phase = {
   stimulus_duration:7500,
   trial_duration:7500,
   on_load: function() {
+    let hasResponded = false;
+    // Add border on response
     document.addEventListener('keydown', function(event) {
+      if (hasResponded) return;
       if (['1', '2'].includes(event.key)) {
+        hasResponded = true;
         var selected_choice = event.key;
         var image_ids = ['img1', 'img2'];
         image_ids.forEach(function(id) {
@@ -431,9 +440,10 @@ var shortestpath_phase = {
         });
         var selected_image = document.getElementById('img' + selected_choice);
         if (selected_image) {
-          selected_image.style.border = '5px solid black'; 
+          selected_image.style.border = '5px solid black';
         }
-      }})
+      }
+    });
     // Reveal other rooms after 1500 ms
     setTimeout(function() {
       for(let i = 0;i<document.getElementsByClassName('bottomshortest').length;i++){
