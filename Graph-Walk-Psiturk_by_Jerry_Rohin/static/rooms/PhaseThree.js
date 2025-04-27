@@ -44,7 +44,6 @@ function recon_init(){
 }
 
 function continueButton() {
-
     document.getElementById('nextButton').style.display = 'block'
     document.getElementById('nextButton').addEventListener('click', function() {
       jsPsych.finishTrial(); // End trial on button click
