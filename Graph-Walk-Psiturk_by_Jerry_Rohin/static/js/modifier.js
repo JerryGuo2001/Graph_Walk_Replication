@@ -1,7 +1,7 @@
 //debug moode on/off
 debugmode= true
 if (debugmode==true){
-  n_learning_trial=1 //This determine the number of learning trial you want in total
+  n_learning_trial=10 //This determine the number of learning trial you want in total
   n_direct_trial=1 //how many direct trial you want
   n_shortest_trial=2 //how many shortest path you want
   n_goaldir_trial=1 //how many goal directed planning you want
@@ -81,6 +81,8 @@ function shuffle(array) {
 }
 
 let randomizedArray = shuffle(arr);
+
+randomizedArray = ensureNoConsecutiveDuplicates(randomizedArray)
 
 for (var i = 0; i < randomizedArray.length; i++){
     learn_left.push(list_left[randomizedArray[i]])
@@ -532,6 +534,19 @@ for (let i = 0; i<shuffledList.length; i++){
 
 }
 
+function ensureNoConsecutiveDuplicates(arr) {
+  for (let i = 1; i < arr.length; i++) {
+      if (arr[i] === arr[i - 1]) {
+          for (let j = i + 1; j < arr.length; j++) {
+              if (arr[j] !== arr[i] && arr[j - 1] !== arr[i]) {
+                  [arr[i], arr[j]] = [arr[j], arr[i]];
+                  break;
+              }
+          }
+      }
+  }
+  return arr;
+}
 
 //color for the plus sign
 atcheckcolor=['blue','green']
@@ -544,7 +559,7 @@ function colorStart(){
 
 //time for the duration of the color being present
 function colorStop(colordetretime){
-    removecolor= 2500-colordetretime-100;
+    removecolor= 1500-colordetretime-100;
     return removecolor
 }
 
