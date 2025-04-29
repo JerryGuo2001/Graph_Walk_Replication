@@ -591,7 +591,7 @@ var thank_you = {
 //time line here
 timeline.push(welcome,enterFullscreen)
 //debug
-timeline.push(phase3[0])
+// timeline.push(phase3[0])
 //debug
 timelinepushintro(intro_learn,instructnames)
 timeline.push(learn_phase)
