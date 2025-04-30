@@ -467,27 +467,28 @@ var shortestpath_phase = {
     let onedifflength = twothree.length + threefour.length + fourfive.length
     let twodifflength = twofour.length + threefive.length
     let threedifflength = twofive.length
-    if (cumulativearr[curr_shortest_trial] < onedifflength){
+    if (cumulativearr[curr_shortest_trial] < 20){
       data.condition = 'One Edge Diff'
-    } else if (cumulativearr[curr_shortest_trial] >= onedifflength && cumulativearr[curr_shortest_trial] < onedifflength + twodifflength){
+    } else if (cumulativearr[curr_shortest_trial] >= 20 && cumulativearr[curr_shortest_trial] < 40){
       data.condition = 'Two Edge Diff'
-    } else if (cumulativearr[curr_shortest_trial] >= onedifflength + twodifflength){
+    } else if (cumulativearr[curr_shortest_trial] >= 40){
       data.condition = 'Three Edge Diff'
     }
 
-    if (cumulativearr[curr_shortest_trial] < twothree.length){
-      data.specific_pairs = "Two Edge Three Edge"
-    } else if (cumulativearr[curr_shortest_trial] >= twothree.length && cumulativearr[curr_shortest_trial] < twothree.length + threefour.length){
-      data.specific_pairs = 'Three Edge Four Edge'
-    } else if (cumulativearr[curr_shortest_trial] >= twothree.length + threefour.length && cumulativearr[curr_shortest_trial] < onedifflength){
-      data.specific_pairs = 'Four Edge Five Edge'
-    } else if (cumulativearr[curr_shortest_trial] >= onedifflength && cumulativearr[curr_shortest_trial] < onedifflength + twofour.length){
-      data.specific_pairs = 'Two Edge Four Edge'
-    } else if (cumulativearr[curr_shortest_trial] >= onedifflength + twofour.length && cumulativearr[curr_shortest_trial] < onedifflength + twodifflength){
-      data.specific_pairs = 'Three Edge Five Edge'
-    } else if (cumulativearr[curr_shortest_trial] >= onedifflength + twodifflength){
-      data.specific_pairs = 'Two Edge Five Edge'
-    }
+    // Need either post analysis or change collection (20 right now per above but it may need to be some of below)
+    // if (cumulativearr[curr_shortest_trial] < twothree.length){
+    //   data.specific_pairs = "Two Edge Three Edge"
+    // } else if (cumulativearr[curr_shortest_trial] >= twothree.length && cumulativearr[curr_shortest_trial] < twothree.length + threefour.length){
+    //   data.specific_pairs = 'Three Edge Four Edge'
+    // } else if (cumulativearr[curr_shortest_trial] >= twothree.length + threefour.length && cumulativearr[curr_shortest_trial] < onedifflength){
+    //   data.specific_pairs = 'Four Edge Five Edge'
+    // } else if (cumulativearr[curr_shortest_trial] >= onedifflength && cumulativearr[curr_shortest_trial] < onedifflength + twofour.length){
+    //   data.specific_pairs = 'Two Edge Four Edge'
+    // } else if (cumulativearr[curr_shortest_trial] >= onedifflength + twofour.length && cumulativearr[curr_shortest_trial] < onedifflength + twodifflength){
+    //   data.specific_pairs = 'Three Edge Five Edge'
+    // } else if (cumulativearr[curr_shortest_trial] >= onedifflength + twodifflength){
+    //   data.specific_pairs = 'Two Edge Five Edge'
+    // }
 
 
     let sum = 0;
