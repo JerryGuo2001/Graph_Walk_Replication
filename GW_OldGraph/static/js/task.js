@@ -408,7 +408,7 @@ var directmemory_phase = {
     sfa=data.key_press,
     curr_direct_trial=curr_direct_trial+1,
     directmemory_phase.stimulus=create_direct_trial(room_direct_up,room_direct_left,room_direct_mid,room_direct_right,curr_direct_trial)
-    attentioncheck(directmemory_phase,sfa,curr_direct_trial,n_direct_trial,short_break)
+    attentioncheck(directmemory_phase,a=1,curr_direct_trial,n_direct_trial,short_break)
   }
 }
 //Direct Memory test end
@@ -500,7 +500,7 @@ var shortestpath_phase = {
     sfa=data.key_press,
     curr_shortest_trial=curr_shortest_trial+1,
     shortestpath_phase.stimulus=create_shortestpath_trial(room_shortest_up,room_shortest_left,room_shortest_right,curr_shortest_trial)
-    attentioncheck(shortestpath_phase,sfa,curr_shortest_trial,n_shortest_trial,dir_break)
+    attentioncheck(shortestpath_phase,a=1,curr_shortest_trial,n_shortest_trial,dir_break)
   }
 }
 //Shortest Path memory end
