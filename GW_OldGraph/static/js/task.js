@@ -408,7 +408,7 @@ var directmemory_phase = {
     sfa=data.key_press,
     curr_direct_trial=curr_direct_trial+1,
     directmemory_phase.stimulus=create_direct_trial(room_direct_up,room_direct_left,room_direct_mid,room_direct_right,curr_direct_trial)
-    attentioncheck(directmemory_phase,a=1,curr_direct_trial,n_direct_trial,short_break)
+    attentioncheck(directmemory_phase,sfa,curr_direct_trial,n_direct_trial,short_break)
   }
 }
 //Direct Memory test end
