@@ -94,6 +94,9 @@ function initiatep3(){
 
 //PART THAT NEED TO BE RUN UNDER BUTTON END
 
+
+let messageShown = false;
+
 function checkAllConnected() {
     let adjacency = {};
     for (let i = 1; i <= 13; i++) {
@@ -104,37 +107,46 @@ function checkAllConnected() {
     for (let i = 0; i <= linecounter; i++) {
         if (specificline[i]) {
             let imgIDs = specificline[i].name[0];
-            let first = imgIDs.slice(0, imgIDs.length/2);
-            let second = imgIDs.slice(imgIDs.length/2);
+            let first = imgIDs.slice(0, imgIDs.length / 2);
+            let second = imgIDs.slice(imgIDs.length / 2);
             adjacency[first].push(second);
             adjacency[second].push(first);
         }
     }
 
-    // BFS to see if all nodes are connected
-    let visited = new Set();
-    let keys = Object.keys(adjacency);
-    let queue = [];
+    let allConnected = Object.values(adjacency).every(neighbors => neighbors.length > 0);
 
-    if (keys.length > 0) {
-        queue.push(keys[0]); // Start from any node
-        visited.add(keys[0]);
-    }
+    if (allConnected) {
+        continueButton();
 
-    while (queue.length > 0) {
-        let node = queue.shift();
-        for (let neighbor of adjacency[node]) {
-            if (!visited.has(neighbor)) {
-                visited.add(neighbor);
-                queue.push(neighbor);
-            }
+        if (!messageShown) {
+            messageShown = true; // prevent future displays
+
+            // Create and show message
+            let messageEl = document.createElement('div');
+            messageEl.id = 'proceed-message';
+            messageEl.style.position = 'fixed';
+            messageEl.style.top = '20px';
+            messageEl.style.left = '50%';
+            messageEl.style.transform = 'translateX(-50%)';
+            messageEl.style.backgroundColor = '#d4edda';
+            messageEl.style.color = '#155724';
+            messageEl.style.border = '1px solid #c3e6cb';
+            messageEl.style.padding = '10px 20px';
+            messageEl.style.fontSize = '18px';
+            messageEl.style.fontWeight = 'bold';
+            messageEl.style.borderRadius = '8px';
+            messageEl.style.zIndex = '9999';
+            messageEl.textContent = '✅ You can now proceed';
+            document.body.appendChild(messageEl);
+
+            // Auto-hide after 2 seconds
+            setTimeout(() => {
+                messageEl.remove();
+            }, 2000);
         }
-    }
-
-    if (visited.size === 13) {
-        continueButton(); // all connected
     } else {
-        document.getElementById('nextButton').style.display = 'none'; // hide again
+        document.getElementById('nextButton').style.display = 'none';
     }
 }
 
