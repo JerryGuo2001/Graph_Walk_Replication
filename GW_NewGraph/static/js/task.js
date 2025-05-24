@@ -123,6 +123,226 @@ intro_short=createfulintro(short_instruct,short_instructnames)
 //Instruction page end
 
 
+  //practice attention check
+var ac_colorprepare=colorStart()
+var ac_colorstop=colorStop(ac_colorprepare)
+var ac_colorlist=['blue','green','green','blue','green','green','blue','green','blue','blue']
+var ac_colornumber=0
+var total_ac = 0
+var correct_ac = 0
+var ac_feedback = {}
+
+var instruct_lastonebefore_practice={
+  type: 'html-keyboard-response',
+  choices: ['spacebar'],
+  stimulus: `
+  <div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>
+  You will have 1 second from when the cross flashes blue or green to respond, so please respond quickly. 
+  If you miss several responses in a row, the experiment will quit early. However, remember that while you should pay attention to the center cross changing colors, 
+  it is most important that you memorize the pairs (using the strategy we practiced earlier). You will NOT have to memorize the color changes. The task will begin once you press space.
+  <p style= 'font-size:25px;margin-top:100px'>[press the spacebar to start]</p>
+   `,
+  on_finish: function (data) {
+    data.trial_type = 'last_instruct';
+    data.stimulus='instruct'
+  }
+}
+
+// 1: The black plus sign, the color change, the black plus sign for response
+
+
+var prac_attentioncheck_blackplus={
+  type: 'html-keyboard-response',
+  choices: jsPsych.NO_KEYS,
+  stimulus_height: 100,
+  stimulus_width: 100,
+  stimulus_duration: ac_colorprepare,
+  trial_duration: ac_colorprepare,
+  response_ends_trial: false,
+  stimulus:create_memory_ten(),
+  prompt:parse("<br><br><style>body {background-color: #ffff;}</style>"),
+  on_finish: function(data) {
+    data.trial_type='prac_atten_color_black'
+    data.stimulus='black_plus_sign'
+    prac_attentioncheck_colorchange.stimulus=create_color_list(ac_colorlist[ac_colornumber])
+    jsPsych.addNodeToEndOfTimeline({
+      timeline: [prac_attentioncheck_colorchange],
+    }, jsPsych.resumeExperiment)
+  }
+}
+var csfa=[]
+
+//attention check color cross
+function create_color_list(color) {
+  return parse("<p style='position:absolute;top: 50%;right: 50%;transform: translate(50%, -50%);font-size: 125px;color: %s;'>\u002B</p>"
+  ,color)
+}
+
+var prac_attentioncheck_colorchange={
+  type: 'html-keyboard-responsefl',
+  choices: ['1','2'],
+  response_ends_trial: false,
+  stimulus:create_color_list(ac_colorlist[ac_colornumber]),
+  stimulus_duration:ac_colorstop,
+  trial_duration:ac_colorstop,
+  on_finish: function(data) {
+    data.trial_type = 'prac_atten_color';
+    data.stimulus = 'prac_stop_color'
+    csfa=data.key_press
+    jsPsych.addNodeToEndOfTimeline({
+      timeline: [prac_attentioncheck_thethird],
+    }, jsPsych.resumeExperiment)
+  }
+}
+
+var prac_attentioncheck_thethird={
+  type: 'html-keyboard-response',
+  choices: ['1','2'],
+  stimulus_height: 100,
+  stimulus_width: 100,
+  stimulus_duration: 2000,
+  trial_duration: 2000,
+  response_ends_trial: false,
+  stimulus:create_memory_ten(),
+  prompt:parse("<br><br><style>body {background-color: #ffff;}</style>"),
+  on_finish: function(data) {
+    data.trial_type='prac_atten_color_black'
+    data.stimulus='black_plus_sign'
+    if(ac_colornumber<ac_colortotal){
+      if (csfa==49&&ac_colorlist[ac_colornumber]=='blue'){
+        correct_ac += 1
+        jsPsych.addNodeToEndOfTimeline({
+          timeline: [prac_attentioncheck_blackplus],
+        }, jsPsych.resumeExperiment)
+      }else if (csfa==50&&ac_colorlist[ac_colornumber]=='green'){
+        correct_ac += 1
+        jsPsych.addNodeToEndOfTimeline({
+          timeline: [prac_attentioncheck_blackplus],
+        }, jsPsych.resumeExperiment)
+      }else if (data.key_press==49&&ac_colorlist[ac_colornumber]=='blue'){
+        correct_ac += 1
+        jsPsych.addNodeToEndOfTimeline({
+          timeline: [prac_attentioncheck_blackplus],
+        }, jsPsych.resumeExperiment)
+      }else if (data.key_press==50&&ac_colorlist[ac_colornumber]=='green'){
+        correct_ac += 1
+        jsPsych.addNodeToEndOfTimeline({
+          timeline: [prac_attentioncheck_blackplus],
+        }, jsPsych.resumeExperiment)
+      }else{
+        jsPsych.addNodeToEndOfTimeline({
+          timeline: [helpofattentioncheck,prac_attentioncheck_blackplus],
+        }, jsPsych.resumeExperiment)
+      }
+    }else{
+      if (csfa==49&&ac_colorlist[ac_colornumber]=='blue' || csfa==50&&ac_colorlist[ac_colornumber]=='green' || data.key_press==49&&ac_colorlist[ac_colornumber]=='blue' || data.key_press==49&&ac_colorlist[ac_colornumber]=='green') {
+        correct_ac += 1
+      }
+      total_ac += 1
+      getACvalues()
+      if (kickout_record>kickout_total){
+          jsPsych.addNodeToEndOfTimeline({
+            timeline: [TaskEarlyFail],
+          }, jsPsych.resumeExperiment)
+      }else{
+          jsPsych.addNodeToEndOfTimeline({
+            timeline: [ac_feedback],
+          }, jsPsych.resumeExperiment)
+      }
+  }
+    ac_colornumber+=1
+    total_ac +=1
+    csfa=[]
+    ac_colorprepare=colorStart()
+    ac_colorstop=colorStop(ac_colorprepare)
+    prac_attentioncheck_blackplus.stimulus_duration=ac_colorprepare
+    prac_attentioncheck_blackplus.trial_duration=ac_colorprepare
+    prac_attentioncheck_colorchange.stimulus_duration=ac_colorstop
+    prac_attentioncheck_colorchange.trial_duration=ac_colorstop
+  }
+}
+
+function getACvalues() {
+  if (correct_ac/total_ac<0.7){
+  kickout_record+=1
+  ac_feedback = {
+    type: 'html-button-response',
+    stimulus: `<div style='margin-left:200px; margin-right: 200px; text-align: center;'>
+                <p style='font-size: 30px; line-height:1.5'>
+                  Thank you for completing the practice, your score is ${correct_ac}/${total_ac}. 
+                  <br><br> 
+                  Please try to respond to each color change as accurately as possible during the task. 
+                  To continue this experiment, please make sure to get at least 7 of the 10 trials correct. When you are ready press 'Try Again'. 
+                </p><br>
+              </div>`,
+    choices: ['Try Again'],
+    button_html: [
+      '<button id="retry-button" class ="custom-button" style="font-size: 20px; padding: 10px; margin: 10px;">%choice%</button>',
+    ],
+    response_ends_trial: true, 
+    on_load: function() {
+      document.getElementById("retry-button").addEventListener("click", function() {
+        ac_colornumber = 0
+        total_ac = 0
+        correct_ac = 0
+        jsPsych.addNodeToEndOfTimeline({
+          timeline: [prac_attentioncheck_blackplus],
+        }, jsPsych.resumeExperiment)
+        console.log("Try Again button clicked!");
+      });
+    },
+    on_finish: function(data) {
+      data.trial_type = 'attentioncheck_feedback';
+      data.stimulus = 'cross_check_feedback';
+      data.failed_practice = kickout_record
+    }
+  };
+}else{
+  ac_feedback = {
+    type: 'html-button-response',
+    stimulus: `<div style='margin-left:200px; margin-right: 200px; text-align: center;'>
+                <p style='font-size: 30px; line-height:1.5'>
+                  Thank you for completing the practice, your score is ${correct_ac}/${total_ac}. 
+                  <br><br> 
+                  Please try to respond to each color change as accurately as possible during the task. 
+                  If you are ready to continue to the next practice, press 'Continue'.
+                </p><br>
+              </div>`,
+    choices: ['Continue'],
+    button_html: [
+      '<button id="continue-button" class="custom-button" style="font-size: 20px; padding: 10px; margin: 10px;">%choice%</button>'
+    ],
+    response_ends_trial: true, 
+    on_load: function() {
+      document.getElementById("continue-button").addEventListener("click", function() {
+        jsPsych.addNodeToEndOfTimeline({
+          timeline: [instruct_lastonebefore_practice,learn_phase,learn_phase_color,thecrossant,thecrossant_black,thecrossant_break],
+        }, jsPsych.resumeExperiment)
+      });
+    },
+    on_finish: function(data) {
+      data.trial_type = 'attentioncheck_feedback';
+      data.stimulus = 'cross_check_feedback';
+    }
+  };
+}
+}
+
+
+
+var helpofattentioncheck={
+  type: 'html-keyboard-response',
+  choices: ['spacebar'],
+  stimulus: "<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>It seems you got one wrong. Remember, for the cross below:</p><img src= '../static/images/isi.png' width='150' height='150'><p style ='font-size: 30px;line-height:1.5'>If the cross flashes <span style='color: blue;'>blue,</span> press the '1' key on your keyboard, if it flashes <span style='color: green;'>green,</span> press '2'.<p style= 'font-size:25px;margin-top:100px'>[press the spacebar to continue]</p>",
+  on_finish: function (data) {
+    data.trial_type = 'attentioncheck_help';
+    data.stimulus='instruct'
+  }
+}
+
+//practice attention check end
+
+
 // learning phase
 var curr_learning_trial=0
 var colordetretime=colorStart()
@@ -363,11 +583,11 @@ var directmemory_phase = {
       
       
       }})
-    setTimeout(function() {
-      for(let i = 0;i<document.getElementsByClassName('bottom').length;i++){
-        document.getElementsByClassName('bottom')[i].style.visibility = 'visible';
-      }
-    }, randomDelay);
+    // setTimeout(function() {
+    //   for(let i = 0;i<document.getElementsByClassName('bottom').length;i++){
+    //     document.getElementsByClassName('bottom')[i].style.visibility = 'visible';
+    //   }
+    // }, randomDelay);
   },
   on_finish: function(data) {
     data.trial_type = 'directmemory_phase';
@@ -445,11 +665,11 @@ var shortestpath_phase = {
       }
     });
     // Reveal other rooms after 1500 ms
-    setTimeout(function() {
-      for(let i = 0;i<document.getElementsByClassName('bottomshortest').length;i++){
-        document.getElementsByClassName('bottomshortest')[i].style.visibility = 'visible';
-      }
-    }, randomDelay);
+    // setTimeout(function() {
+    //   for(let i = 0;i<document.getElementsByClassName('bottomshortest').length;i++){
+    //     document.getElementsByClassName('bottomshortest')[i].style.visibility = 'visible';
+    //   }
+    // }, randomDelay);
   },
   on_finish: function(data) {
     data.trial_type = 'shortestpath_phase';
@@ -464,39 +684,58 @@ var shortestpath_phase = {
       data.accuracy = 0
       correctness.push(0)
     }
-    let onedifflength = twothree.length + threefour.length + fourfive.length
-    let twodifflength = twofour.length + threefive.length
-    let threedifflength = twofive.length
-    if (cumulativearr[curr_shortest_trial] < 20){
+  
+    let onedifflength = 48
+    let twodifflength = 36
+    let threedifflength = 24
+    let fourdifflength = 13
+
+    if (cumulativearr[curr_shortest_trial] < onedifflength){
       data.condition = 'One Edge Diff'
-    } else if (cumulativearr[curr_shortest_trial] >= 20 && cumulativearr[curr_shortest_trial] < 40){
+    } else if (cumulativearr[curr_shortest_trial] >= onedifflength && cumulativearr[curr_shortest_trial] < onedifflength + twodifflength){
       data.condition = 'Two Edge Diff'
-    } else if (cumulativearr[curr_shortest_trial] >= 40){
+    } else if (cumulativearr[curr_shortest_trial] >= onedifflength + twodifflength && cumulativearr[curr_shortest_trial] < onedifflength + twodifflength + threedifflength){
       data.condition = 'Three Edge Diff'
+    } else if (cumulativearr[curr_shortest_trial] >= onedifflength + twodifflength + threedifflength){
+      data.condition = 'Four Edge Diff'
     }
 
-    // Need either post analysis or change collection (20 right now per above but it may need to be some of below)
-    // if (cumulativearr[curr_shortest_trial] < twothree.length){
-    //   data.specific_pairs = "Two Edge Three Edge"
-    // } else if (cumulativearr[curr_shortest_trial] >= twothree.length && cumulativearr[curr_shortest_trial] < twothree.length + threefour.length){
-    //   data.specific_pairs = 'Three Edge Four Edge'
-    // } else if (cumulativearr[curr_shortest_trial] >= twothree.length + threefour.length && cumulativearr[curr_shortest_trial] < onedifflength){
-    //   data.specific_pairs = 'Four Edge Five Edge'
-    // } else if (cumulativearr[curr_shortest_trial] >= onedifflength && cumulativearr[curr_shortest_trial] < onedifflength + twofour.length){
-    //   data.specific_pairs = 'Two Edge Four Edge'
-    // } else if (cumulativearr[curr_shortest_trial] >= onedifflength + twofour.length && cumulativearr[curr_shortest_trial] < onedifflength + twodifflength){
-    //   data.specific_pairs = 'Three Edge Five Edge'
-    // } else if (cumulativearr[curr_shortest_trial] >= onedifflength + twodifflength){
-    //   data.specific_pairs = 'Two Edge Five Edge'
-    // }
+    if (cumulativearr[curr_shortest_trial] < shuffled_twothree.length){
+      data.specific_pairs = "Two Edge Three Edge"
+    } else if (cumulativearr[curr_shortest_trial] >= shuffled_twothree.length && cumulativearr[curr_shortest_trial] < shuffled_twothree.length + shuffled_threefour.length){
+      data.specific_pairs = 'Three Edge Four Edge'
+    } else if (cumulativearr[curr_shortest_trial] >= shuffled_twothree.length + shuffled_threefour.length && cumulativearr[curr_shortest_trial] < shuffled_twothree.length + shuffled_threefour.length + shuffled_fourfive.length){
+      data.specific_pairs = 'Four Edge Five Edge'
+    } else if (cumulativearr[curr_shortest_trial] >= shuffled_twothree.length + shuffled_threefour.length + shuffled_fourfive.length && cumulativearr[curr_shortest_trial] < onedifflength){
+      data.specific_pairs = 'Five Edge Six Edge'
 
+    } else if (cumulativearr[curr_shortest_trial] >= onedifflength && cumulativearr[curr_shortest_trial] < onedifflength + shuffled_twofour.length){
+      data.specific_pairs = 'Two Edge Four Edge'
+    } else if (cumulativearr[curr_shortest_trial] >= onedifflength + shuffled_twofour.length && cumulativearr[curr_shortest_trial] < onedifflength + shuffled_twofour.length + shuffled_threefive.length){
+      data.specific_pairs = 'Three Edge Five Edge'
+    } else if (cumulativearr[curr_shortest_trial] >= onedifflength + shuffled_twofour.length + shuffled_threefive.length && cumulativearr[curr_shortest_trial] < onedifflength + twodifflength){
+      data.specific_pairs = 'Four Edge Six Edge'
 
+    } else if (cumulativearr[curr_shortest_trial] >= onedifflength + twodifflength && cumulativearr[curr_shortest_trial] < onedifflength + twodifflength + shuffled_twofive.length){
+      data.specific_pairs = 'Two Edge Five Edge'
+    } else if (cumulativearr[curr_shortest_trial] >= onedifflength + twodifflength + shuffled_twofive.length && cumulativearr[curr_shortest_trial] < onedifflength + twodifflength + threedifflength){
+      data.specific_pairs = 'Two Edge Five Edge'
+    }
+
+    else if (cumulativearr[curr_shortest_trial] >= onedifflength + twodifflength + threedifflength){
+      data.specific_pairs = 'Two Edge Six Edge'
+    }
+
+    console.log(data.condition)
+    console.log(data.specific_pairs)
     let sum = 0;
     correctness.forEach(function(value) {
       sum += value;
     });
-
+    console.log(data.accuracy)
     data.cumulative_accuracy = sum / correctness.length;
+
+
     sfa=data.key_press,
     curr_shortest_trial=curr_shortest_trial+1,
     shortestpath_phase.stimulus=create_shortestpath_trial(room_shortest_up,room_shortest_left,room_shortest_right,curr_shortest_trial)
@@ -521,20 +760,18 @@ function createPhase3(numberoftrial){
         //   });
         // },
         on_finish: function (data) {
-          data.trial_type='Goal Directed Planning'
-          data.imgL_ID = leftName
-          data.imgR_ID = rightName
+          data.trial_type='Graph Reconstruction'
           data.linedress=''
           for (const key in specificline) {
               data.linedressed += specificline[key].name+':[x1:'+specificline[key].location.x1+' x2:'+specificline[key].location.x2+' y1:'+specificline[key].location.y1+' y2:'+specificline[key].location.y2+']'
           }
-          if (goaldirIndex[numberoftrial] < threeEdgePair.length){
-            data.condition = 'Three Edge Diff'
-          } else if (goaldirIndex[numberoftrial] >= threeEdgePair.length && goaldirIndex[numberoftrial] < threeEdgePair.length + fourEdgePair.length){
-            data.condition = 'Four Edge Diff'
-          } else if (goaldirIndex[numberoftrial] >= threeEdgePair.length + fourEdgePair.length + fiveEdgePair.length){
-            data.condition = 'Five Edge Diff'
-          }
+          // if (goaldirIndex[numberoftrial] < threeEdgePair.length){
+          //   data.condition = 'Three Edge Diff'
+          // } else if (goaldirIndex[numberoftrial] >= threeEdgePair.length && goaldirIndex[numberoftrial] < threeEdgePair.length + fourEdgePair.length){
+          //   data.condition = 'Four Edge Diff'
+          // } else if (goaldirIndex[numberoftrial] >= threeEdgePair.length + fourEdgePair.length + fiveEdgePair.length){
+          //   data.condition = 'Five Edge Diff'
+          // }
           recon_init(),
           jsPsych.addNodeToEndOfTimeline({
             timeline: [thank_you],
@@ -580,7 +817,7 @@ dir_break=createbreak(intro_mem,mem_instructnames,phase3[0])
 var thank_you = {
   type: 'html-keyboard-response',
   choices: ['space'],
-  stimulus: "<p> Congratulations, you are all done!</p><p>The secret code to enter at the beginning screen is: AJFHBG897</p><p> Please make sure to submit the HIT and email mnadkarn@gmail.com if you had any issues! </p>",
+  stimulus: "<p> Congratulations, you are all done!</p><p>The secret code to enter at the beginning screen is: AJFHBG897</p><p> Please make sure to submit the HIT and email uciccnl@gmail.com if you had any issues! </p>",
   on_finish: function (data) {
     data.trial_type = 'thank_you';
     data.detectfocus = detectfocus;
@@ -595,8 +832,9 @@ timeline.push(welcome,enterFullscreen)
 // timeline.push(phase3[0])
 //debug
 timelinepushintro(intro_learn,instructnames)
-timeline.push(learn_phase)
-timeline.push(learn_phase_color,thecrossant,thecrossant_black,thecrossant_break)
+timeline.push(prac_attentioncheck_blackplus)
+// timeline.push(learn_phase)
+// timeline.push(learn_phase_color,thecrossant,thecrossant_black,thecrossant_break)
 
 jsPsych.init({
   timeline: timeline,

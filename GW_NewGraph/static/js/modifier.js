@@ -1,14 +1,14 @@
 //debug moode on/off
 debugmode= true
 if (debugmode==true){
-  n_learning_trial=1 //This determine the number of learning trial you want in total
-  n_direct_trial=1 //how many direct trial you want
-  n_shortest_trial=2 //how many shortest path you want
+  n_learning_trial=3 //This determine the number of learning trial you want in total
+  n_direct_trial=3 //how many direct trial you want
+  n_shortest_trial=3 //how many shortest path you want
   n_goaldir_trial=1 //how many goal directed planning you want
 }else{
   n_learning_trial=128 //This determine the number of learning trial you want in total
   n_direct_trial=32 //how many direct trial you want
-  n_shortest_trial=60 //how many shortest path you want
+  n_shortest_trial=121 //how many shortest path you want
   n_goaldir_trial=1 //how many goal directed planning you want
 }
 
@@ -18,19 +18,41 @@ warning_1="<div style='margin-left:200px ;margin-right: 200px ;text-justify: aut
 checkfail=0 //this is to start the attentioncheck
 checkthreshold=2 //this is to add the threshold for attentioncheck
 
+var kickout_record=0
+var kickout_total=2
+var ac_colortotal=9
+
+// Add custom CSS for buttons dynamically
+const style = document.createElement('style');
+style.innerHTML = `
+  .custom-button {
+    background-color: lightgreen; /* Set the background color */
+    color: black; /* Set the text color */
+    font-size: 20px; /* Make the font size bigger */
+    padding: 10px 25px; /* Adjust padding for larger buttons */
+    border: none; /* Remove borders */
+    border-radius: 5px; /* Add rounded corners */
+    cursor: pointer; /* Change cursor to pointer when hovering */
+  }
+  .custom-button:hover {
+    background-color: green; /* Darker green on hover */
+    color: white; /* Change text color on hover */
+  }
+`;
+document.head.appendChild(style); // Append the styles to the document head
+
 //Text for instruction
 instruct_1="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>In this experiment, you will observe pairs of objects. Your task is to memorize these pairs. Note that the pairs will repeat, and that the position of the object (left or right) in the pair does not matter. Objects are NOT paired in a meaningful way (for example based on what they are used for).<p style= 'font-size:25px;margin-top:100px'>[press the spacebar to continue]</p>",
-instruct_2="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>A good strategy to remember the pairs is to try and come up with a story or image that connects the two objects. For example, if you saw the following pair of objects: \n </p><img src= '../static/images/GW-Tutorial/object_334.jpg' width='250' height='250' style='margin-right:50px'></img><img src= '../static/images/GW-Tutorial/object_268.jpg' width='250' height='250' style='margin-left:50px'><p style ='font-size: 30px;line-height:1.5'>you may imagine holding the briefcase while wearing the red robe, or you can come up with a story in which you have to pack the robe in the briefcase for a business trip.<br></p><p style= 'font-size:25px;margin-top:100px'>[press the spacebar to continue]</p>",
+instruct_2="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>A good strategy to remember the pairs is to try and come up with a story or image that connects the two objects. For example, if you saw the following pair of objects: \n </p><img src= '../static/images/GW-Tutorial/pan.jpg' width='250' height='250' style='margin-right:50px'></img><img src= '../static/images/GW-Tutorial/trophy.jpg' width='250' height='250' style='margin-left:50px'><p style ='font-size: 30px;line-height:1.5'>you may imagine holding a trophy while cooking in a pan, or you can come up with a story in which you won the trophy from a cooking competition.<br></p><p style= 'font-size:25px;margin-top:100px'>[press the spacebar to continue]</p>",
 instruct_3="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>Let's practice this strategy, which you will use throughout the experiment. For each pair, try to come up with an image or story in your head that connects the two objects. You will have 1 second for each pair,so please work quickly. The story or image does not have to make sense.<br><p style= 'font-size:25px;margin-top:100px'>[press the spacebar to continue]</p>",
-instruct_4="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'><img src= '../static/images/GW-Tutorial/object_068.jpg' width='250' height='250' style='margin-right:50px'></img><img src= '../static/images/GW-Tutorial/object_029.jpg' width='250' height='250' style='margin-left:50px'><br><br><p style ='font-size: 30px;line-height:1.5'>Were you able to come up with a story or image connecting these items?<br><br>Once you think of one, press the spacebar to continue.</p>",
-instruct_5="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>Great! Please continue to come up with a story or image for each trial.<br><br>For example, you might imagine kicking the fire hydrant while wearing the boot.</p><p style= 'font-size:25px;margin-top:100px'>[press the spacebar to continue]</p>",
-instruct_6="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'><img src= '../static/images/GW-Tutorial/object_229.jpg' width='250' height='250' style='margin-right:50px'></img><img src= '../static/images/GW-Tutorial/object_250.jpg' width='250' height='250' style='margin-left:50px'><br><br><p style ='font-size: 30px;line-height:1.5'>Were you able to come up with a story or image connecting these items?<br><br>Once you think of one, press the spacebar to continue.</p>",
-instruct_7="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>Great! Please continue to come up with a story or image for each trial.<br><br>For example, you might imagine trying to break open the piggy bank with the traffic cone.</p><p style= 'font-size:25px;margin-top:100px'>[press the spacebar to continue]</p>",
-instruct_8="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>To make sure that you are paying attention on each trial, you will see a cross on the center of your screen like the one below:</p><img src= '../static/images/isi.png' width='250' height='250'><p style ='font-size: 30px;line-height:1.5'>If the cross flashes <span style='color: blue;'>blue,</span> press the '1' key on your keyboard, if it flashes <span style='color: green;'>green,</span> press '2'.<p style= 'font-size:25px;margin-top:100px'>[press the spacebar to continue]</p>",
-instruct_9="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>Please make sure to respond to every trial, as too many missed trials will disqualify you from participating. Remember, the goal is to (1) memorize the flight paths, and  (2) try to respond as quickly and as accurately as possible when you see the cross change color.</p><p style= 'font-size:25px;margin-top:100px'>[press the spacebar to continue]</p>",
+instruct_4="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'><img src= '../static/images/GW-Tutorial/chainsaw.jpg' width='250' height='250' style='margin-right:50px'></img><img src= '../static/images/GW-Tutorial/canoe.jpg' width='250' height='250' style='margin-left:50px'><br><br><p style ='font-size: 30px;line-height:1.5'>Were you able to come up with a story or image connecting these items?<br><br>Once you think of one, press the spacebar to continue.</p>",
+instruct_5="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>Great! Please continue to come up with a story or image for each trial.<br><br>For example, you might imagine cutting the canoe using the chainsaw.</p><p style= 'font-size:25px;margin-top:100px'>[press the spacebar to continue]</p>",
+instruct_6="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'><img src= '../static/images/GW-Tutorial/chess.jpg' width='250' height='250' style='margin-right:50px'></img><img src= '../static/images/GW-Tutorial/golfcart.jpg' width='250' height='250' style='margin-left:50px'><br><br><p style ='font-size: 30px;line-height:1.5'>Were you able to come up with a story or image connecting these items?<br><br>Once you think of one, press the spacebar to continue.</p>",
+instruct_7="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>Great! Please continue to come up with a story or image for each trial.<br><br>For example, you might imagine trying to play chess while on the golf cart.</p><p style= 'font-size:25px;margin-top:100px'>[press the spacebar to continue]</p>",
+instruct_8="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>While you are learning to remember the image pairs, you will also see a cross on the center of your screen like the one below:</p><img src= '../static/images/isi.png' width='150' height='150'><p style ='font-size: 30px;line-height:1.5'>To make sure that you are paying attention on each trial, we will have you do a simple color detection task in addition to learning the pairs. If the cross flashes <span style='color: blue;'>blue,</span> press the '1' key on your keyboard, if it flashes <span style='color: green;'>green,</span> press '2'.<br><br>Now we will do a short practice on these color changes. You will be unable to advance until you get enough of the color check trials correct.<p style= 'font-size:25px;margin-top:100px'>[press the spacebar to start the practice]</p>",
 
-instructnames = ["instruct_1","instruct_2","instruct_3","instruct_4","instruct_5","instruct_6","instruct_7","instruct_8","instruct_9"]// IF you want to add or decrease number of page for instruct, just delete or add var name here.
-instruct={instruct_1,instruct_2,instruct_3,instruct_4,instruct_5,instruct_6,instruct_7,instruct_8,instruct_9} // IF you want to add or decrease number of page for instruct, just delete or add var here.
+instructnames = ["instruct_1","instruct_2","instruct_3","instruct_4","instruct_5","instruct_6","instruct_7","instruct_8"]// IF you want to add or decrease number of page for instruct, just delete or add var name here.
+instruct={instruct_1,instruct_2,instruct_3,instruct_4,instruct_5,instruct_6,instruct_7,instruct_8} // IF you want to add or decrease number of page for instruct, just delete or add var here.
 
 
 //Text for direct memory instruction
@@ -42,7 +64,7 @@ dir_instruct={instruct_dir_2} //same for above
 
 //Text for shortest path instruction
 instruct_short_1="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>You may have noticed that the object pairs you studied in the study phase were connected to one another such that one object was often paired with more than just one other object.\nIn this phase, you will be presented with three objects on the screen.\nYour task is to choose which one of the side objects, left or right, you think is closer to the middle object based on how the objects were indirectly associated during the study phase.</p><br /><p style= 'font-size:25px;margin-top:100px'>[press the spacebar to continue]</p>",
-instruct_short_2="<div style='margin-left:250px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>For example, if you studied the following pairs:</p><img src= '../static/images/shortest_img_1.png' width='350' height='250'><p style ='font-size: 30px;line-height:1.5'>and you are shown the following:</p><img src= '../static/images/shortest_img_2.png' width='350' height='250'><br><p style ='font-size: 30px;line-height:1.5'>You should select the umbrella as being 'closer' to the robe, as the umbrella was 2 'steps' away from the robe (robe > briefcase > umbrella), whereas the clock was 3 'steps' away from the robe (robe > briefcase > umbrella > clock).</p><p style= 'font-size:25px;margin-top:100px'>[press the spacebar to continue]</p>"
+instruct_short_2="<div style='margin-left:250px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>For example, if you studied the following pairs:</p><img src= '../static/images/shortest_img_1.png' width='350' height='250'><p style ='font-size: 30px;line-height:1.5'>and you are shown the following:</p><img src= '../static/images/shortest_img_2.png' width='350' height='250'><br><p style ='font-size: 30px;line-height:1.5'>You should select the canoe as being 'closer' to the golf cart, as the canoe was 2 'steps' away from the golf cart (golf cart > chess board > canoe), whereas the clock was 3 'steps' away from the chainsaw (golf cart > chess board > canoe > chainsaw).</p><p style= 'font-size:25px;margin-top:100px'>[press the spacebar to continue]</p>"
 instruct_short_3="<div style='margin-left:250px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>Press '1' on your keyboard if you think the center object is closer to the LEFT object, based on what you learned in the previous phase. Press '2' on your keyboard if you think the object that is closer to the center object is the RIGHT object.<br><br>It might seem difficult and overwhelming, but trust your instincts, and do your best! Please contact the experimenter if you have any questions on this section before continuing.</p><br><p style= 'font-size:25px;margin-top:100px'>[press the spacebar to continue]</p>"
 short_instructnames = ["instruct_short_1","instruct_short_2","instruct_short_3"]
 short_instruct={instruct_short_1,instruct_short_2,instruct_short_3} 
@@ -56,7 +78,7 @@ mem_instruct={instruct_mem_1,instruct_mem_2,instruct_mem_3}
 
 //learning phse
 
-imageList=['GW/backpack.jpg','GW/boat.jpg','GW/cake.jpg','GW/couch.jpg','GW/fan.jpg','GW/globe.jpg','GW/mailbox.jpg','GW/oven.jpg','GW/pawn.jpg','GW/picnic_basket.jpg','GW/rocking_chair.jpg','GW/skates.jpg','GW/sunglasses.jpg']
+imageList=['GW/gong.jpg','GW/barrel.jpg','GW/basket.jpg','GW/soldier.jpg','GW/camera.jpg','GW/paint.jpg','GW/wheelchair.jpg','GW/dustpan.jpg','GW/snail.jpg','GW/globe.jpg','GW/hat.jpg','GW/jukebox.jpg','GW/teeth.jpg']
 
 imageIndex= [[0,1], [1,2], [1,3], [2,10], [2,5], [3,4], [3,11], [5,6], [5,8], [6,7], [6,8], [6,12], [7,8], [7,9], [8,10], [10,11]]
 
@@ -398,57 +420,180 @@ for(let i = 0;i<directLeft.length;i++){
 
 
 //Shoretst Path judge phase
+
+// One distance diff (Hard)
 twothree = graph.getCustomTriplets(2,3)
+let twothreecorrect = correctNode
+correctNode = []
 threefour = graph.getCustomTriplets(3,4)
+let threefourcorrect = correctNode
+correctNode = []
 fourfive = graph.getCustomTriplets(4,5)
+let fourfivecorrect = correctNode
+correctNode = []
+fivesix = graph.getCustomTriplets(5,6)
+let fivesixcorrect = correctNode
+correctNode = []
+
 let onediff = twothree.concat(threefour,fourfive)
-let onediffcorrect = correctNode
-correctNode = []
 
+// Two distance diff (Medium)
 twofour = graph.getCustomTriplets(2,4)
+let twofourcorrect = correctNode
+correctNode = []
 threefive = graph.getCustomTriplets(3,5)
-let twodiff = twofour.concat(threefive)
-let twodiffcorrect = correctNode
+let threefivecorrect = correctNode
+correctNode = []
+let foursix = graph.getCustomTriplets(4,6)
+let foursixcorrect = correctNode
 correctNode = []
 
+let twodiff = twofour.concat(threefive)
+
+// Three distance diff (Easy)
 twofive = graph.getCustomTriplets(2,5)
-let threediff = twofive
-let threediffcorrect = correctNode
+let twofivecorrect = correctNode
+correctNode = []
+threesix = graph.getCustomTriplets(2,5)
+let threesixcorrect = correctNode
+correctNode = []
 
-let diff_arr = []
+let threediff = twofive.concat(threesix)
 
-for (let i = 0;i < 20;i++){
-  diff_arr.push(i)
+// Four distance diff (Very Easy)
+twosix = graph.getCustomTriplets(2,6)
+twosixcorrect = correctNode
+correctNode = []
+
+let fourdiff = twosix
+
+//
+
+function makeShuffledArray(length) {
+  const arr = Array.from({ length }, (_, i) => i);
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
 }
-shuffle(diff_arr)
 
-let shuffled_one_diff = []
-let shuffled_two_diff = []
-let shuffled_three_diff = []
+let twothree_arr = makeShuffledArray(twothree.length);
+let threefour_arr = makeShuffledArray(threefour.length);
+let fourfive_arr = makeShuffledArray(fourfive.length);
+let fivesix_arr = makeShuffledArray(fivesix.length);
 
-let shuffled_one_diff_correct = []
-let shuffled_two_diff_correct = []
-let shuffled_three_diff_correct = []
+let twofour_arr = makeShuffledArray(twofour.length);
+let threefive_arr = makeShuffledArray(threefive.length);
+let foursix_arr = makeShuffledArray(foursix.length);
+
+let twofive_arr = makeShuffledArray(twofive.length);
+let threesix_arr = makeShuffledArray(threesix.length);
+
+let twosix_arr = makeShuffledArray(twosix.length);
+
+
+let shuffled_twothree = []
+let shuffled_threefour = []
+let shuffled_fourfive = []
+let shuffled_fivesix = []
+
+let shuffled_twofour = []
+let shuffled_threefive = []
+let shuffled_foursix = []
+
+let shuffled_twofive = []
+let shuffled_threesix = []
+
+let shuffled_twosix = []
+
+
+let shuffled_twothree_correct = []
+let shuffled_threefour_correct = []
+let shuffled_fourfive_correct = []
+let shuffled_fivesix_correct = []
+
+let shuffled_twofour_correct = []
+let shuffled_threefive_correct = []
+let shuffled_foursix_correct = []
+
+let shuffled_twofive_correct = []
+let shuffled_threesix_correct = []
+
+let shuffled_twosix_correct = []
+
+
 let combined_arr = []
 
-for (let i = 0;i < 20;i++){
-  shuffled_one_diff.push(onediff[i])
-  shuffled_one_diff_correct.push(onediffcorrect[i])
+for (let i = 0;i < 12;i++){
+  shuffled_twothree.push(twothree[twothree_arr[i]])
+  shuffled_twothree_correct.push(twothreecorrect[twothree_arr[i]])
   combined_arr.push(i)
-}
-for (let i = 0;i < 20;i++){
-  shuffled_two_diff.push(twodiff[i])
-  shuffled_two_diff_correct.push(twodiffcorrect[i])
-  combined_arr.push(i+20)
-}
-for (let i = 0;i < 20;i++){
-  shuffled_three_diff.push(threediff[i])
-  shuffled_three_diff_correct.push(threediffcorrect[i])
-  combined_arr.push(i+40)
+
+  shuffled_threefour.push(threefour[threefour_arr[i]]);
+  shuffled_threefour_correct.push(threefourcorrect[threefour_arr[i]]);
+  combined_arr.push(i+12);
+
+  shuffled_fourfive.push(fourfive[fourfive_arr[i]]);
+  shuffled_fourfive_correct.push(fourfivecorrect[fourfive_arr[i]]);
+  combined_arr.push(i+24);
+
+  shuffled_fivesix.push(fivesix[fivesix_arr[i]]);
+  shuffled_fivesix_correct.push(fivesixcorrect[fivesix_arr[i]]);
+  combined_arr.push(i+36);
 }
 
-let cumulativediff = shuffled_one_diff.concat(shuffled_two_diff,shuffled_three_diff)
-let cumulativeCorrect = shuffled_one_diff_correct.concat(shuffled_two_diff_correct,shuffled_three_diff_correct)
+for (let i = 0; i < 12; i++) {
+  shuffled_twofour.push(twofour[twofour_arr[i]]);
+  shuffled_twofour_correct.push(twofourcorrect[twofour_arr[i]]);
+  combined_arr.push(i+48);
+
+  shuffled_threefive.push(threefive[threefive_arr[i]]);
+  shuffled_threefive_correct.push(threefivecorrect[threefive_arr[i]]);
+  combined_arr.push(i+60);
+
+  shuffled_foursix.push(foursix[foursix_arr[i]]);
+  shuffled_foursix_correct.push(foursixcorrect[foursix_arr[i]]);
+  combined_arr.push(i+72);
+}
+
+for (let i = 0; i < 12; i++) {
+  shuffled_twofive.push(twofive[twofive_arr[i]]);
+  shuffled_twofive_correct.push(twofivecorrect[twofive_arr[i]]);
+  combined_arr.push(i+84);
+
+  shuffled_threesix.push(threesix[threesix_arr[i]]);
+  shuffled_threesix_correct.push(threesixcorrect[threesix_arr[i]]);
+  combined_arr.push(i+96);
+}
+
+for (let i = 0; i < 13; i++) {
+  shuffled_twosix.push(twosix[twosix_arr[i]]);
+  shuffled_twosix_correct.push(twosixcorrect[twosix_arr[i]]);
+  combined_arr.push(i+108);
+}
+
+let cumulativediff = shuffled_twothree
+.concat(shuffled_threefour)
+.concat(shuffled_fourfive)
+.concat(shuffled_fivesix)
+.concat(shuffled_twofour)
+.concat(shuffled_threefive)
+.concat(shuffled_foursix)
+.concat(shuffled_twofive)
+.concat(shuffled_threesix)
+.concat(shuffled_twosix);
+
+let cumulativeCorrect = shuffled_twothree_correct
+.concat(shuffled_threefour_correct)
+.concat(shuffled_fourfive_correct)
+.concat(shuffled_fivesix_correct)
+.concat(shuffled_twofour_correct)
+.concat(shuffled_threefive_correct)
+.concat(shuffled_foursix_correct)
+.concat(shuffled_twofive_correct)
+.concat(shuffled_threesix_correct)
+.concat(shuffled_twosix_correct);
 
 let cumulativearr = []
   for (let i = 0; i < cumulativediff.length; i++) {
@@ -479,6 +624,7 @@ for (let i = 0;i<n_shortest_trial;i++){
   room_shortest_right.push(imageList[rightList[i]-1])
   room_shortest_correct.push(imageList[correctShortList[i]-1])
 }
+
 
 
 //Goal Directed Navigation:
