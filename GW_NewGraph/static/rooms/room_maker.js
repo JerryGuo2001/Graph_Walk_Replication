@@ -20,10 +20,10 @@ function create_learning_trial(room_choiceStims_left,room_choiceStims_right,tria
 //Direct Memory phase
 function create_direct_trial(room_choice_up, room_choiceStims_left, room_choice_mid, room_choiceStims_right, trial_num) {
   return parse(
-    "<img style='position:absolute;top: 30%;right: 50%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>" +
-    "<img id='img1' class='bottom' style='position:absolute;top: 80%;right: 75%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>" +
-    "<img id='img2' class='bottom' style='position:absolute;top: 80%;right: 50%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>" +
-    "<img id='img3' class='bottom' style='position:absolute;top: 80%;right: 25%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>" +
+    "<img style='position:absolute;top: 20%;right: 50%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>" +
+    "<img id='img1' class='bottom' style='position:absolute;top: 70%;right: 75%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>" +
+    "<img id='img2' class='bottom' style='position:absolute;top: 70%;right: 50%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>" +
+    "<img id='img3' class='bottom' style='position:absolute;top: 70%;right: 25%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>" +
     "<div class='bottom' style='position:absolute;top: 96%;right: 75%;transform: translate(50%, -50%);z-score:0;width: 250px;text-align:center;font-size: 30px;'>1</div>" +
     "<div class='bottom' style='position:absolute;top: 96%;right: 50%;transform: translate(50%, -50%);z-score:0;width: 250px;text-align:center;font-size: 30px;'>2</div>" +
     "<div class='bottom' style='position:absolute;top: 96%;right: 25%;transform: translate(50%, -50%);z-score:0;width: 250px;text-align:center;font-size: 30px;'>3</div>" +
@@ -35,9 +35,9 @@ function create_direct_trial(room_choice_up, room_choiceStims_left, room_choice_
 //Shortest path judgement
 function create_shortestpath_trial(room_choice_up,room_choiceStims_left,room_choiceStims_right,trial_num) {
   return parse(
-    "<img style='position:absolute;top: 30%;right: 50%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>"+
-    "<img id = 'img1' class = 'bottomshortest' style='position:absolute;top: 80%;right: 65%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>"+
-    "<img id = 'img2' class = 'bottomshortest' style='position:absolute;top: 80%;right: 35%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>"+
+    "<img style='position:absolute;top: 20%;right: 50%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>"+
+    "<img id = 'img1' class = 'bottomshortest' style='position:absolute;top: 70%;right: 65%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>"+
+    "<img id = 'img2' class = 'bottomshortest' style='position:absolute;top: 70%;right: 35%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>"+
     "<div class='bottomshortest' style='position:absolute;top: 96%;right: 65%;transform: translate(50%, -50%);z-score:0;width: 250px;text-align:center;font-size: 30px;'>1</div>" +
     "<div class='bottomshortest' style='position:absolute;top: 96%;right: 35%;transform: translate(50%, -50%);z-score:0;width: 250px;text-align:center;font-size: 30px;'>2</div>" +
     "<br><style>body {background-color: #ffff;}</style>" 
