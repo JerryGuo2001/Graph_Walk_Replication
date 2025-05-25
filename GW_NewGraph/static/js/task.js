@@ -721,7 +721,7 @@ var shortestpath_phase = {
     } else if (cumulativearr[curr_shortest_trial] >= onedifflength + twodifflength && cumulativearr[curr_shortest_trial] < onedifflength + twodifflength + shuffled_twofive.length){
       data.specific_pairs = 'Two Edge Five Edge'
     } else if (cumulativearr[curr_shortest_trial] >= onedifflength + twodifflength + shuffled_twofive.length && cumulativearr[curr_shortest_trial] < onedifflength + twodifflength + threedifflength){
-      data.specific_pairs = 'Two Edge Five Edge'
+      data.specific_pairs = 'Three Edge Six Edge'
     }
 
     else if (cumulativearr[curr_shortest_trial] >= onedifflength + twodifflength + threedifflength){
