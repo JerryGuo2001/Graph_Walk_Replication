@@ -51,6 +51,86 @@ var welcome = {
 }
 //welcome page end
 
+//direct_memory
+var curr_direct_trial=0
+var directmemory_phase = {
+  type: 'html-keyboard-responsefl',
+  choices: ['1','2','3'],
+  response_ends_trial: false,
+  stimulus:create_direct_trial(room_direct_up,room_direct_left,room_direct_mid,room_direct_right,curr_direct_trial),
+  stimulus_duration:6500,//5 second for now, we will discuss it 
+  trial_duration:6500,//5 second for now 
+  on_load: function() {
+    let directResp = false
+    document.addEventListener('keydown', function(event) {
+      if (directResp) return;
+      if (['1', '2', '3'].includes(event.key)) {
+        directResp = true
+        var selected_choice = event.key;
+        var image_ids = ['img1', 'img2', 'img3'];
+        image_ids.forEach(function(id) {
+          var image = document.getElementById(id);
+          if (image) {
+            image.style.border = '';
+          }
+        });
+        var selected_image = document.getElementById('img' + selected_choice);
+        if (selected_image) {
+          selected_image.style.border = '5px solid black';
+        }
+      
+      
+      }})
+    // setTimeout(function() {
+    //   for(let i = 0;i<document.getElementsByClassName('bottom').length;i++){
+    //     document.getElementsByClassName('bottom')[i].style.visibility = 'visible';
+    //   }
+    // }, randomDelay);
+  },
+  on_finish: function(data) {
+    data.trial_type = 'directmemory_phase';
+    data.stimulus=room_direct_up[curr_direct_trial];
+    data.stimulus_down_left=room_direct_left[curr_direct_trial],
+    data.stimulus_down_mid=room_direct_mid[curr_direct_trial]
+    data.stimulus_down_right=room_direct_right[curr_direct_trial];
+    data.stimulus_correct=room_direct_correct[curr_direct_trial];
+    data.stimulus_short=room_direct_short[curr_direct_trial];
+    data.stimulus_far=room_direct_far[curr_direct_trial];
+    if ((data.key_press == 49 && data.stimulus_down_left == data.stimulus_correct)||
+    (data.key_press == 50 && data.stimulus_down_mid == data.stimulus_correct) ||(data.key_press == 51 && data.stimulus_down_right == data.stimulus_correct)) {
+      data.accuracy = 1
+      directcorrectness.push(1)
+      data.weighted_accuracy = 1
+    } else {
+      data.accuracy = 0
+      directcorrectness.push(0)
+      data.weighted_accuracy = 0
+    }
+
+    if ((data.key_press == 49 && data.stimulus_down_left == data.stimulus_short)||
+    (data.key_press == 50 && data.stimulus_down_mid == data.stimulus_short) ||(data.key_press == 51 && data.stimulus_down_right == data.stimulus_short)) {
+      data.missedtrial = 'closer'
+      data.weighted_accuracy = 0.5
+    } else if ((data.key_press == 49 && data.stimulus_down_left == data.stimulus_far)||
+    (data.key_press == 50 && data.stimulus_down_mid == data.stimulus_far) ||(data.key_press == 51 && data.stimulus_down_right == data.stimulus_far)) {
+      data.missedtrial = 'closer'
+      data.weighted_accuracy = 0.5
+    }
+    
+    let directsum = 0;
+    directcorrectness.forEach(function(value) {
+      directsum += value;
+    });
+
+    data.cumulative_accuracy = directsum / directcorrectness.length;
+    sfa=data.key_press,
+    curr_direct_trial=curr_direct_trial+1,
+    directmemory_phase.stimulus=create_direct_trial(room_direct_up,room_direct_left,room_direct_mid,room_direct_right,curr_direct_trial)
+    attentioncheck(directmemory_phase,a=1,curr_direct_trial,n_direct_trial,intro_short)
+  }
+}
+//Direct Memory test end
+
 //Fullscreen start
 var enterFullscreen = {
   type: 'html-button-response',
@@ -95,34 +175,90 @@ var enterFullscreen = {
 // Fullscreen end
 
 //Instruction page
-function createinstruct(instruct_1,number){
-  var intro={
-    type: 'html-keyboard-response',
-    choices: ['space'],
-    stimulus: instruct_1,
+function create_instruct(instruct,instructnames,instruction_number,prac_attentioncheck_blackplus,a=''){
+  var intro_learn={
+    type: 'html-button-response',
+    button_html: '<button class="jspsych-btn" style="padding: 12px 24px; font-size: 18px; border-radius: 10px; background-color: #4CAF50; color: white; border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 0 10px;">%choice%</button>',
+    choices: ['Next'],
+    stimulus: instruct[`instruct_`+a+`${instruction_number}`],
     on_finish: function (data) {
-      data.trial_type = 'intro_'+number;
-      data.stimulus='instruct'
+      data.trial_type = 'intro_'+instruction_number;
+      data.stimulus='instruct';
+      // Check which button was pressed
+      if (instructnames.length==1){
+        if (data.button_pressed == 0) {
+          data.response = 'Start';
+          jsPsych.addNodeToEndOfTimeline({
+              timeline: [prac_attentioncheck_blackplus],
+            }, jsPsych.resumeExperiment)
+        }
+      }else if (instruction_number>=instructnames.length){
+        if (data.button_pressed == 0) {
+          intro_learn.choices=['Previous','Next']
+          instruction_number-=1
+          intro_learn.stimulus=instruct[`instruct_`+a+`${instruction_number}`],
+          data.response = 'Previous';
+          jsPsych.addNodeToEndOfTimeline({
+              timeline: [intro_learn],
+            }, jsPsych.resumeExperiment)
+        } else if (data.button_pressed == 1) {
+          console.log('nextphase')
+          data.response = 'Next';
+          jsPsych.addNodeToEndOfTimeline({
+              timeline: [prac_attentioncheck_blackplus],
+            }, jsPsych.resumeExperiment)
+        }
+      }else if (instruction_number==1){
+        instruction_number+=1
+        intro_learn.choices=['Previous','Next']
+        intro_learn.stimulus=instruct[`instruct_`+a+`${instruction_number}`],
+        jsPsych.addNodeToEndOfTimeline({
+          timeline: [intro_learn],
+        }, jsPsych.resumeExperiment)
+      }else if (instruction_number==instructnames.length-1){
+        if (data.button_pressed == 0) {
+          if (instruction_number==2){
+            intro_learn.choices=['Next']
+          }
+          instruction_number-=1
+          intro_learn.stimulus=instruct[`instruct_`+a+`${instruction_number}`],
+          data.response = 'Previous';
+          jsPsych.addNodeToEndOfTimeline({
+              timeline: [intro_learn],
+            }, jsPsych.resumeExperiment)
+          } else if (data.button_pressed == 1) {
+            intro_learn.choices=['Previous','Start']
+            instruction_number+=1
+            intro_learn.stimulus=instruct[`instruct_`+a+`${instruction_number}`],
+            data.response = 'Next';
+            jsPsych.addNodeToEndOfTimeline({
+                timeline: [intro_learn],
+              }, jsPsych.resumeExperiment)
+          }
+      }else{
+      if (data.button_pressed == 0) {
+        if (instruction_number==2){
+          intro_learn.choices=['Next']
+        }
+        instruction_number-=1
+        intro_learn.stimulus=instruct[`instruct_`+a+`${instruction_number}`],
+        data.response = 'Previous';
+        jsPsych.addNodeToEndOfTimeline({
+            timeline: [intro_learn],
+          }, jsPsych.resumeExperiment)
+        } else if (data.button_pressed == 1) {
+          instruction_number+=1
+          intro_learn.stimulus=instruct[`instruct_`+a+`${instruction_number}`],
+          data.response = 'Next';
+          jsPsych.addNodeToEndOfTimeline({
+              timeline: [intro_learn],
+            }, jsPsych.resumeExperiment)
+        }
+      }
     }
   }
-  return intro
+  return intro_learn
 }
-
-function createfulintro(instruct,instructnames){
-  intro={}
-for (let i = 0; i < instructnames.length; i++) {
-  instructname=instructnames[i]
-  intro[i] = createinstruct(instruct[instructname],i)
-}return intro
-}
-
-
-intro_learn=createfulintro(instruct,instructnames)
-intro_mem=createfulintro(mem_instruct,mem_instructnames)
-intro_dir=createfulintro(dir_instruct,dir_instructnames)
-intro_short=createfulintro(short_instruct,short_instructnames)
-
-//Instruction page end
 
 
   //practice attention check
@@ -476,6 +612,10 @@ var TaskFailed = {
   }
 };
 
+
+let dir_instruction_number=1
+let intro_dir=create_instruct(dir_instruct,dir_instructnames,dir_instruction_number,directmemory_phase,a='dir_')
+
 var thecrossant_break={
   type: 'html-keyboard-response',
   choices: jsPsych.NO_KEYS,
@@ -502,7 +642,7 @@ var thecrossant_break={
     learn_phase.stimulus_duration=2000
     thecrossant_black.stimulus=create_memory_ten('black')
     thecrossant.stimulus=create_learningcolor_trial(curr_learning_trial,pluscolor[curr_learning_trial])
-    attentioncheck_learningphase(learn_phase,sfa,curr_learning_trial,n_learning_trial,learn_break,thecrossant,thecrossant_black,thecrossant_break)
+    attentioncheck_learningphase(learn_phase,sfa,curr_learning_trial,n_learning_trial,intro_dir,thecrossant,thecrossant_black,thecrossant_break)
     
   }
 }
@@ -555,88 +695,81 @@ var learn_phase_color = {
 
 // learning phase end
 var directcorrectness = []
-//Direct Memory test
-var curr_direct_trial=0
-var directmemory_phase = {
-  type: 'html-keyboard-responsefl',
-  choices: ['1','2','3'],
-  response_ends_trial: false,
-  stimulus:create_direct_trial(room_direct_up,room_direct_left,room_direct_mid,room_direct_right,curr_direct_trial),
-  stimulus_duration:6500,//5 second for now, we will discuss it 
-  trial_duration:6500,//5 second for now 
-  on_load: function() {
-    let directResp = false
-    document.addEventListener('keydown', function(event) {
-      if (directResp) return;
-      if (['1', '2', '3'].includes(event.key)) {
-        directResp = true
-        var selected_choice = event.key;
-        var image_ids = ['img1', 'img2', 'img3'];
-        image_ids.forEach(function(id) {
-          var image = document.getElementById(id);
-          if (image) {
-            image.style.border = '';
+
+
+//goal directed planning
+var phase3 = {}
+//Goal directed planning
+function createPhase3(numberoftrial){
+  var phase3 = {}
+  for (let i = 0; i < numberoftrial; i++){
+    if (i==numberoftrial-1){
+      phase3[i] = {
+        type: 'html-keyboard-response',
+        stimulus: phasethreeroom[0],
+        choices: jsPsych.NO_KEYS, // Disable keyboard responses
+        // on_load: function() {
+        //   document.getElementById('nextButton').style.display = 'block'
+        //   document.getElementById('nextButton').addEventListener('click', function() {
+        //     jsPsych.finishTrial(); // End trial on button click
+        //   });
+        // },
+        on_finish: function (data) {
+          data.trial_type='Graph Reconstruction'
+          data.linedress=''
+          for (const key in specificline) {
+              data.linedressed += specificline[key].name+':[x1:'+specificline[key].location.x1+' x2:'+specificline[key].location.x2+' y1:'+specificline[key].location.y1+' y2:'+specificline[key].location.y2+']'
           }
-        });
-        var selected_image = document.getElementById('img' + selected_choice);
-        if (selected_image) {
-          selected_image.style.border = '5px solid black';
+          // if (goaldirIndex[numberoftrial] < threeEdgePair.length){
+          //   data.condition = 'Three Edge Diff'
+          // } else if (goaldirIndex[numberoftrial] >= threeEdgePair.length && goaldirIndex[numberoftrial] < threeEdgePair.length + fourEdgePair.length){
+          //   data.condition = 'Four Edge Diff'
+          // } else if (goaldirIndex[numberoftrial] >= threeEdgePair.length + fourEdgePair.length + fiveEdgePair.length){
+          //   data.condition = 'Five Edge Diff'
+          // }
+          recon_init(),
+          jsPsych.addNodeToEndOfTimeline({
+            timeline: [end_questions,thank_you],
+          }, jsPsych.resumeExperiment)
         }
-      
-      
-      }})
-    // setTimeout(function() {
-    //   for(let i = 0;i<document.getElementsByClassName('bottom').length;i++){
-    //     document.getElementsByClassName('bottom')[i].style.visibility = 'visible';
-    //   }
-    // }, randomDelay);
-  },
-  on_finish: function(data) {
-    data.trial_type = 'directmemory_phase';
-    data.stimulus=room_direct_up[curr_direct_trial];
-    data.stimulus_down_left=room_direct_left[curr_direct_trial],
-    data.stimulus_down_mid=room_direct_mid[curr_direct_trial]
-    data.stimulus_down_right=room_direct_right[curr_direct_trial];
-    data.stimulus_correct=room_direct_correct[curr_direct_trial];
-    data.stimulus_short=room_direct_short[curr_direct_trial];
-    data.stimulus_far=room_direct_far[curr_direct_trial];
-    if ((data.key_press == 49 && data.stimulus_down_left == data.stimulus_correct)||
-    (data.key_press == 50 && data.stimulus_down_mid == data.stimulus_correct) ||(data.key_press == 51 && data.stimulus_down_right == data.stimulus_correct)) {
-      data.accuracy = 1
-      directcorrectness.push(1)
-      data.weighted_accuracy = 1
-    } else {
-      data.accuracy = 0
-      directcorrectness.push(0)
-      data.weighted_accuracy = 0
+      }
+    }else{
+      phase3[i] = {
+        type: 'html-keyboard-response',
+        stimulus: phasethreeroom[0],
+        choices: jsPsych.NO_KEYS, // Disable keyboard responses
+        // on_load: function() {
+        //   document.getElementById('nextButton').addEventListener('click', function() {
+        //     jsPsych.finishTrial(); // End trial on button click
+        //   });
+        // },
+        on_finish: function (data) {
+          data.trial_type='Goal Directed Planning'
+          data.linedress=''
+          for (const key in specificline) {
+              data.linedressed += specificline[key].name+':[x1:'+specificline[key].location.x1+' x2:'+specificline[key].location.x2+' y1:'+specificline[key].location.y1+' y2:'+specificline[key].location.y2+']'
+          }
+          recon_init(),
+          jsPsych.addNodeToEndOfTimeline({
+            timeline: [phase3[i+1]],
+          }, jsPsych.resumeExperiment)
+        }
+      }
     }
-
-    if ((data.key_press == 49 && data.stimulus_down_left == data.stimulus_short)||
-    (data.key_press == 50 && data.stimulus_down_mid == data.stimulus_short) ||(data.key_press == 51 && data.stimulus_down_right == data.stimulus_short)) {
-      data.missedtrial = 'closer'
-      data.weighted_accuracy = 0.5
-    } else if ((data.key_press == 49 && data.stimulus_down_left == data.stimulus_far)||
-    (data.key_press == 50 && data.stimulus_down_mid == data.stimulus_far) ||(data.key_press == 51 && data.stimulus_down_right == data.stimulus_far)) {
-      data.missedtrial = 'closer'
-      data.weighted_accuracy = 0.5
-    }
-    
-    let directsum = 0;
-    directcorrectness.forEach(function(value) {
-      directsum += value;
-    });
-
-    data.cumulative_accuracy = directsum / directcorrectness.length;
-    sfa=data.key_press,
-    curr_direct_trial=curr_direct_trial+1,
-    directmemory_phase.stimulus=create_direct_trial(room_direct_up,room_direct_left,room_direct_mid,room_direct_right,curr_direct_trial)
-    attentioncheck(directmemory_phase,a=1,curr_direct_trial,n_direct_trial,short_break)
   }
+  return phase3
 }
-//Direct Memory test end
 
+
+
+phase3=createPhase3(n_goaldir_trial)
+
+
+//shortestpath
 correctness = []
-//Shortest Path memory test
+let mem_instruction_number=1
+let intro_mem=create_instruct(mem_instruct,mem_instructnames,mem_instruction_number,phase3[0],a='mem_')
+
 var curr_shortest_trial=0
 var shortestpath_phase = {
   type: 'html-keyboard-responsefl',
@@ -741,79 +874,15 @@ var shortestpath_phase = {
     sfa=data.key_press,
     curr_shortest_trial=curr_shortest_trial+1,
     shortestpath_phase.stimulus=create_shortestpath_trial(room_shortest_up,room_shortest_left,room_shortest_right,curr_shortest_trial)
-    attentioncheck(shortestpath_phase,a=1,curr_shortest_trial,n_shortest_trial,dir_break)
+    attentioncheck(shortestpath_phase,a=1,curr_shortest_trial,n_shortest_trial,intro_mem)
   }
 }
 //Shortest Path memory end
-var phase3 = {}
-//Goal directed planning
-function createPhase3(numberoftrial){
-  var phase3 = {}
-  for (let i = 0; i < numberoftrial; i++){
-    if (i==numberoftrial-1){
-      phase3[i] = {
-        type: 'html-keyboard-response',
-        stimulus: phasethreeroom[0],
-        choices: jsPsych.NO_KEYS, // Disable keyboard responses
-        // on_load: function() {
-        //   document.getElementById('nextButton').style.display = 'block'
-        //   document.getElementById('nextButton').addEventListener('click', function() {
-        //     jsPsych.finishTrial(); // End trial on button click
-        //   });
-        // },
-        on_finish: function (data) {
-          data.trial_type='Graph Reconstruction'
-          data.linedress=''
-          for (const key in specificline) {
-              data.linedressed += specificline[key].name+':[x1:'+specificline[key].location.x1+' x2:'+specificline[key].location.x2+' y1:'+specificline[key].location.y1+' y2:'+specificline[key].location.y2+']'
-          }
-          // if (goaldirIndex[numberoftrial] < threeEdgePair.length){
-          //   data.condition = 'Three Edge Diff'
-          // } else if (goaldirIndex[numberoftrial] >= threeEdgePair.length && goaldirIndex[numberoftrial] < threeEdgePair.length + fourEdgePair.length){
-          //   data.condition = 'Four Edge Diff'
-          // } else if (goaldirIndex[numberoftrial] >= threeEdgePair.length + fourEdgePair.length + fiveEdgePair.length){
-          //   data.condition = 'Five Edge Diff'
-          // }
-          recon_init(),
-          jsPsych.addNodeToEndOfTimeline({
-            timeline: [end_questions,thank_you],
-          }, jsPsych.resumeExperiment)
-        }
-      }
-    }else{
-      phase3[i] = {
-        type: 'html-keyboard-response',
-        stimulus: phasethreeroom[0],
-        choices: jsPsych.NO_KEYS, // Disable keyboard responses
-        // on_load: function() {
-        //   document.getElementById('nextButton').addEventListener('click', function() {
-        //     jsPsych.finishTrial(); // End trial on button click
-        //   });
-        // },
-        on_finish: function (data) {
-          data.trial_type='Goal Directed Planning'
-          data.linedress=''
-          for (const key in specificline) {
-              data.linedressed += specificline[key].name+':[x1:'+specificline[key].location.x1+' x2:'+specificline[key].location.x2+' y1:'+specificline[key].location.y1+' y2:'+specificline[key].location.y2+']'
-          }
-          recon_init(),
-          jsPsych.addNodeToEndOfTimeline({
-            timeline: [phase3[i+1]],
-          }, jsPsych.resumeExperiment)
-        }
-      }
-    }
-  }
-  return phase3
-}
-
-
-
-phase3=createPhase3(n_goaldir_trial)
-learn_break=createbreak(intro_dir,dir_instructnames,directmemory_phase)
-short_break=createbreak(intro_short,short_instructnames,shortestpath_phase)
-dir_break=createbreak(intro_mem,mem_instructnames,phase3[0])
 //Goal directed planning end
+
+let short_instruction_number=1
+let intro_short=create_instruct(short_instruct,short_instructnames,short_instruction_number,shortestpath_phase,a='short_')
+
 
 // Survey
 var end_questions = {
@@ -909,14 +978,18 @@ var thank_you = {
   }
 }
 
+//instruction section
+let instruction_number=1
+let intro_learn=create_instruct(instruct,instructnames,instruction_number,prac_attentioncheck_blackplus)
 
 //time line here
 timeline.push(welcome,enterFullscreen)
+timeline.push(intro_learn)
 //debug
 // timeline.push(phase3[0])
 //debug
-timelinepushintro(intro_learn,instructnames)
-timeline.push(prac_attentioncheck_blackplus)
+// timelinepushintro(intro_learn,instructnames)
+// timeline.push(prac_attentioncheck_blackplus)
 // timeline.push(learn_phase)
 // timeline.push(learn_phase_color,thecrossant,thecrossant_black,thecrossant_break)
 
