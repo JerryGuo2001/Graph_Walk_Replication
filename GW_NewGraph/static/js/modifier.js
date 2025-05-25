@@ -1,5 +1,5 @@
 //debug moode on/off
-debugmode= false
+debugmode= true
 if (debugmode==true){
   n_learning_trial=3 //This determine the number of learning trial you want in total
   n_direct_trial=3 //how many direct trial you want
