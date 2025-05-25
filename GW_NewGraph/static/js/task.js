@@ -42,6 +42,8 @@ var welcome = {
   html: "<label for='worker_id'>Enter your Prolific Worker ID. Please make sure this is correct! </label><br><input type='text' id='worker_id' name='worker_id' required><br><br>",
   on_finish: function (data) {
     data.trial_type = "id_enter"
+    data.stimulus = "id_enter"
+    data.graphorder = `${imageList.join("; ")}`
     window.useridtouse=data.responses
     window.useridtouse = useridtouse.split('"')[3];
     subject_id=useridtouse

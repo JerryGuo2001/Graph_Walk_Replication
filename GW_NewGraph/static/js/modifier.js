@@ -124,7 +124,27 @@ let survey_questions = `
 
 //learning phse
 
-imageList=['GW/gong.jpg','GW/barrel.jpg','GW/basket.jpg','GW/soldier.jpg','GW/camera.jpg','GW/paint.jpg','GW/wheelchair.jpg','GW/dustpan.jpg','GW/snail.jpg','GW/globe.jpg','GW/hat.jpg','GW/jukebox.jpg','GW/teeth.jpg']
+let unshuffled_imageList=['GW/gong.jpg','GW/barrel.jpg','GW/basket.jpg','GW/soldier.jpg','GW/camera.jpg','GW/paint.jpg','GW/wheelchair.jpg','GW/dustpan.jpg','GW/snail.jpg','GW/globe.jpg','GW/hat.jpg','GW/jukebox.jpg','GW/teeth.jpg']
+let imageList = []
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+let image_arr = [];
+
+for (let i = 0; i < unshuffled_imageList.length; i++) {
+  image_arr.push(i);
+}
+shuffle(image_arr);
+
+for (let i = 0; i < unshuffled_imageList.length; i++) {
+  imageList.push(unshuffled_imageList[image_arr[i]])
+}
 
 imageIndex= [[0,1], [1,2], [1,3], [2,10], [2,5], [3,4], [3,11], [5,6], [5,8], [6,7], [6,8], [6,12], [7,8], [7,9], [8,10], [10,11]]
 
@@ -138,14 +158,6 @@ for (let i = 0; i < 16; i++) {
   for (let j = 0; j < 8; j++) {
     arr.push(i);
   }
-}
-
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
 }
 
 let randomizedArray = shuffle(arr);
