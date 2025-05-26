@@ -6,18 +6,22 @@ var data_save_method = 'csv_server_py';
 var normal_exit = false;
 var window_height = window.screen.height;
 
-document.addEventListener("keydown", function (event) {
-  // F5 key or Ctrl+R
+// Save function references
+function blockRefresh(event) {
   if (event.key === "F5" || (event.ctrlKey && event.key === "r")) {
-      event.preventDefault();
-      alert("Page refresh is disabled.");
+    event.preventDefault();
+    alert("Page refresh is disabled.");
   }
-});
+}
 
-window.addEventListener("beforeunload", function (event) {
+function blockUnload(event) {
   event.preventDefault();
   event.returnValue = ""; // Some browsers need this line
-});
+}
+
+// Attach the listeners
+document.addEventListener("keydown", blockRefresh);
+window.addEventListener("beforeunload", blockUnload);
 
 //this is to test if the user leave the webpage
 var detectfocus=0
@@ -1021,6 +1025,9 @@ var thank_you = {
     save_final_deter='final',
     save_data(),
     markVersion2AsFinished()
+    // Remove the listeners
+    document.removeEventListener("keydown", blockRefresh);
+    window.removeEventListener("beforeunload", blockUnload);
   },
   on_finish: function (data) {
     data.trial_type = 'thank_you';
