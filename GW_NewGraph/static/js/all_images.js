@@ -1,6 +1,10 @@
 preload_images = []
 for (i=0;i< imageList.length;i++){
     preload_images.push('../static/images/' + imageList[i])
+    
+}
+for (i=1; i<=6;i++){
+    preload_images.push(`../static/images/short${i}.png`)
 }
 preload_images.push('../static/images/isi.png','../static/images/shortest_img_1.png','../static/images/shortest_img_2.png',
     '../static/images/isigreen.png','../static/images/isiblue.png','../static/images/GW-Tutorial/canoe.jpg', '../static/images/GW-Tutorial/chainsaw.jpg',
