@@ -213,7 +213,6 @@ function create_instruct(instruct,instructnames,instruction_number,prac_attentio
               timeline: [intro_learn],
             }, jsPsych.resumeExperiment)
         } else if (data.button_pressed == 1) {
-          console.log('nextphase')
           data.response = 'Next';
           jsPsych.addNodeToEndOfTimeline({
               timeline: [prac_attentioncheck_blackplus],
@@ -437,7 +436,6 @@ function getACvalues() {
         jsPsych.addNodeToEndOfTimeline({
           timeline: [prac_attentioncheck_blackplus],
         }, jsPsych.resumeExperiment)
-        console.log("Try Again button clicked!");
       });
     },
     on_finish: function(data) {
@@ -527,7 +525,6 @@ var thecrossant= {
     data.stimulus_left=learn_left[curr_learning_trial]
     data.stimulus_right=learn_right[curr_learning_trial]
     data.trial_type='rt_plussign_withcolor'
-    console.log(colordetretime)
     kp=data.key_press
   }
 }
@@ -872,13 +869,10 @@ var shortestpath_phase = {
       data.specific_pairs = 'Two Edge Six Edge'
     }
 
-    console.log(data.condition)
-    console.log(data.specific_pairs)
     let sum = 0;
     correctness.forEach(function(value) {
       sum += value;
     });
-    console.log(data.accuracy)
     data.cumulative_accuracy = sum / correctness.length;
 
 
@@ -940,7 +934,6 @@ var end_questions = {
     data.easier = easier
     data.similar = similar
     data.comments = comments
-    console.log(problems,smooth,distraction,strategies,easier,similar,comments)
   }
 };
 

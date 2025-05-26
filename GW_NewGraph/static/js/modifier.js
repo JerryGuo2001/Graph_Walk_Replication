@@ -426,7 +426,7 @@ graph.addEdge(8, 10);
 graph.addEdge(9, 11);
 graph.addEdge(11, 12);
 
-graph.displayGraph();
+// graph.displayGraph();
 
 //Direct Memory phase
 graph.initTriplet()
@@ -439,7 +439,7 @@ let directShort = []
 let directFar = []
 var directNodes = 0
 
-for(let i = 1;i<13;i++){
+for(let i = 1;i<14;i++){
   for(let j = 0;j<graph.getDirectNeighbors(i).length;j++){
     graph.getTriplet(i)
     directLeft.push(directNodes[0])
@@ -453,30 +453,74 @@ for(let i = 1;i<13;i++){
   
 }
 
+// Generate directarr as before
 let directarr = [];
-  for (let i = 0; i < directLeft.length; i++) {
-    directarr.push(i);
+for (let i = 0; i < directLeft.length; i++) {
+  directarr.push(i);
+}
+directarr = shuffle(directarr);
+directarr = shuffle(directarr);
+directarr = shuffle(directarr);
+
+// Apply back-to-back constraints with reordering
+let ordered_directarr = [];
+let dirprevUp = null;
+let dirprevCorrect = null;
+
+for (let i = 0; i < directarr.length; i++) {
+  let foundValid = false;
+
+  for (let j = i; j < directarr.length; j++) {
+    let idx = directarr[j];
+    let up = directUp[idx];
+    let correct = directCorrect[idx];
+
+    // Constraint checks
+    if (
+      up === dirprevUp ||
+      correct === dirprevCorrect ||
+      up === dirprevCorrect ||
+      correct === dirprevUp
+    ) {
+      continue;
+    }
+
+    // Swap valid trial to position i
+    if (i !== j) {
+      [directarr[i], directarr[j]] = [directarr[j], directarr[i]];
+    }
+
+    ordered_directarr.push(directarr[i]);
+    dirprevUp = up;
+    dirprevCorrect = correct;
+    foundValid = true;
+    break;
   }
-directarr = shuffle(directarr)
-directarr = shuffle(directarr)
-directarr = shuffle(directarr)
-let room_direct_left=[]
-let room_direct_mid=[]
-let room_direct_right=[]
-let room_direct_up=[]
-let room_direct_correct=[]
-let room_direct_far=[]
-let room_direct_short=[]
 
+  if (!foundValid) {
+    console.warn(`Could not find a valid trial for position ${i}.`);
+    break;
+  }
+}
 
-for(let i = 0;i<directLeft.length;i++){
-  room_direct_up.push(imageList[directUp[directarr[i]]-1])
-  room_direct_left.push(imageList[directLeft[directarr[i]]-1])
-  room_direct_right.push(imageList[directRight[directarr[i]]-1])
-  room_direct_mid.push(imageList[directMid[directarr[i]]-1])
-  room_direct_correct.push(imageList[directCorrect[directarr[i]]-1])
-  room_direct_short.push(imageList[directShort[directarr[i]]-1])
-  room_direct_far.push(imageList[directFar[directarr[i]]-1])
+// Now build room_direct arrays using ordered_directarr
+let room_direct_left = [];
+let room_direct_mid = [];
+let room_direct_right = [];
+let room_direct_up = [];
+let room_direct_correct = [];
+let room_direct_far = [];
+let room_direct_short = [];
+
+for (let i = 0; i < ordered_directarr.length; i++) {
+  let idx = ordered_directarr[i];
+  room_direct_up.push(imageList[directUp[idx] - 1]);
+  room_direct_left.push(imageList[directLeft[idx] - 1]);
+  room_direct_right.push(imageList[directRight[idx] - 1]);
+  room_direct_mid.push(imageList[directMid[idx] - 1]);
+  room_direct_correct.push(imageList[directCorrect[idx] - 1]);
+  room_direct_short.push(imageList[directShort[idx] - 1]);
+  room_direct_far.push(imageList[directFar[idx] - 1]);
 }
 
 
@@ -656,38 +700,74 @@ let cumulativeCorrect = shuffled_twothree_correct
 .concat(shuffled_threesix_correct)
 .concat(shuffled_twosix_correct);
 
-let cumulativearr = []
-  for (let i = 0; i < cumulativediff.length; i++) {
-    cumulativearr.push(i)
+// Step 1: Shuffle initial index list
+let cumulativearr = [];
+for (let i = 0; i < cumulativediff.length; i++) {
+  cumulativearr.push(i);
+}
+cumulativearr = shuffle(cumulativearr);
+
+// Step 2: Enforce constraints by reordering (swap-based)
+let ordered_shortestarr = [];
+let prevUp = null;
+let prevCorrect = null;
+
+for (let i = 0; i < cumulativearr.length; i++) {
+  let foundValid = false;
+
+  for (let j = i; j < cumulativearr.length; j++) {
+    let trialIndex = cumulativearr[j];
+    let top = cumulativediff[trialIndex][1];
+    let correct = cumulativeCorrect[trialIndex];
+
+    if (
+      top === prevUp ||
+      correct === prevCorrect ||
+      correct === prevUp ||
+      top === prevCorrect
+    ) {
+      continue;
+    }
+
+    // Swap valid trial to position i
+    if (i !== j) {
+      [cumulativearr[i], cumulativearr[j]] = [cumulativearr[j], cumulativearr[i]];
+    }
+
+    ordered_shortestarr.push(cumulativearr[i]);
+    prevUp = top;
+    prevCorrect = correct;
+    foundValid = true;
+    break;
   }
 
-cumulativearr=shuffle(cumulativearr)
-
-let correctShortList = []
-let upList = []
-let leftList = []
-let rightList = []
-let sorted_combined_arr = []
-for (let i = 0;i<cumulativediff.length;i++){
-  upList.push(cumulativediff[cumulativearr[i]][1])
-  leftList.push(cumulativediff[cumulativearr[i]][0])
-  rightList.push(cumulativediff[cumulativearr[i]][2])
-  correctShortList.push(cumulativeCorrect[cumulativearr[i]])
-  sorted_combined_arr.push(combined_arr[i])
-}
-var room_shortest_right = []
-var room_shortest_left = []
-var room_shortest_up = []
-var  room_shortest_correct = []
-for (let i = 0;i<n_shortest_trial;i++){
-  room_shortest_up.push(imageList[upList[i]-1])
-  room_shortest_left.push(imageList[leftList[i]-1])
-  room_shortest_right.push(imageList[rightList[i]-1])
-  room_shortest_correct.push(imageList[correctShortList[i]-1])
+  if (!foundValid) {
+    console.warn(`⚠️ Could not find valid trial for position ${i} under current constraints.`);
+    break;
+  }
 }
 
+// Step 3: Build final arrays using ordered_shortestarr
+let upList = [];
+let leftList = [];
+let rightList = [];
+let correctShortList = [];
+let sorted_combined_arr = [];
 
+for (let i = 0; i < ordered_shortestarr.length; i++) {
+  let trialIndex = ordered_shortestarr[i];
+  upList.push(cumulativediff[trialIndex][1]);
+  leftList.push(cumulativediff[trialIndex][0]);
+  rightList.push(cumulativediff[trialIndex][2]);
+  correctShortList.push(cumulativeCorrect[trialIndex]);
+  sorted_combined_arr.push(combined_arr[trialIndex]);
+}
 
+// Step 4: Convert to image paths
+let room_shortest_up = upList.map(i => imageList[i - 1]);
+let room_shortest_left = leftList.map(i => imageList[i - 1]);
+let room_shortest_right = rightList.map(i => imageList[i - 1]);
+let room_shortest_correct = correctShortList.map(i => imageList[i - 1]);
 //Goal Directed Navigation:
 
 var room_goaldir_left = []
