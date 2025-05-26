@@ -1,0 +1,133 @@
+rt,responses,trial_type,time_elapsed,stimulus,graphorder,button_pressed,response,key_press,stimulus_left,stimulus_right,accuracy,cumulative_accuracy,stimulus_down_left,stimulus_down_mid,stimulus_down_right,stimulus_correct,stimulus_short,stimulus_far,weighted_accuracy,missedtrial,condition,specific_pairs
+5464.699999809265,{worker_id:patrickstar},id_enter,5466,id_enter,GW/camera.jpg; GW/hat.jpg; GW/basket.jpg; GW/paint.jpg; GW/gong.jpg; GW/barrel.jpg; GW/snail.jpg; GW/globe.jpg; GW/teeth.jpg; GW/wheelchair.jpg; GW/dustpan.jpg; GW/soldier.jpg; GW/jukebox.jpg,,,,,,,,,,,,,,,,,
+950.3999996185303,,html-button-response,6419,
+        <style>
+            ul {
+                list-style-type: disc;
+                margin: 20px 0;
+                padding-left: 100px;
+                text-align: left;
+            }
+            li {
+                margin-bottom: 15px;
+                font-size: 18px;
+                line-height: 1.6;
+            }
+            p {
+                font-size: 18px;
+                line-height: 1.6;
+                margin: 10px 0;
+                text-align: center;
+            }
+        </style>
+        <h3 style='text-align: center'><strong>Thank you for your participation in this study. Please:</strong></h3>
+        <br />
+        <ul>
+            <li>Follow the instructions for each task and try your best to perform well.</li>
+            <li>Maximize your browser and focus completely on the task without any distractions.</li>
+            <li><strong>DO NOT</strong> take notes during the experiment, as this interferes with our ability to accurately measure the learning process.</li>
+            <li><strong>DO NOT</strong> participate if you feel you cannot fully commit to these requirements.</li>
+        </ul> <br />
+        <p>When you are ready to take the experiment, click 'Enter Fullscreen' to begin.</p> <br />
+    ,,0,,,,,,,,,,,,,,,,
+1413.1000003814697,,intro_1,7834,instruct,,0,,,,,,,,,,,,,,,,
+7722.699999809265,,intro_2,15558,instruct,,1,Next,,,,,,,,,,,,,,,
+873.5,,intro_3,16434,instruct,,1,Next,,,,,,,,,,,,,,,
+null,,learn_prac_1,18437,lean_prac_1,,,,null,,,,,,,,,,,,,,
+null,,html-keyboard-response,19440,<p></p>,,,,null,,,,,,,,,,,,,,
+958.2000002861023,,intro_1,20400,instruct,,0,,,,,,,,,,,,,,,,
+731.5999999046326,,intro_2,21133,instruct,,1,Next,,,,,,,,,,,,,,,
+null,,learn_prac_2,23136,lean_prac_2,,,,null,,,,,,,,,,,,,,
+null,,html-keyboard-response,24139,<p></p>,,,,null,,,,,,,,,,,,,,
+741.2999997138977,,intro_1,24882,instruct,,0,,,,,,,,,,,,,,,,
+666.5,,intro_2,25549,instruct,,1,Next,,,,,,,,,,,,,,,
+900,,intro_3,26450,instruct,,1,Next,,,,,,,,,,,,,,,
+null,,prac_atten_color_black,27236,black_plus_sign,,,,null,,,,,,,,,,,,,,
+null,,prac_atten_color,27857,prac_stop_color,,,,null,,,,,,,,,,,,,,
+419,,prac_atten_color_black,29860,black_plus_sign,,,,49,,,,,,,,,,,,,,
+null,,prac_atten_color_black,30647,black_plus_sign,,,,null,,,,,,,,,,,,,,
+360.2999997138977,,prac_atten_color,31384,prac_stop_color,,,,50,,,,,,,,,,,,,,
+null,,prac_atten_color_black,33388,black_plus_sign,,,,null,,,,,,,,,,,,,,
+null,,prac_atten_color_black,34056,black_plus_sign,,,,null,,,,,,,,,,,,,,
+507.8999996185303,,prac_atten_color,35005,prac_stop_color,,,,50,,,,,,,,,,,,,,
+null,,prac_atten_color_black,37007,black_plus_sign,,,,null,,,,,,,,,,,,,,
+null,,prac_atten_color_black,37466,black_plus_sign,,,,null,,,,,,,,,,,,,,
+null,,prac_atten_color,38079,prac_stop_color,,,,null,,,,,,,,,,,,,,
+240.69999980926514,,prac_atten_color_black,40082,black_plus_sign,,,,49,,,,,,,,,,,,,,
+null,,prac_atten_color_black,40874,black_plus_sign,,,,null,,,,,,,,,,,,,,
+null,,prac_atten_color,41322,prac_stop_color,,,,null,,,,,,,,,,,,,,
+162.7999997138977,,prac_atten_color_black,43324,black_plus_sign,,,,50,,,,,,,,,,,,,,
+null,,prac_atten_color_black,44284,black_plus_sign,,,,null,,,,,,,,,,,,,,
+457,,prac_atten_color,44867,prac_stop_color,,,,50,,,,,,,,,,,,,,
+null,,prac_atten_color_black,46870,black_plus_sign,,,,null,,,,,,,,,,,,,,
+null,,prac_atten_color_black,47693,black_plus_sign,,,,null,,,,,,,,,,,,,,
+487.69999980926514,,prac_atten_color,48710,prac_stop_color,,,,49,,,,,,,,,,,,,,
+null,,prac_atten_color_black,50713,black_plus_sign,,,,null,,,,,,,,,,,,,,
+null,,prac_atten_color_black,51102,black_plus_sign,,,,null,,,,,,,,,,,,,,
+492.2000002861023,,prac_atten_color,51610,prac_stop_color,,,,50,,,,,,,,,,,,,,
+null,,prac_atten_color_black,53612,black_plus_sign,,,,null,,,,,,,,,,,,,,
+null,,prac_atten_color_black,54511,black_plus_sign,,,,null,,,,,,,,,,,,,,
+503.09999990463257,,prac_atten_color,55235,prac_stop_color,,,,49,,,,,,,,,,,,,,
+null,,prac_atten_color_black,57238,black_plus_sign,,,,null,,,,,,,,,,,,,,
+null,,prac_atten_color_black,57920,black_plus_sign,,,,null,,,,,,,,,,,,,,
+null,,prac_atten_color,58504,prac_stop_color,,,,null,,,,,,,,,,,,,,
+82,,prac_atten_color_black,60506,black_plus_sign,,,,49,,,,,,,,,,,,,,
+1775,,attentioncheck_feedback,62284,cross_check_feedback,,0,,,,,,,,,,,,,,,,
+1194.8000001907349,,last_instruct,63480,instruct,,,,32,,,,,,,,,,,,,,
+null,,learn_phase(without_color),65482,black_plus_sign,,,,null,GW/paint.jpg,GW/gong.jpg,,,,,,,,,,,,
+null,,black_cross(without_color),66206,green,,,,null,GW/paint.jpg,GW/gong.jpg,,,,,,,,,,,,
+null,,rt_plussign_withcolor,66709,green,,,,null,GW/paint.jpg,GW/gong.jpg,,,,,,,,,,,,
+953.6999998092651,,rt_thecrossant_black,67991,black_plus_sign,,,,50,,,1,1,,,,,,,,,,
+null,,color_black,68095,black_plus_sign,,,,null,,,,,,,,,,,,,,
+null,,learn_phase(without_color),70099,black_plus_sign,,,,null,GW/dustpan.jpg,GW/soldier.jpg,,,,,,,,,,,,
+null,,black_cross(without_color),70566,blue,,,,null,GW/dustpan.jpg,GW/soldier.jpg,,,,,,,,,,,,
+481.30000019073486,,rt_plussign_withcolor,71069,blue,,,,49,GW/dustpan.jpg,GW/soldier.jpg,,,,,,,,,,,,
+null,,rt_thecrossant_black,72608,black_plus_sign,,,,null,,,1,1,,,,,,,,,,
+null,,color_black,72710,black_plus_sign,,,,null,,,,,,,,,,,,,,
+null,,learn_phase(without_color),74714,black_plus_sign,,,,null,GW/barrel.jpg,GW/teeth.jpg,,,,,,,,,,,,
+null,,black_cross(without_color),75281,green,,,,null,GW/barrel.jpg,GW/teeth.jpg,,,,,,,,,,,,
+418.69999980926514,,rt_plussign_withcolor,75783,green,,,,50,GW/barrel.jpg,GW/teeth.jpg,,,,,,,,,,,,
+null,,rt_thecrossant_black,77221,black_plus_sign,,,,null,,,1,1,,,,,,,,,,
+null,,color_black,77324,black_plus_sign,,,,null,,,,,,,,,,,,,,
+null,,learn_phase(without_color),79328,black_plus_sign,,,,null,GW/hat.jpg,GW/basket.jpg,,,,,,,,,,,,
+null,,black_cross(without_color),79952,blue,,,,null,GW/hat.jpg,GW/basket.jpg,,,,,,,,,,,,
+null,,rt_plussign_withcolor,80455,blue,,,,null,GW/hat.jpg,GW/basket.jpg,,,,,,,,,,,,
+931.7000002861023,,rt_thecrossant_black,81837,black_plus_sign,,,,49,,,1,1,,,,,,,,,,
+null,,color_black,81940,black_plus_sign,,,,null,,,,,,,,,,,,,,
+null,,learn_phase(without_color),83943,black_plus_sign,,,,null,GW/globe.jpg,GW/wheelchair.jpg,,,,,,,,,,,,
+null,,black_cross(without_color),84709,blue,,,,null,GW/globe.jpg,GW/wheelchair.jpg,,,,,,,,,,,,
+null,,rt_plussign_withcolor,85212,blue,,,,null,GW/globe.jpg,GW/wheelchair.jpg,,,,,,,,,,,,
+848.5,,rt_thecrossant_black,86451,black_plus_sign,,,,49,,,1,1,,,,,,,,,,
+null,,color_black,86555,black_plus_sign,,,,null,,,,,,,,,,,,,,
+1043,,intro_1,87600,instruct,,0,Start,,,,,,,,,,,,,,,
+1035.2999997138977,,directmemory_phase,88637,GW/snail.jpg,,,,51,,,1,1,GW/camera.jpg,GW/basket.jpg,GW/teeth.jpg,GW/teeth.jpg,GW/basket.jpg,GW/camera.jpg,1,,,
+null,,html-keyboard-response,89640,<p></p>,,,,null,,,,,,,,,,,,,,
+1150.0999999046326,,directmemory_phase,90792,GW/basket.jpg,,,,50,,,0,0.5,GW/jukebox.jpg,GW/camera.jpg,GW/hat.jpg,GW/hat.jpg,GW/camera.jpg,GW/jukebox.jpg,0.5,closer,,
+null,,html-keyboard-response,91794,<p></p>,,,,null,,,,,,,,,,,,,,
+1039.2999997138977,,directmemory_phase,92835,GW/teeth.jpg,,,,49,,,1,0.6666666666666666,GW/dustpan.jpg,GW/paint.jpg,GW/basket.jpg,GW/dustpan.jpg,GW/basket.jpg,GW/paint.jpg,1,,,
+null,,html-keyboard-response,93838,<p></p>,,,,null,,,,,,,,,,,,,,
+680.0999999046326,,directmemory_phase,94519,GW/globe.jpg,,,,50,,,0,0.5,GW/paint.jpg,GW/jukebox.jpg,GW/snail.jpg,GW/snail.jpg,GW/jukebox.jpg,GW/paint.jpg,0.5,closer,,
+null,,html-keyboard-response,95522,<p></p>,,,,null,,,,,,,,,,,,,,
+1588.6999998092651,,directmemory_phase,97112,GW/dustpan.jpg,,,,50,,,1,0.6,GW/paint.jpg,GW/basket.jpg,GW/wheelchair.jpg,GW/basket.jpg,GW/paint.jpg,GW/wheelchair.jpg,1,,,
+null,,html-keyboard-response,98116,<p></p>,,,,null,,,,,,,,,,,,,,
+1361.9000000953674,,intro_1,99479,instruct,,0,,,,,,,,,,,,,,,,
+898.1999998092651,,intro_2,100379,instruct,,1,Next,,,,,,,,,,,,,,,
+682.4000000953674,,intro_3,101063,instruct,,1,Next,,,,,,,,,,,,,,,
+697.2000002861023,,intro_4,101762,instruct,,1,Next,,,,,,,,,,,,,,,
+515.9000000953674,,intro_5,102279,instruct,,1,Next,,,,,,,,,,,,,,,
+431.2999997138977,,intro_6,102712,instruct,,1,Next,,,,,,,,,,,,,,,
+450.1000003814697,,intro_7,103163,instruct,,1,Next,,,,,,,,,,,,,,,
+914.7999997138977,,intro_8,104079,instruct,,1,Next,,,,,,,,,,,,,,,
+1021.7000002861023,,shortestpath_phase,105102,GW/gong.jpg,,,,49,GW/jukebox.jpg,GW/globe.jpg,0,0,,,,GW/globe.jpg,,,,,One Edge Diff,Five Edge Six Edge
+null,,html-keyboard-response,106106,<p></p>,,,,null,,,,,,,,,,,,,,
+557.8000001907349,,shortestpath_phase,106665,GW/paint.jpg,,,,50,GW/snail.jpg,GW/barrel.jpg,1,0.5,,,,GW/barrel.jpg,,,,,One Edge Diff,Three Edge Four Edge
+null,,html-keyboard-response,107668,<p></p>,,,,null,,,,,,,,,,,,,,
+976.6999998092651,,shortestpath_phase,108646,GW/globe.jpg,,,,50,GW/camera.jpg,GW/dustpan.jpg,1,0.6666666666666666,,,,GW/dustpan.jpg,,,,,Three Edge Diff,Three Edge Six Edge
+null,,html-keyboard-response,109649,<p></p>,,,,null,,,,,,,,,,,,,,
+869.3000001907349,,shortestpath_phase,110520,GW/snail.jpg,,,,49,GW/paint.jpg,GW/hat.jpg,0,0.5,,,,GW/hat.jpg,,,,,One Edge Diff,Three Edge Four Edge
+null,,html-keyboard-response,111523,<p></p>,,,,null,,,,,,,,,,,,,,
+939.8999996185303,,shortestpath_phase,112464,GW/barrel.jpg,,,,50,GW/globe.jpg,GW/gong.jpg,0,0.4,,,,GW/globe.jpg,,,,,Two Edge Diff,Two Edge Four Edge
+null,,html-keyboard-response,113467,<p></p>,,,,null,,,,,,,,,,,,,,
+1712,,intro_1,115180,instruct,,0,,,,,,,,,,,,,,,,
+1013.3000001907349,,intro_2,116195,instruct,,1,Next,,,,,,,,,,,,,,,
+1165.7999997138977,,intro_3,117363,instruct,,1,Next,,,,,,,,,,,,,,,
