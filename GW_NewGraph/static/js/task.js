@@ -489,6 +489,38 @@ var helpofattentioncheck={
 
 //practice attention check end
 
+// Learn prac 1
+
+var learn_prac1_phase = {
+  type: 'html-keyboard-responsefl',
+  choices: jsPsych.NO_KEYS,
+  response_ends_trial: false,
+  stimulus:create_learning_trial(['GW-Tutorial/object_068.jpg'],['GW-Tutorial/object_029.jpg'],0),
+  stimulus_duration:2000,
+  trial_duration:2000,
+  on_load: function(){
+    timeline.push(intro_prac1_learn)  
+  },
+  on_finish: function(data) {
+    data.trial_type = 'learn_prac_1';
+    data.stimulus='lean_prac_1'
+    attentioncheck(intro_prac1_learn,a=1,1,0,intro_prac1_learn)
+  }
+}
+
+var learn_prac2_phase = {
+  type: 'html-keyboard-responsefl',
+  choices: jsPsych.NO_KEYS,
+  response_ends_trial: false,
+  stimulus:create_learning_trial(['GW-Tutorial/object_229.jpg'],['GW-Tutorial/object_250.jpg'],0),
+  stimulus_duration:2000,
+  trial_duration:2000,
+  on_finish: function(data) {
+    data.trial_type = 'learn_prac_2';
+    data.stimulus='lean_prac_2'
+    attentioncheck(intro_prac2_learn,a=1,1,0,intro_prac2_learn)
+  }
+}
 
 // learning phase
 var curr_learning_trial=0
@@ -984,7 +1016,12 @@ var thank_you = {
 
 //instruction section
 let instruction_number=1
-let intro_learn=create_instruct(instruct,instructnames,instruction_number,prac_attentioncheck_blackplus)
+let intro_learn=create_instruct(instruct,instructnames,instruction_number,learn_prac1_phase)
+let prac1_num=1
+let intro_prac1_learn=create_instruct(instructprac1,instructprac1names,prac1_num,learn_prac2_phase,a='prac_')
+let prac2_num=1
+let intro_prac2_learn=create_instruct(instructprac2,instructprac2names,prac2_num,prac_attentioncheck_blackplus,a='prac2_')
+
 
 //time line here
 timeline.push(welcome,enterFullscreen)

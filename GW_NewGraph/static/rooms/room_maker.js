@@ -24,9 +24,9 @@ function create_direct_trial(room_choice_up, room_choiceStims_left, room_choice_
     "<img id='img1' class='bottom' style='position:absolute;top: 70%;right: 75%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>" +
     "<img id='img2' class='bottom' style='position:absolute;top: 70%;right: 50%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>" +
     "<img id='img3' class='bottom' style='position:absolute;top: 70%;right: 25%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>" +
-    "<div class='bottom' style='position:absolute;top: 96%;right: 75%;transform: translate(50%, -50%);z-score:0;width: 250px;text-align:center;font-size: 30px;'>1</div>" +
-    "<div class='bottom' style='position:absolute;top: 96%;right: 50%;transform: translate(50%, -50%);z-score:0;width: 250px;text-align:center;font-size: 30px;'>2</div>" +
-    "<div class='bottom' style='position:absolute;top: 96%;right: 25%;transform: translate(50%, -50%);z-score:0;width: 250px;text-align:center;font-size: 30px;'>3</div>" +
+    "<div class='bottom' style='position:absolute;top: 90%;right: 75%;transform: translate(50%, -50%);z-score:0;width: 250px;text-align:center;font-size: 30px;'>1</div>" +
+    "<div class='bottom' style='position:absolute;top: 90%;right: 50%;transform: translate(50%, -50%);z-score:0;width: 250px;text-align:center;font-size: 30px;'>2</div>" +
+    "<div class='bottom' style='position:absolute;top: 90%;right: 25%;transform: translate(50%, -50%);z-score:0;width: 250px;text-align:center;font-size: 30px;'>3</div>" +
     "<br><style>body {background-color: #ffff;}</style>", 
     room_choice_up[trial_num], room_choiceStims_left[trial_num], room_choice_mid[trial_num], room_choiceStims_right[trial_num]
   );
@@ -38,8 +38,8 @@ function create_shortestpath_trial(room_choice_up,room_choiceStims_left,room_cho
     "<img class = 'bottomshortest' style='position:absolute;top: 20%;right: 50%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>"+
     "<img id = 'img1' class = 'bottomshortest' style='position:absolute;top: 70%;right: 65%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>"+
     "<img id = 'img2' class = 'bottomshortest' style='position:absolute;top: 70%;right: 35%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>"+
-    "<div class='bottomshortest' style='position:absolute;top: 96%;right: 65%;transform: translate(50%, -50%);z-score:0;width: 250px;text-align:center;font-size: 30px;'>1</div>" +
-    "<div class='bottomshortest' style='position:absolute;top: 96%;right: 35%;transform: translate(50%, -50%);z-score:0;width: 250px;text-align:center;font-size: 30px;'>2</div>" +
+    "<div class='bottomshortest' style='position:absolute;top: 90%;right: 65%;transform: translate(50%, -50%);z-score:0;width: 250px;text-align:center;font-size: 30px;'>1</div>" +
+    "<div class='bottomshortest' style='position:absolute;top: 90%;right: 35%;transform: translate(50%, -50%);z-score:0;width: 250px;text-align:center;font-size: 30px;'>2</div>" +
     "<br><style>body {background-color: #ffff;}</style>" 
   ,room_choice_up[trial_num],room_choiceStims_left[trial_num],room_choiceStims_right[trial_num])
 }
