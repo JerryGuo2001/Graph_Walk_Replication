@@ -192,11 +192,13 @@ var enterFullscreen = {
         <p>When you are ready to take the experiment, click 'Enter Fullscreen' to begin.</p> <br />
     `,
   choices: ['Enter Fullscreen'],
-  on_finish: function() {
+  on_finish: function(data) {
       // Trigger fullscreen mode when the button is clicked
       document.documentElement.requestFullscreen().catch(err => {
           console.error(`Error attempting to enable fullscreen mode: ${err.message}`);
       });
+      data.trial_type = 'fullscreen'
+      data.stimulus = 'fullscreen'
   }
 };
 // Fullscreen end
