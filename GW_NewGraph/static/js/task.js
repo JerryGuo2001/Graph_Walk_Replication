@@ -54,38 +54,38 @@ var welcome = {
 //direct_memory
 var curr_direct_trial=0
 var directmemory_phase = {
-  type: 'html-keyboard-responsefl',
+  type: 'html-keyboard-response',
   choices: ['1','2','3'],
   response_ends_trial: true,
   stimulus:create_direct_trial(room_direct_up,room_direct_left,room_direct_mid,room_direct_right,curr_direct_trial),
-  stimulus_duration:6500,//5 second for now, we will discuss it 
+  stimulus_duration:6500,//6.5 second for now, we will discuss it 
   trial_duration:6500,//5 second for now 
   on_load: function() {
-    let directResp = false
-    document.addEventListener('keydown', function(event) {
-      if (directResp) return;
-      if (['1', '2', '3'].includes(event.key)) {
-        directResp = true
-        var selected_choice = event.key;
-        var image_ids = ['img1', 'img2', 'img3'];
-        image_ids.forEach(function(id) {
-          var image = document.getElementById(id);
-          if (image) {
-            image.style.border = '';
-          }
-        });
-        var selected_image = document.getElementById('img' + selected_choice);
-        if (selected_image) {
-          selected_image.style.border = '5px solid black';
-        }
+    // let directResp = false
+    // document.addEventListener('keydown', function(event) {
+    //   if (directResp) return;
+    //   if (['1', '2', '3'].includes(event.key)) {
+    //     directResp = true
+    //     var selected_choice = event.key;
+    //     var image_ids = ['img1', 'img2', 'img3'];
+    //     image_ids.forEach(function(id) {
+    //       var image = document.getElementById(id);
+    //       if (image) {
+    //         image.style.border = '';
+    //       }
+    //     });
+    //     var selected_image = document.getElementById('img' + selected_choice);
+    //     if (selected_image) {
+    //       selected_image.style.border = '5px solid black';
+    //     }
       
       
-      }})
+      // }})
     // setTimeout(function() {
     //   for(let i = 0;i<document.getElementsByClassName('bottom').length;i++){
     //     document.getElementsByClassName('bottom')[i].style.visibility = 'visible';
     //   }
-    // }, randomDelay);
+    // }, 500);
   },
   on_finish: function(data) {
     data.trial_type = 'directmemory_phase';
@@ -130,6 +130,17 @@ var directmemory_phase = {
   }
 }
 //Direct Memory test end
+
+var directmem_break= {
+  type: 'html-keyboard-response',
+  choices:jsPsych.NO_KEYS,
+  stimulus_duration: 1000,
+  trial_duration: 1000,
+  stimulus:'<p></p>',
+  on_finish: function() {
+    
+  }
+}
 
 //Fullscreen start
 var enterFullscreen = {
@@ -772,39 +783,39 @@ let intro_mem=create_instruct(mem_instruct,mem_instructnames,mem_instruction_num
 
 var curr_shortest_trial=0
 var shortestpath_phase = {
-  type: 'html-keyboard-responsefl',
+  type: 'html-keyboard-response',
   choices: ['1','2'],
   response_ends_trial: true,
   stimulus:create_shortestpath_trial(room_shortest_up,room_shortest_left,room_shortest_right,curr_shortest_trial),
   stimulus_duration:7500,
   trial_duration:7500,
   on_load: function() {
-    let hasResponded = false;
-    // Add border on response
-    document.addEventListener('keydown', function(event) {
-      if (hasResponded) return;
-      if (['1', '2'].includes(event.key)) {
-        hasResponded = true;
-        var selected_choice = event.key;
-        var image_ids = ['img1', 'img2'];
-        image_ids.forEach(function(id) {
-          var image = document.getElementById(id);
-          if (image) {
-            image.style.border = '';
-          }
-        });
-        var selected_image = document.getElementById('img' + selected_choice);
-        if (selected_image) {
-          selected_image.style.border = '5px solid black';
-        }
-      }
-    });
+    // let hasResponded = false;
+    // // Add border on response
+    // document.addEventListener('keydown', function(event) {
+    //   if (hasResponded) return;
+    //   if (['1', '2'].includes(event.key)) {
+    //     hasResponded = true;
+    //     var selected_choice = event.key;
+    //     var image_ids = ['img1', 'img2'];
+    //     image_ids.forEach(function(id) {
+    //       var image = document.getElementById(id);
+    //       if (image) {
+    //         image.style.border = '';
+    //       }
+    //     });
+    //     var selected_image = document.getElementById('img' + selected_choice);
+    //     if (selected_image) {
+    //       selected_image.style.border = '5px solid black';
+    //     }
+    //   }
+    // });
     // Reveal other rooms after 1500 ms
     // setTimeout(function() {
     //   for(let i = 0;i<document.getElementsByClassName('bottomshortest').length;i++){
     //     document.getElementsByClassName('bottomshortest')[i].style.visibility = 'visible';
     //   }
-    // }, randomDelay);
+    // }, 500);
   },
   on_finish: function(data) {
     data.trial_type = 'shortestpath_phase';

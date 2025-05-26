@@ -20,7 +20,7 @@ function create_learning_trial(room_choiceStims_left,room_choiceStims_right,tria
 //Direct Memory phase
 function create_direct_trial(room_choice_up, room_choiceStims_left, room_choice_mid, room_choiceStims_right, trial_num) {
   return parse(
-    "<img style='position:absolute;top: 20%;right: 50%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>" +
+    "<img class='bottom' style='position:absolute;top: 20%;right: 50%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>" +
     "<img id='img1' class='bottom' style='position:absolute;top: 70%;right: 75%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>" +
     "<img id='img2' class='bottom' style='position:absolute;top: 70%;right: 50%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>" +
     "<img id='img3' class='bottom' style='position:absolute;top: 70%;right: 25%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>" +
@@ -35,7 +35,7 @@ function create_direct_trial(room_choice_up, room_choiceStims_left, room_choice_
 //Shortest path judgement
 function create_shortestpath_trial(room_choice_up,room_choiceStims_left,room_choiceStims_right,trial_num) {
   return parse(
-    "<img style='position:absolute;top: 20%;right: 50%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>"+
+    "<img class = 'bottomshortest' style='position:absolute;top: 20%;right: 50%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>"+
     "<img id = 'img1' class = 'bottomshortest' style='position:absolute;top: 70%;right: 65%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>"+
     "<img id = 'img2' class = 'bottomshortest' style='position:absolute;top: 70%;right: 35%;transform: translate(50%, -50%);z-score:0;width: 250px;height: 250px;' src='../static/images/%s' height='250'>"+
     "<div class='bottomshortest' style='position:absolute;top: 96%;right: 65%;transform: translate(50%, -50%);z-score:0;width: 250px;text-align:center;font-size: 30px;'>1</div>" +
@@ -82,11 +82,11 @@ function attentioncheck_learningphase(learn_phase,sfa,curr_blue_trial,n_blue_rou
 function attentioncheck(learn_phase,sfa,curr_blue_trial,n_blue_rounds,thebreak){
   if(sfa && curr_blue_trial<n_blue_rounds) {
     jsPsych.addNodeToEndOfTimeline({
-      timeline: [learn_phase],
+      timeline: [directmem_break,learn_phase],
     }, jsPsych.resumeExperiment)
   }else if(sfa&& curr_blue_trial>=n_blue_rounds) {
     jsPsych.addNodeToEndOfTimeline({
-      timeline: [thebreak],
+      timeline: [directmem_break,thebreak],
     }, jsPsych.resumeExperiment)
   }else if(warning<=2&& curr_blue_trial<n_blue_rounds){
     jsPsych.addNodeToEndOfTimeline({

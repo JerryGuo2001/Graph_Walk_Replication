@@ -1,9 +1,9 @@
 //debug moode on/off
 debugmode= true
 if (debugmode==true){
-  n_learning_trial=3 //This determine the number of learning trial you want in total
-  n_direct_trial=3 //how many direct trial you want
-  n_shortest_trial=3 //how many shortest path you want
+  n_learning_trial=5 //This determine the number of learning trial you want in total
+  n_direct_trial=5 //how many direct trial you want
+  n_shortest_trial=5 //how many shortest path you want
   n_goaldir_trial=1 //how many goal directed planning you want
 }else{
   n_learning_trial=128 //This determine the number of learning trial you want in total
@@ -62,12 +62,12 @@ dir_instruct={instruct_dir_1} //same for above
 
 //Text for shortest path instruction
 instruct_short_1="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>You may have noticed that the object pairs you studied in the study phase were connected to one another such that one object was often paired with more than just one other object.\nIn this phase, you will be presented with three objects on the screen.\nYour task is to choose which one of the side objects, left or right, you think is closer to the middle object based on how the objects were indirectly associated during the study phase.</p><br /><p style= 'font-size:25px;margin-top:100px'></p><br>",
-instruct_short_2="<div style='margin-left:150px ;margin-right: 200px ;text-justify: auto'><img src= '../static/images/short1.png' width='1200' height='700'></div>"
-instruct_short_3="<div style='margin-left:150px ;margin-right: 200px ;text-justify: auto'><img src= '../static/images/short2.png' width='1200' height='700'></div>"
-instruct_short_4="<div style='margin-left:150px ;margin-right: 200px ;text-justify: auto'><img src= '../static/images/short3.png' width='1200' height='700'></div>"
-instruct_short_5="<div style='margin-left:150px ;margin-right: 200px ;text-justify: auto'><img src= '../static/images/short4.png' width='1200' height='700'></div>"
-instruct_short_6="<div style='margin-left:150px ;margin-right: 200px ;text-justify: auto'><img src= '../static/images/short5.png' width='1200' height='700'></div>"
-instruct_short_7="<div style='margin-left:150px ;margin-right: 200px ;text-justify: auto'><img src= '../static/images/short6.png' width='1200' height='700'></div>"
+instruct_short_2="<div style='margin-left:150px ;margin-right: 200px ;text-justify: auto'><img src= '../static/images/short1.png' width='1200' height='600'></div>"
+instruct_short_3="<div style='margin-left:150px ;margin-right: 200px ;text-justify: auto'><img src= '../static/images/short2.png' width='1200' height='600'></div>"
+instruct_short_4="<div style='margin-left:150px ;margin-right: 200px ;text-justify: auto'><img src= '../static/images/short3.png' width='1200' height='600'></div>"
+instruct_short_5="<div style='margin-left:150px ;margin-right: 200px ;text-justify: auto'><img src= '../static/images/short4.png' width='1200' height='600'></div>"
+instruct_short_6="<div style='margin-left:150px ;margin-right: 200px ;text-justify: auto'><img src= '../static/images/short5.png' width='1200' height='600'></div>"
+instruct_short_7="<div style='margin-left:150px ;margin-right: 200px ;text-justify: auto'><img src= '../static/images/short6.png' width='1200' height='600'></div>"
 instruct_short_8="<div style='margin-left:250px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>Press '1' on your keyboard if you think the center object is closer to the LEFT object, based on what you learned in the previous phase. Press '2' on your keyboard if you think the object that is closer to the center object is the RIGHT object.<br><br>It might seem difficult and overwhelming, but trust your instincts, and do your best!</p><br><p style= 'font-size:25px;margin-top:100px'></p><br>"
 short_instructnames = ["instruct_short_1","instruct_short_2","instruct_short_3","instruct_short_4","instruct_short_5","instruct_short_6","instruct_short_7","instruct_short_8"]
 short_instruct={instruct_short_1,instruct_short_2,instruct_short_3,instruct_short_4,instruct_short_5,instruct_short_6,instruct_short_7,instruct_short_8,} 
