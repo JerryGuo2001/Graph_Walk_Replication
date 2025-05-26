@@ -1,9 +1,10 @@
+let save_final_deter
+
 
 var prompt_resubmit = function() {
 		document.body.innerHTML = error_message;
 		$("#resubmit").click(resubmit);
 	};
-
 
   async function markVersion2AsFinished() {
     const fetchUrl = "https://gwdeterversion.vercel.app/api/fetch-runsheet";
