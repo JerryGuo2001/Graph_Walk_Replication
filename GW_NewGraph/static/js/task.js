@@ -982,11 +982,11 @@ var end_questions = {
     data.stimulus = "survey-questions"
     data.problems = problems
     data.smooth = smooth
-    data.distraction = distraction
-    data.strategies = strategies
-    data.easier = easier
-    data.similar = similar
-    data.comments = comments
+    data.distraction = distraction.replace(/,/g, ';');
+    data.strategies = strategies.replace(/,/g, ';');
+    data.easier = easier.replace(/,/g, ';');
+    data.similar = similar.replace(/,/g, ';');
+    data.comments = comments.replace(/,/g, ';');
   }
 };
 
