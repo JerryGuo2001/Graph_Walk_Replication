@@ -68,6 +68,7 @@ var welcome = {
 //welcome page end
 
 //direct_memory
+var dirmem_too_quick_check=0
 var curr_direct_trial=0
 var directmemory_phase = {
   type: 'html-keyboard-response',
@@ -138,11 +139,22 @@ var directmemory_phase = {
       directsum += value;
     });
 
+    if (data.rt<=300){
+      dirmem_too_quick_check+=1
+    }else{
+      dirmem_too_quick_check=0
+    }
     data.cumulative_accuracy = directsum / directcorrectness.length;
     sfa=data.key_press,
-    curr_direct_trial=curr_direct_trial+1,
-    directmemory_phase.stimulus=create_direct_trial(room_direct_up,room_direct_left,room_direct_mid,room_direct_right,curr_direct_trial)
-    attentioncheck(directmemory_phase,a=1,curr_direct_trial,n_direct_trial,intro_short)
+    curr_direct_trial=curr_direct_trial+1;
+
+    if (dirmem_too_quick_check>=3){
+      directmemory_phase.stimulus=create_direct_trial(room_direct_up,room_direct_left,room_direct_mid,room_direct_right,curr_direct_trial)
+      attentioncheck(directmemory_phase,a=1,curr_direct_trial,n_direct_trial,intro_short)
+    }else{
+      directmemory_phase.stimulus=create_direct_trial(room_direct_up,room_direct_left,room_direct_mid,room_direct_right,curr_direct_trial)
+      attentioncheck(directmemory_phase,a=1,curr_direct_trial,n_direct_trial,intro_short)
+    }
   }
 }
 //Direct Memory test end
