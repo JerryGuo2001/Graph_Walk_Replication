@@ -11,7 +11,7 @@ if (debugmode==true){
 }else{
   n_learning_trial=128 //This determine the number of learning trial you want in total
   n_direct_trial=32 //how many direct trial you want
-  n_shortest_trial=121 //how many shortest path you want
+  n_shortest_trial=85 //how many shortest path you want
   n_goaldir_trial=1 //how many goal directed planning you want
 }
 
@@ -876,7 +876,7 @@ for (let i = 0; i < 12; i++) {
   combined_arr.push(i+60);
 }
 
-for (let i = 0; i < 13; i++) {
+for (let i = 0; i < 12; i++) {
   shuffled_twosix.push(twosix[twosix_arr[i]]);
   shuffled_twosix_correct.push(twosixcorrect[twosix_arr[i]]);
   combined_arr.push(i+72);
