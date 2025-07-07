@@ -1,3 +1,6 @@
+// Either "blocked" or "interleaved"
+condition = "blocked"
+
 //debug moode on/off
 debugmode= false
 if (debugmode==true){
@@ -156,29 +159,6 @@ for (let i = 0; i < unshuffled_imageList.length; i++) {
   imageList.push(unshuffled_imageList[image_arr[i]])
 }
 
-imageIndex= [[0,1], [1,2], [1,3], [2,10], [2,5], [3,4], [3,11], [5,6], [5,8], [6,7], [6,8], [6,12], [7,8], [7,9], [8,10], [10,11]]
-
-list_left=[imageList[imageIndex[0][0]],imageList[imageIndex[1][0]],imageList[imageIndex[2][0]],imageList[imageIndex[3][0]],imageList[imageIndex[4][0]],imageList[imageIndex[5][0]],imageList[imageIndex[6][0]],imageList[imageIndex[7][0]],imageList[imageIndex[8][0]],imageList[imageIndex[9][0]],imageList[imageIndex[10][0]],imageList[imageIndex[11][0]],imageList[imageIndex[12][0]],imageList[imageIndex[13][0]],imageList[imageIndex[14][0]],imageList[imageIndex[15][0]]]
-list_right=[imageList[imageIndex[0][1]],imageList[imageIndex[1][1]],imageList[imageIndex[2][1]],imageList[imageIndex[3][1]],imageList[imageIndex[4][1]],imageList[imageIndex[5][1]],imageList[imageIndex[6][1]],imageList[imageIndex[7][1]],imageList[imageIndex[8][1]],imageList[imageIndex[9][1]],imageList[imageIndex[10][1]],imageList[imageIndex[11][1]],imageList[imageIndex[12][1]],imageList[imageIndex[13][1]],imageList[imageIndex[14][1]],imageList[imageIndex[15][1]]]
-learn_left=[]
-learn_right=[]
-
-let arr = [];
-for (let i = 0; i < 16; i++) {
-  for (let j = 0; j < 8; j++) {
-    arr.push(i);
-  }
-}
-
-let randomizedArray = shuffle(arr);
-
-randomizedArray = ensureNoConsecutiveDuplicates(randomizedArray)
-
-for (var i = 0; i < randomizedArray.length; i++){
-    learn_left.push(list_left[randomizedArray[i]])
-    learn_right.push(list_right[randomizedArray[i]])
-}
-
 var correctNode = []
 var correctDirectNodes = 0
 var shortDirectNodes = 0
@@ -202,6 +182,21 @@ class Graph {
 
     this.adjacencyList[vertex1].push(vertex2);
     this.adjacencyList[vertex2].push(vertex1); // For undirected graph
+  }
+
+  getEdges() {
+    const edges = [];
+    const seen = new Set();
+    for (const u in this.adjacencyList) {
+      for (const v of this.adjacencyList[u]) {
+        const key = [Math.min(u, v), Math.max(u, v)].join(',');
+        if (!seen.has(key)) {
+          edges.push([parseInt(u), parseInt(v)]);
+          seen.add(key);
+        }
+      }
+    }
+    return edges;
   }
 
   displayGraph() {
@@ -435,6 +430,193 @@ graph.addEdge(11, 12);
 
 // graph.displayGraph();
 
+function randomEdgePartition(graph, numGroups = 4, maxAttempts = 1000) {
+  const edges = graph.getEdges();
+  if (edges.length % numGroups !== 0) {
+    throw new Error("Cannot evenly divide edges into groups.");
+  }
+  const groupSize = edges.length / numGroups;
+
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    // Shuffle edges randomly
+    const shuffled = [...edges].sort(() => Math.random() - 0.5);
+    const groups = Array.from({ length: numGroups }, () => []);
+    const usedNodesInGroup = Array.from({ length: numGroups }, () => new Set());
+
+    let success = true;
+
+    for (const [u, v] of shuffled) {
+      let assigned = false;
+      for (let i = 0; i < numGroups; i++) {
+        if (
+          !usedNodesInGroup[i].has(u) &&
+          !usedNodesInGroup[i].has(v) &&
+          groups[i].length < groupSize
+        ) {
+          groups[i].push([u, v]);
+          usedNodesInGroup[i].add(u);
+          usedNodesInGroup[i].add(v);
+          assigned = true;
+          break;
+        }
+      }
+      if (!assigned) {
+        success = false;
+        break;
+      }
+    }
+
+    if (success) return groups;
+  }
+
+  throw new Error("Failed to create valid edge partitions after many attempts.");
+}
+
+const blocked_groups = randomEdgePartition(graph, 4);
+
+
+imageIndex= [[0,1], [1,2], [1,3], [2,10], [2,5], [3,4], [3,11], [5,6], [5,8], [6,7], [6,8], [6,12], [7,8], [7,9], [8,10], [10,11]]
+
+list_left=[imageList[imageIndex[0][0]],imageList[imageIndex[1][0]],imageList[imageIndex[2][0]],imageList[imageIndex[3][0]],imageList[imageIndex[4][0]],imageList[imageIndex[5][0]],imageList[imageIndex[6][0]],imageList[imageIndex[7][0]],imageList[imageIndex[8][0]],imageList[imageIndex[9][0]],imageList[imageIndex[10][0]],imageList[imageIndex[11][0]],imageList[imageIndex[12][0]],imageList[imageIndex[13][0]],imageList[imageIndex[14][0]],imageList[imageIndex[15][0]]]
+list_right=[imageList[imageIndex[0][1]],imageList[imageIndex[1][1]],imageList[imageIndex[2][1]],imageList[imageIndex[3][1]],imageList[imageIndex[4][1]],imageList[imageIndex[5][1]],imageList[imageIndex[6][1]],imageList[imageIndex[7][1]],imageList[imageIndex[8][1]],imageList[imageIndex[9][1]],imageList[imageIndex[10][1]],imageList[imageIndex[11][1]],imageList[imageIndex[12][1]],imageList[imageIndex[13][1]],imageList[imageIndex[14][1]],imageList[imageIndex[15][1]]]
+
+first_list_block_left = []
+first_list_block_right = []
+
+second_list_block_left = []
+second_list_block_right = []
+
+third_list_block_left = []
+third_list_block_right = []
+
+fourth_list_block_left = []
+fourth_list_block_right = []
+
+for (block = 0;block<4;block++){
+  for (pair = 0;pair<4;pair++){
+    if (block == 0){
+      first_list_block_left.push(imageList[blocked_groups[block][pair][0]-1]) // -1 is for zero indexing
+      first_list_block_right.push(imageList[blocked_groups[block][pair][1]-1])
+    }
+    if (block == 1){
+      second_list_block_left.push(imageList[blocked_groups[block][pair][0]-1])
+      second_list_block_right.push(imageList[blocked_groups[block][pair][1]-1])
+    }
+    if (block == 2){
+      third_list_block_left.push(imageList[blocked_groups[block][pair][0]-1])
+      third_list_block_right.push(imageList[blocked_groups[block][pair][1]-1])
+    }
+    if (block == 3){
+      fourth_list_block_left.push(imageList[blocked_groups[block][pair][0]-1])
+      fourth_list_block_right.push(imageList[blocked_groups[block][pair][1]-1])
+    }
+  }
+}
+
+learn_left=[]
+learn_right=[]
+
+let arr = [];
+for (let i = 0; i < 4; i++) {
+  for (let j = 0; j < 8; j++) {
+    arr.push(i);
+  }
+}
+
+function ensureNoConsecutiveDuplicates(arr) {
+  for (let i = 1; i < arr.length; i++) {
+      if (arr[i] === arr[i - 1]) {
+          for (let j = i + 1; j < arr.length; j++) {
+              if (arr[j] !== arr[i] && arr[j - 1] !== arr[i]) {
+                  [arr[i], arr[j]] = [arr[j], arr[i]];
+                  break;
+              }
+          }
+      }
+  }
+  return arr;
+}
+first_block_left = []
+first_block_right = []
+
+second_block_left = []
+second_block_right = []
+
+third_block_left = []
+third_block_right = []
+
+fourth_block_left = []
+fourth_block_right = []
+
+var randomizedArray = shuffle(arr);
+randomizedArray = ensureNoConsecutiveDuplicates(randomizedArray)
+for (var i = 0; i < randomizedArray.length; i++){
+    first_block_left.push(first_list_block_left[randomizedArray[i]])
+    first_block_right.push(first_list_block_right[randomizedArray[i]])
+}
+randomizedArray = shuffle(arr);
+randomizedArray = ensureNoConsecutiveDuplicates(randomizedArray)
+for (var i = 0; i < randomizedArray.length; i++){
+    second_block_left.push(second_list_block_left[randomizedArray[i]])
+    second_block_right.push(second_list_block_right[randomizedArray[i]])
+}
+randomizedArray = shuffle(arr);
+randomizedArray = ensureNoConsecutiveDuplicates(randomizedArray)
+for (var i = 0; i < randomizedArray.length; i++){
+    third_block_left.push(third_list_block_left[randomizedArray[i]])
+    third_block_right.push(third_list_block_right[randomizedArray[i]])
+}
+randomizedArray = shuffle(arr);
+randomizedArray = ensureNoConsecutiveDuplicates(randomizedArray)
+for (var i = 0; i < randomizedArray.length; i++){
+    fourth_block_left.push(fourth_list_block_left[randomizedArray[i]])
+    fourth_block_right.push(fourth_list_block_right[randomizedArray[i]])
+}
+
+compiled_left_list = first_block_left.concat(second_block_left,third_block_left,fourth_block_left)
+compiled_right_list = first_block_right.concat(second_block_right,third_block_right,fourth_block_right)
+
+inter_arr = []
+for (i=0;i<compiled_left_list.length;i++){
+  inter_arr.push(i)
+}
+inter_arr = shuffle(inter_arr)
+
+inter_left_list = []
+inter_right_list = []
+
+for(i=0;i<inter_arr.length;i++){
+  inter_left_list.push(compiled_left_list[inter_arr[i]])
+  inter_right_list.push(compiled_right_list[inter_arr[i]])
+}
+var switch_left_right = 0
+if (condition == "blocked"){ // If blocked it takes inputs in the blocked order, if interleaved it randomizes across blocks
+  for (i=0;i < compiled_left_list.length;i++){
+    switch_left_right = Math.random()
+    if (switch_left_right < 0.5){
+      learn_left.push(compiled_left_list[i])
+      learn_right.push(compiled_right_list[i])
+    } else {
+      learn_left.push(compiled_right_list[i])
+      learn_right.push(compiled_left_list[i])
+    }
+  }
+
+}
+else if (condition == "interleaved") {
+    for (i=0;i < inter_left_list.length;i++){
+    switch_left_right = Math.random()
+    if (switch_left_right < 0.5){
+      learn_left.push(inter_left_list[i])
+      learn_right.push(inter_right_list[i])
+    } else {
+      learn_left.push(inter_right_list[i])
+      learn_right.push(inter_left_list[i])
+    }
+  }
+}
+
+
 //Direct Memory phase
 graph.initTriplet()
 let directRight = []
@@ -469,46 +651,61 @@ directarr = shuffle(directarr);
 directarr = shuffle(directarr);
 directarr = shuffle(directarr);
 
-// Apply back-to-back constraints with reordering
-let ordered_directarr = [];
-let dirprevUp = null;
-let dirprevCorrect = null;
-
-for (let i = 0; i < directarr.length; i++) {
-  let foundValid = false;
-
-  for (let j = i; j < directarr.length; j++) {
-    let idx = directarr[j];
-    let up = directUp[idx];
-    let correct = directCorrect[idx];
-
-    // Constraint checks
-    if (
-      up === dirprevUp ||
-      correct === dirprevCorrect ||
-      up === dirprevCorrect ||
-      correct === dirprevUp
-    ) {
-      continue;
-    }
-
-    // Swap valid trial to position i
-    if (i !== j) {
-      [directarr[i], directarr[j]] = [directarr[j], directarr[i]];
-    }
-
-    ordered_directarr.push(directarr[i]);
-    dirprevUp = up;
-    dirprevCorrect = correct;
-    foundValid = true;
-    break;
-  }
-
-  if (!foundValid) {
-    console.warn(`Could not find a valid trial for position ${i}.`);
-    break;
-  }
+function isValidTransition(prevUp, prevCorrect, currUp, currCorrect) {
+  return !(
+    currUp === prevUp ||
+    currCorrect === prevCorrect ||
+    currUp === prevCorrect ||
+    currCorrect === prevUp
+  );
 }
+
+function greedyReorder(directarr, directUp, directCorrect) {
+  let arr = [...directarr];
+  let ordered = [];
+  let used = new Array(arr.length).fill(false);
+
+  let prevUp = null;
+  let prevCorrect = null;
+
+  for (let i = 0; i < arr.length; i++) {
+    let found = false;
+
+    for (let j = 0; j < arr.length; j++) {
+      if (used[j]) continue;
+
+      const idx = arr[j];
+      const up = directUp[idx];
+      const correct = directCorrect[idx];
+
+      if (i === 0 || isValidTransition(prevUp, prevCorrect, up, correct)) {
+        ordered.push(idx);
+        used[j] = true;
+        prevUp = up;
+        prevCorrect = correct;
+        found = true;
+        break;
+      }
+    }
+
+    if (!found) return null; // Failed to reorder greedily
+  }
+
+  return ordered;
+}
+
+function generateValidSequenceHybrid(directarr, directUp, directCorrect, maxTries = 10000) {
+  for (let attempt = 0; attempt < maxTries; attempt++) {
+    const greedyResult = greedyReorder(directarr, directUp, directCorrect);
+    if (greedyResult) return greedyResult;
+
+    shuffle(directarr); // Try again with a new shuffle
+  }
+
+  throw new Error("Could not generate a valid sequence after many attempts.");
+}
+var ordered_directarr = generateValidSequenceHybrid(directarr, directUp, directCorrect);
+console.log("Valid sequence:", ordered_directarr);
 
 // Now build room_direct arrays using ordered_directarr
 let room_direct_left = [];
@@ -637,52 +834,52 @@ let shuffled_twosix_correct = []
 
 let combined_arr = []
 
-for (let i = 0;i < 12;i++){
+for (let i = 0;i < 6;i++){
   shuffled_twothree.push(twothree[twothree_arr[i]])
   shuffled_twothree_correct.push(twothreecorrect[twothree_arr[i]])
   combined_arr.push(i)
 
   shuffled_threefour.push(threefour[threefour_arr[i]]);
   shuffled_threefour_correct.push(threefourcorrect[threefour_arr[i]]);
-  combined_arr.push(i+12);
+  combined_arr.push(i+6);
 
   shuffled_fourfive.push(fourfive[fourfive_arr[i]]);
   shuffled_fourfive_correct.push(fourfivecorrect[fourfive_arr[i]]);
-  combined_arr.push(i+24);
+  combined_arr.push(i+12);
 
   shuffled_fivesix.push(fivesix[fivesix_arr[i]]);
   shuffled_fivesix_correct.push(fivesixcorrect[fivesix_arr[i]]);
-  combined_arr.push(i+36);
+  combined_arr.push(i+18);
 }
 
-for (let i = 0; i < 12; i++) {
+for (let i = 0; i < 8; i++) {
   shuffled_twofour.push(twofour[twofour_arr[i]]);
   shuffled_twofour_correct.push(twofourcorrect[twofour_arr[i]]);
-  combined_arr.push(i+48);
+  combined_arr.push(i+24);
 
   shuffled_threefive.push(threefive[threefive_arr[i]]);
   shuffled_threefive_correct.push(threefivecorrect[threefive_arr[i]]);
-  combined_arr.push(i+60);
+  combined_arr.push(i+32);
 
   shuffled_foursix.push(foursix[foursix_arr[i]]);
   shuffled_foursix_correct.push(foursixcorrect[foursix_arr[i]]);
-  combined_arr.push(i+72);
+  combined_arr.push(i+40);
 }
 
 for (let i = 0; i < 12; i++) {
   shuffled_twofive.push(twofive[twofive_arr[i]]);
   shuffled_twofive_correct.push(twofivecorrect[twofive_arr[i]]);
-  combined_arr.push(i+84);
+  combined_arr.push(i+48);
 
   shuffled_threesix.push(threesix[threesix_arr[i]]);
   shuffled_threesix_correct.push(threesixcorrect[threesix_arr[i]]);
-  combined_arr.push(i+96);
+  combined_arr.push(i+60);
 }
 
 for (let i = 0; i < 13; i++) {
   shuffled_twosix.push(twosix[twosix_arr[i]]);
   shuffled_twosix_correct.push(twosixcorrect[twosix_arr[i]]);
-  combined_arr.push(i+108);
+  combined_arr.push(i+72);
 }
 
 let cumulativediff = shuffled_twothree
@@ -707,53 +904,62 @@ let cumulativeCorrect = shuffled_twothree_correct
 .concat(shuffled_threesix_correct)
 .concat(shuffled_twosix_correct);
 
-// Step 1: Shuffle initial index list
-let cumulativearr = [];
-for (let i = 0; i < cumulativediff.length; i++) {
-  cumulativearr.push(i);
-}
-cumulativearr = shuffle(cumulativearr);
-
-// Step 2: Enforce constraints by reordering (swap-based)
-let ordered_shortestarr = [];
-let prevUp = null;
-let prevCorrect = null;
-
-for (let i = 0; i < cumulativearr.length; i++) {
-  let foundValid = false;
-
-  for (let j = i; j < cumulativearr.length; j++) {
-    let trialIndex = cumulativearr[j];
-    let top = cumulativediff[trialIndex][1];
-    let correct = cumulativeCorrect[trialIndex];
-
-    if (
-      top === prevUp ||
-      correct === prevCorrect ||
-      correct === prevUp ||
-      top === prevCorrect
-    ) {
-      continue;
-    }
-
-    // Swap valid trial to position i
-    if (i !== j) {
-      [cumulativearr[i], cumulativearr[j]] = [cumulativearr[j], cumulativearr[i]];
-    }
-
-    ordered_shortestarr.push(cumulativearr[i]);
-    prevUp = top;
-    prevCorrect = correct;
-    foundValid = true;
-    break;
-  }
-
-  if (!foundValid) {
-    console.warn(`⚠️ Could not find valid trial for position ${i} under current constraints.`);
-    break;
-  }
+function isValidTransition(prevTop, prevCorrect, currTop, currCorrect) {
+  return !(
+    currTop === prevTop ||
+    currCorrect === prevCorrect ||
+    currCorrect === prevTop ||
+    currTop === prevCorrect
+  );
 }
 
+function greedyReorderCumulative(cumulativearr, cumulativediff, cumulativeCorrect) {
+  const arr = [...cumulativearr];
+  const ordered = [];
+  const used = new Array(arr.length).fill(false);
+
+  let prevTop = null;
+  let prevCorrect = null;
+
+  for (let i = 0; i < arr.length; i++) {
+    let found = false;
+
+    for (let j = 0; j < arr.length; j++) {
+      if (used[j]) continue;
+
+      const trialIndex = arr[j];
+      const currTop = cumulativediff[trialIndex][1];
+      const currCorrect = cumulativeCorrect[trialIndex];
+
+      if (i === 0 || isValidTransition(prevTop, prevCorrect, currTop, currCorrect)) {
+        ordered.push(trialIndex);
+        used[j] = true;
+        prevTop = currTop;
+        prevCorrect = currCorrect;
+        found = true;
+        break;
+      }
+    }
+
+    if (!found) return null;
+  }
+
+  return ordered;
+}
+
+function generateValidCumulativeSequence(cumulativediff, cumulativeCorrect, maxTries = 10000) {
+  const initialArr = Array.from({ length: cumulativediff.length }, (_, i) => i);
+
+  for (let attempt = 0; attempt < maxTries; attempt++) {
+    const shuffled = shuffle([...initialArr]);
+    const reordered = greedyReorderCumulative(shuffled, cumulativediff, cumulativeCorrect);
+    if (reordered) return reordered;
+  }
+
+  throw new Error("Failed to generate a valid sequence under constraints.");
+}
+ordered_shortestarr = generateValidCumulativeSequence(cumulativediff, cumulativeCorrect);
+cumulativearr = ordered_shortestarr
 // Step 3: Build final arrays using ordered_shortestarr
 let upList = [];
 let leftList = [];

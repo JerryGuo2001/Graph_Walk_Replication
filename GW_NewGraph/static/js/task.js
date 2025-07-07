@@ -526,8 +526,8 @@ var learn_prac1_phase = {
   choices: jsPsych.NO_KEYS,
   response_ends_trial: false,
   stimulus:create_learning_trial(['GW-Tutorial/object_068.jpg'],['GW-Tutorial/object_029.jpg'],0),
-  stimulus_duration:2000,
-  trial_duration:2000,
+  stimulus_duration:3000,
+  trial_duration:3000,
   on_load: function(){
     timeline.push(intro_prac1_learn)  
   },
@@ -543,8 +543,8 @@ var learn_prac2_phase = {
   choices: jsPsych.NO_KEYS,
   response_ends_trial: false,
   stimulus:create_learning_trial(['GW-Tutorial/object_229.jpg'],['GW-Tutorial/object_250.jpg'],0),
-  stimulus_duration:2000,
-  trial_duration:2000,
+  stimulus_duration:3000,
+  trial_duration:3000,
   on_finish: function(data) {
     data.trial_type = 'learn_prac_2';
     data.stimulus='lean_prac_2'
@@ -708,8 +708,8 @@ var thecrossant_break={
     thecrossant_black.trial_duration=2000-removecolor
     curr_learning_trial=curr_learning_trial+1,
     learn_phase.stimulus=create_learning_trial(learn_left,learn_right,curr_learning_trial)
-    learn_phase.trial_duration=2000
-    learn_phase.stimulus_duration=2000
+    learn_phase.trial_duration=3000
+    learn_phase.stimulus_duration=3000
     thecrossant_black.stimulus=create_memory_ten('black')
     thecrossant.stimulus=create_learningcolor_trial(curr_learning_trial,pluscolor[curr_learning_trial])
     attentioncheck_learningphase(learn_phase,sfa,curr_learning_trial,n_learning_trial,intro_dir,thecrossant,thecrossant_black,thecrossant_break)
@@ -736,8 +736,8 @@ var learn_phase = {
   choices: jsPsych.NO_KEYS,
   response_ends_trial: false,
   stimulus:create_learning_trial(learn_left,learn_right,curr_learning_trial),
-  stimulus_duration:2000,
-  trial_duration:2000,
+  stimulus_duration:3000,
+  trial_duration:3000,
   on_finish: function(data) {
     data.trial_type = 'learn_phase(without_color)';
     data.stimulus='black_plus_sign'
