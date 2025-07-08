@@ -56,7 +56,7 @@ var welcome = {
   type: 'survey-html-form',
   html: "<label for='worker_id'>Enter your Prolific Worker ID. Please make sure this is correct! </label><br><input type='text' id='worker_id' name='worker_id' required><br><br>",
   on_finish: function (data) {
-    data.condition = condition
+    data.sequence = sequence
     data.trial_type = "id_enter"
     data.stimulus = "id_enter"
     data.graphorder = `${imageList.join("; ")}`

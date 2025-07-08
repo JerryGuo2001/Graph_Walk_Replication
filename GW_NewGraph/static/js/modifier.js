@@ -1,5 +1,5 @@
 // Either "blocked" or "interleaved"
-condition = "blocked"
+sequence = "blocked"
 
 //debug moode on/off
 debugmode= false
@@ -590,7 +590,7 @@ for(i=0;i<inter_arr.length;i++){
   inter_right_list.push(compiled_right_list[inter_arr[i]])
 }
 var switch_left_right = 0
-if (condition == "blocked"){ // If blocked it takes inputs in the blocked order, if interleaved it randomizes across blocks
+if (sequence == "blocked"){ // If blocked it takes inputs in the blocked order, if interleaved it randomizes across blocks
   for (i=0;i < compiled_left_list.length;i++){
     switch_left_right = Math.random()
     if (switch_left_right < 0.5){
@@ -603,7 +603,7 @@ if (condition == "blocked"){ // If blocked it takes inputs in the blocked order,
   }
 
 }
-else if (condition == "interleaved") {
+else if (sequence == "interleaved") {
     for (i=0;i < inter_left_list.length;i++){
     switch_left_right = Math.random()
     if (switch_left_right < 0.5){
