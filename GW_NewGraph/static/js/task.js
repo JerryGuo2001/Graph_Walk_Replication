@@ -995,11 +995,11 @@ var end_questions = {
     data.stimulus = "survey-questions"
     data.problems = problems
     data.smooth = smooth
-    data.distraction = distraction.replace(/,/g, ';');
-    data.strategies = strategies.replace(/,/g, ';');
-    data.easier = easier.replace(/,/g, ';');
-    data.similar = similar.replace(/,/g, ';');
-    data.comments = comments.replace(/,/g, ';');
+    data.distraction  = (distraction  || "").replace(/,/g, ';');
+    data.strategies   = (strategies   || "").replace(/,/g, ';');
+    data.easier       = (easier       || "").replace(/,/g, ';');
+    data.similar      = (similar      || "").replace(/,/g, ';');
+    data.comments     = (comments     || "").replace(/,/g, ';');
   }
 };
 
