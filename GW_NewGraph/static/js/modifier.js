@@ -11,8 +11,8 @@ if (debugmode==true){
 }else{
   n_learning_trial=128 //This determine the number of learning trial you want in total
   n_direct_trial=32 //how many direct trial you want
-  n_shortest_trial=85 //how many shortest path you want
-  n_goaldir_trial=1 //how many goal directed planning you want
+  n_shortest_trial=84 //how many shortest path you want
+  n_goaldir_trial=33 //how many goal directed planning you want
 }
 
 //warningpage
@@ -981,59 +981,200 @@ let room_shortest_up = upList.map(i => imageList[i - 1]);
 let room_shortest_left = leftList.map(i => imageList[i - 1]);
 let room_shortest_right = rightList.map(i => imageList[i - 1]);
 let room_shortest_correct = correctShortList.map(i => imageList[i - 1]);
-//Goal Directed Navigation:
 
+
+//Goal Directed Navigation:
 var room_goaldir_left = []
 var room_goaldir_right = []
 
-let twoEdgePair = graph.getPairsKEdgesApart(2)
-let threeEdgePair = graph.getPairsKEdgesApart(3)
-let fourEdgePair = graph.getPairsKEdgesApart(4)
-let fiveEdgePair = graph.getPairsKEdgesApart(5)
 
-let goaldirList = graph.getPairsKEdgesApart(2).concat(graph.getPairsKEdgesApart(3),graph.getPairsKEdgesApart(4),graph.getPairsKEdgesApart(5))
-goaldirIndex = []
-for (let i = 0; i < goaldirList.length; i++) {
-  goaldirIndex.push(i);
+function selectBestCoveragePairs(graph, pairs, count, trials = 100) {
+    const allNodes = Object.keys(graph.adjacencyList).map(Number);
+    const allNodesSet = new Set(allNodes);
+    let bestSelection = [];
+    let maxCovered = 0;
+
+    for (let t = 0; t < trials; t++) {
+        const shuffled = pairs.slice();
+        const selected = [];
+        const usedNodes = new Set();
+        const coveredNodes = new Set();
+
+        // Shuffle the candidate pairs
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+
+        for (let [u, v] of shuffled) {
+            const path = getShortestPath(graph, u, v);
+            if (!path) continue;
+
+            const newNodes = path.filter(n => !coveredNodes.has(n));
+
+            const canAdd =
+                selected.length < count &&
+                (
+                    !usedNodes.has(u) && !usedNodes.has(v)
+                    || coveredNodes.size === allNodes.length
+                );
+
+            if (canAdd) {
+                selected.push([u, v]);
+                usedNodes.add(u);
+                usedNodes.add(v);
+                newNodes.forEach(n => coveredNodes.add(n));
+            }
+
+            if (selected.length === count) break;
+        }
+
+        if (selected.length === count && coveredNodes.size >= maxCovered) {
+            bestSelection = selected;
+            maxCovered = coveredNodes.size;
+
+            if (maxCovered === allNodes.length) break; // early stop if all covered
+        }
+    }
+
+    return bestSelection;
 }
-goaldirIndex = shuffle(goaldirIndex)
 
-let shuffledList = []
-for (let i = 0;i < 4; i++){
-  shuffledList.push(goaldirList[goaldirIndex[i]])
-  shuffledList.push(goaldirList[goaldirIndex[i+twoEdgePair.length]])
-  shuffledList.push(goaldirList[goaldirIndex[i+twoEdgePair.length + threeEdgePair.length]])
-  shuffledList.push(goaldirList[goaldirIndex[i+twoEdgePair.length + threeEdgePair.length + fourEdgePair.length]])
+
+function selectUniquePairsWithFullCoverage(graph, pairs, count, maxRetries = 100) {
+    const allNodes = Object.keys(graph.adjacencyList).map(Number);
+    let attempt = 0;
+
+    while (attempt < maxRetries) {
+        const shuffled = pairs.slice();
+        const selected = [];
+        const usedNodes = new Set();
+        const coveredNodes = new Set();
+
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+
+        for (let [u, v] of shuffled) {
+            if (usedNodes.has(u) || usedNodes.has(v)) continue;
+
+            const path = getShortestPath(graph, u, v);
+            if (!path) continue;
+
+            const newNodes = path.filter(n => !coveredNodes.has(n));
+            if (newNodes.length > 0) {
+                selected.push([u, v]);
+                usedNodes.add(u);
+                usedNodes.add(v);
+                newNodes.forEach(n => coveredNodes.add(n));
+            }
+
+            if (selected.length === count) break;
+        }
+
+        const isFullyCovered = allNodes.every(n => coveredNodes.has(n));
+        if (selected.length === count && isFullyCovered) {
+            return selected;
+        }
+
+        attempt++;
+    }
+
+    return []; // fallback to empty
 }
 
-let shuffledIndex = []
-for (let i = 0; i < shuffledList.length; i++) {
-  shuffledIndex.push(i);
+function getShortestPath(graph, start, goal) {
+    const queue = [[start]];
+    const visited = new Set([start]);
+
+    while (queue.length > 0) {
+        const path = queue.shift();
+        const node = path[path.length - 1];
+
+        if (node === goal) return path;
+
+        for (let neighbor of graph.getDirectNeighbors(node)) {
+            if (!visited.has(neighbor)) {
+                visited.add(neighbor);
+                queue.push([...path, neighbor]);
+            }
+        }
+    }
+
+    return null;
 }
 
-for (let i = 0; i<shuffledList.length; i++){
-  if(Math.floor(Math.random() * 2 + 1) == 1){
-    room_goaldir_left.push(shuffledList[shuffledIndex[i]][0])
-    room_goaldir_right.push(shuffledList[shuffledIndex[i]][1])
-  }else {
-    room_goaldir_left.push(shuffledList[shuffledIndex[i]][1])
-    room_goaldir_right.push(shuffledList[shuffledIndex[i]][0])
+//randomly generate index for detour task
+function getRandomSample(array, n) {
+  const copy = [...array];
+  const result = [];
+
+  for (let i = 0; i < n; i++) {
+    const index = Math.floor(Math.random() * copy.length);
+    result.push(copy.splice(index, 1)[0]);
   }
 
+  return result;
 }
 
-function ensureNoConsecutiveDuplicates(arr) {
-  for (let i = 1; i < arr.length; i++) {
-      if (arr[i] === arr[i - 1]) {
-          for (let j = i + 1; j < arr.length; j++) {
-              if (arr[j] !== arr[i] && arr[j - 1] !== arr[i]) {
-                  [arr[i], arr[j]] = [arr[j], arr[i]];
-                  break;
-              }
-          }
-      }
-  }
-  return arr;
+function generateSequence() {
+  const group1 = [...Array(9).keys()];         // 0–8
+  const group2 = [...Array(9).keys()].map(i => i + 9);   // 9–17
+  const group3 = [...Array(6).keys()].map(i => i + 18);  // 18–23
+  const group4 = [...Array(6).keys()].map(i => i + 24);  // 24–29
+  const group5 = [...Array(3).keys()].map(i => i + 30);  // 30–32
+
+  const sample1 = getRandomSample(group1, 3);
+  const sample2 = getRandomSample(group2, 3);
+  const sample3 = getRandomSample(group3, 2);
+  const sample4 = getRandomSample(group4, 2);
+  const sample5 = getRandomSample(group5, 1);
+
+  const finalSequence = [...sample1, ...sample2, ...sample3, ...sample4, ...sample5];
+  return finalSequence;
+}
+
+var detour_Sequence= generateSequence()
+
+
+// Select 4 unique pairs for distances 2–5, and 3 for distance 6
+let selectedPairs = {
+    2: selectBestCoveragePairs(graph, graph.getPairsKEdgesApart(2), 9), // fallback if needed
+    3: selectBestCoveragePairs(graph, graph.getPairsKEdgesApart(3), 9), // fallback if needed
+    4: selectBestCoveragePairs(graph, graph.getPairsKEdgesApart(4), 6), // fallback if needed
+    5: selectBestCoveragePairs(graph, graph.getPairsKEdgesApart(5), 6), // fallback if needed
+    6:  graph.getPairsKEdgesApart(6)
+};
+
+
+let twoEdgePair = selectedPairs[2]
+let threeEdgePair = selectedPairs[3]
+let fourEdgePair = selectedPairs[4]
+let fiveEdgePair = selectedPairs[5]
+let sixEdgePair = selectedPairs[6]
+
+let unshuff_goaldirIndex = []
+// Flatten all pairs into one list
+let allSelectedPairs = []
+for (let dist = 2; dist <= 6; dist++) {
+    allSelectedPairs = allSelectedPairs.concat(selectedPairs[dist]);
+}
+for (let i = 0; i < allSelectedPairs.length; i++) {
+unshuff_goaldirIndex.push(i)
+}
+// Shuffle the combined list
+for (let i = allSelectedPairs.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [allSelectedPairs[i], allSelectedPairs[j]] = [allSelectedPairs[j], allSelectedPairs[i]];
+    [unshuff_goaldirIndex[i],unshuff_goaldirIndex[j]] = [unshuff_goaldirIndex[j],unshuff_goaldirIndex[i]]
+}
+
+let goaldirIndex = []
+for (let i = 0; i<allSelectedPairs.length; i++){
+  room_goaldir_left.push(allSelectedPairs[i][0])
+  room_goaldir_right.push(allSelectedPairs[i][1])
+  goaldirIndex.push(unshuff_goaldirIndex[i])
 }
 
 //color for the plus sign
@@ -1054,3 +1195,16 @@ function colorStop(colordetretime){
 
 //randomDelay for Direct Memory Test and Shortest Path Judgement
 var randomDelay = Math.floor(Math.random() * (2500 - 100 + 1)) + 100;
+
+
+//detour Map
+const detourLocationMap = {};
+
+goaldirIndex.forEach(index => {
+  const pos = detour_Sequence.indexOf(index);
+  if (pos !== -1) {
+    detourLocationMap[index] = pos;
+  } else {
+    detourLocationMap[index] = null; // or -1 if you prefer
+  }
+});
