@@ -965,7 +965,6 @@ let upList = [];
 let leftList = [];
 let rightList = [];
 let correctShortList = [];
-let sorted_combined_arr = [];
 
 for (let i = 0; i < ordered_shortestarr.length; i++) {
   let trialIndex = ordered_shortestarr[i];
@@ -973,7 +972,6 @@ for (let i = 0; i < ordered_shortestarr.length; i++) {
   leftList.push(cumulativediff[trialIndex][0]);
   rightList.push(cumulativediff[trialIndex][2]);
   correctShortList.push(cumulativeCorrect[trialIndex]);
-  sorted_combined_arr.push(combined_arr[trialIndex]);
 }
 
 // Step 4: Convert to image paths

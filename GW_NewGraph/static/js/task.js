@@ -1070,10 +1070,10 @@ var shortestpath_phase = {
       correctness.push(0)
     }
   
-    let onedifflength = 48
-    let twodifflength = 36
+    let onedifflength = 24
+    let twodifflength = 24
     let threedifflength = 24
-    let fourdifflength = 13
+    let fourdifflength = 12
 
     if (cumulativearr[curr_shortest_trial] < onedifflength){
       data.condition = 'One Edge Diff'
