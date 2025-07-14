@@ -848,7 +848,7 @@ function createPhase3(numberoftrial){
           }
           gdp_init(),
           jsPsych.addNodeToEndOfTimeline({
-            timeline: [recon_phase3[0]],
+            timeline: [intro_graph],
           }, jsPsych.resumeExperiment)
           specificline_saved={};
           detourcity_name=[];
@@ -1201,6 +1201,9 @@ var easier = 0
 var similar = 0 
 var comments = 0 
 
+//graph reconstruction instruction start
+let intro_graph=create_instruct(graph_instruct,graph_instructnames,graph_instruction_number,recon_phase3[0],a='graph_')
+//graph reconstruction instruction finish
 
 // final thank you
 var thank_you = {
