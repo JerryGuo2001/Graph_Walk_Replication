@@ -2,6 +2,13 @@ var debug_mode = 0; // debug mode determines how long the blocks are, 5 sec in d
 //var data_save_method = 'csv_server_py';
 var data_save_method = 'csv_server_py';
 
+var part2_sfa= NaN
+let save_final_deter;
+var direct_warning = 0
+var short_warning = 0
+var quickKP = 0;
+var infKP = 0;
+var timer = 0;
 // Will be set to true when experiment is exiting fullscreen normally, to prevent above end experiment code
 var normal_exit = false;
 var window_height = window.screen.height;
@@ -67,6 +74,20 @@ var welcome = {
   }
 }
 //welcome page end
+
+var too_quick={
+  type: 'html-keyboard-response',
+  stimulus: '<h1 style="color: red;font-size: 50px">Your response was too quick. Please take your time to carefully consider your answer before responding.</h1>' +
+            '<p style="color: red;font-size: 50px">The experiment will continue in 10 seconds.</p>',
+  choices: jsPsych.NO_KEYS, // Prevent responses
+  trial_duration: 10000, // Stay on screen for 10 seconds
+  on_finish: function(data) {
+    data.trial_type='slowdown_page'
+    data.stimulus='too_quick'
+    quickKP +=1
+  }
+}
+
 
 //direct_memory
 var dirmem_too_quick_check=0
@@ -135,27 +156,49 @@ var directmemory_phase = {
       data.weighted_accuracy = 0.5
     }
     
+    infKP += 1
+    if (infKP==1){
+      // Start the timer
+      timer = 0;
+      infINT = setInterval(() => {
+          timer++;;
+      }, 1000);
+    }
+    if (infKP == 4 && timer < 4) {
+      clearInterval(infINT)
+      jsPsych.addNodeToEndOfTimeline({
+      timeline: [too_quick],
+      }, jsPsych.resumeExperiment)
+      infKP = -1
+      timer = 0;
+      data.tooquick = 1
+    } else if ((infKP <= 4 && timer >= 4)){
+      infKP = 0
+      clearInterval(infINT);
+      timer = 0
+    }
+
+    if (data.rt < 300) {
+      jsPsych.addNodeToEndOfTimeline({
+        timeline: [too_quick],
+        }, jsPsych.resumeExperiment)
+    }
+    
+
     let directsum = 0;
     directcorrectness.forEach(function(value) {
       directsum += value;
     });
 
-    if (data.rt<=300){
-      dirmem_too_quick_check+=1
-    }else{
-      dirmem_too_quick_check=0
-    }
     data.cumulative_accuracy = directsum / directcorrectness.length;
-    sfa=data.key_press,
-    curr_direct_trial=curr_direct_trial+1;
 
-    if (dirmem_too_quick_check>=3){
-      directmemory_phase.stimulus=create_direct_trial(room_direct_up,room_direct_left,room_direct_mid,room_direct_right,curr_direct_trial)
-      attentioncheck(directmemory_phase,a=1,curr_direct_trial,n_direct_trial,intro_short)
-    }else{
-      directmemory_phase.stimulus=create_direct_trial(room_direct_up,room_direct_left,room_direct_mid,room_direct_right,curr_direct_trial)
-      attentioncheck(directmemory_phase,a=1,curr_direct_trial,n_direct_trial,intro_short)
+    curr_direct_trial=curr_direct_trial+1;
+    part2_sfa=data.key_press
+    if (!part2_sfa){
+      direct_warning +=1
     }
+    directmemory_phase.stimulus=create_direct_trial(direct_base64_up,direct_base64_left,direct_base64_mid,direct_base64_right,curr_direct_trial)
+    attentioncheck(directmemory_phase,part2_sfa,curr_direct_trial,n_direct_trial,intro_short,phase='direct')
   }
 }
 //Direct Memory test end
@@ -764,6 +807,65 @@ var learn_phase_color = {
   }
 }
 
+learn_phase_break = {
+  type: 'html-keyboard-response',
+      stimulus:  `
+        <div id="break-container" style="font-size: 24px; max-width: 800px; margin: auto; text-align: center;">
+          <p><strong>Please take a short (up to 60 seconds) break.</strong></p>
+          <p>Use this time to stretch and reset. After the break, you will continue to learn more flights.</p>
+          <p>If you would like to resume without a break, press the <strong>spacebar</strong>.</p>
+          <p>Otherwise, the screen will advance automatically after 60 seconds.</p><br><br><br>
+          <p><strong>Time remaining: <span id="countdown">60</span> seconds</strong></p>
+        </div>
+      `,
+      choices: ['spacebar'],
+      trial_duration: 60000, // 60 seconds
+      response_ends_trial: true,
+  on_load: function() {
+    let countdown = 60;
+    const countdownEl = document.getElementById('countdown');
+    const interval = setInterval(() => {
+      countdown--;
+      if (countdownEl) countdownEl.textContent = countdown;
+      if (countdown <= 0) clearInterval(interval);
+    }, 1000);
+  },
+  on_finish: function(data) {
+    data.stimulus='learn_break'
+    data.trial_type = 'learn_break';
+  }
+}
+
+learn_phase_end_break = {
+  type: 'html-keyboard-response',
+      stimulus: `
+        <div style="font-size: 24px; max-width: 800px; margin: auto; text-align: center;">
+          <p><strong>Thank you for completing the first part of your job. Please take a short (up to 60 seconds) break.</strong></p>
+          <p>Use this time to stretch and reset. After the break, you will continue to the next part of your job.</p>
+          <p>If you would like to resume without a break, press the <strong>spacebar</strong>.</p>
+          <p>Otherwise, the screen will advance automatically after 60 seconds.</p><br><br><br>
+          <p><strong>Time remaining: <span id="countdown2">60</span> seconds</strong></p>
+        </div>
+      `,
+      choices: ['spacebar'],
+      trial_duration: 60000, // 60 seconds
+      response_ends_trial: true,
+  on_load: function() {
+    let countdown = 60;
+    const countdownEl = document.getElementById('countdown2');
+    const interval = setInterval(() => {
+      countdown--;
+      if (countdownEl) countdownEl.textContent = countdown;
+      if (countdown <= 0) clearInterval(interval);
+    }, 1000);
+  },
+  on_finish: function(data) {
+    data.stimulus='learn_break'
+    data.trial_type = 'learn_break';
+  }
+}
+
+
 // learning phase end
 var directcorrectness = []
 
@@ -1016,7 +1118,6 @@ var recon_phase3=recon_createPhase3(1)
 //recon phase end
 
 //shortestpath
-correctness = []
 let mem_instruction_number=1
 let intro_mem=create_instruct(mem_instruct,mem_instructnames,mem_instruction_number,phase3[0],a='mem_')
 
@@ -1111,6 +1212,37 @@ var shortestpath_phase = {
       data.specific_pairs = 'Two Edge Six Edge'
     }
 
+
+    infKP += 1
+    if (infKP==1){
+      // Start the timer
+      timer = 0;
+      infINT = setInterval(() => {
+          timer++;;
+      }, 1000);
+    }
+    if (infKP == 4 && timer < 4) {
+      clearInterval(infINT)
+      jsPsych.addNodeToEndOfTimeline({
+      timeline: [too_quick],
+      }, jsPsych.resumeExperiment)
+      infKP = -1
+      timer = 0;
+      data.tooquick = 1
+    } else if ((infKP <= 4 && timer >= 4)){
+      infKP = 0
+      clearInterval(infINT);
+      timer = 0
+    }
+
+    if (data.rt < 300) {
+      jsPsych.addNodeToEndOfTimeline({
+        timeline: [too_quick],
+        }, jsPsych.resumeExperiment)
+    }
+
+
+
     let sum = 0;
     correctness.forEach(function(value) {
       sum += value;
@@ -1118,10 +1250,13 @@ var shortestpath_phase = {
     data.cumulative_accuracy = sum / correctness.length;
 
 
-    sfa=data.key_press,
-    curr_shortest_trial=curr_shortest_trial+1,
-    shortestpath_phase.stimulus=create_shortestpath_trial(room_shortest_up,room_shortest_left,room_shortest_right,curr_shortest_trial)
-    attentioncheck(shortestpath_phase,a=1,curr_shortest_trial,n_shortest_trial,intro_mem)
+    part2_sfa=data.key_press
+    if (!part2_sfa){
+      short_warning +=1
+    }
+    curr_shortest_trial=curr_shortest_trial+1
+    shortestpath_phase.stimulus=create_shortestpath_trial(shortest_base64_up,shortest_base64_left,shortest_base64_right,curr_shortest_trial)
+    attentioncheck(shortestpath_phase,part2_sfa,curr_shortest_trial,n_shortest_trial,intro_mem,phase='short')
   }
 }
 //Shortest Path memory end

@@ -1,5 +1,5 @@
 var recon_phasethreeroom=["<div id='displayhelp' style='display:none'><p>Click and drag the objects to the gray box"
-    +"<br /> You can connect the images by clicking the two images in order <br> You can remove an object by clicking on it and then clicking the return arrow on the bottom right of the gray box <br> once all the objects are in the grey box and have <b>at least one line connecting them</b>, press the 'submit' button that will appear</p><button id='nextButton' style='display:none;margin: 0 auto;padding: 10px 20px;background-color: #4CAF50;color: black;border: none;border-radius: 8px;font-size: 16px;cursor: pointer;box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);transition: background-color 0.3s ease;'>Submit</button>"
+    +"<br /> You can connect the images by clicking the two images in order <br> You can remove an object by clicking on it and then clicking the return arrow on the bottom right of the gray box <br> once all the objects are in the grey box and have <b>at least one line connecting them</b>, press the 'submit' button that will appear</p><button id='nextButton' style='display:block;margin: 0 auto;padding: 10px 20px;background-color: #4CAF50;color: black;border: none;border-radius: 8px;font-size: 16px;cursor: pointer;box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);transition: background-color 0.3s ease;'>Submit</button>"
     +`</div><button id='batman' style='display: block;margin: 0 auto;padding: 10px 20px;background-color: #4CAF50;color: black;border: none;border-radius: 8px;font-size: 16px;cursor: pointer;box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);transition: background-color 0.3s ease;', onclick='recon_initiatep3()'>Click to start</button><div id='spiderman' style='display: none;'><div id='Phase3Body'><br><div id='div2'  style='width: 700px; margin: 0 auto; position: relative; bottom: 10%; border: 1px solid #aaaaaa;'><img id='drag01' src='../static/images/${imageList[0]}' alt='Aliance' width='100' height='100' draggable='true' ondragstart='drag(event)'><img id='drag02' src='../static/images/${imageList[1]}' alt='Boulder' width='100' height='100' draggable='true' ondragstart='drag(event)'>
     <img id='drag03' src='../static/images/${imageList[2]}' alt='Cornwall' width='100' height='100' draggable='true' ondragstart='drag(event)'><img id='drag04' src='../static/images/${imageList[3]}' alt='Custer' width='100' height='100' draggable='true' ondragstart='drag(event)'><img id='drag05' src='../static/images/${imageList[4]}' alt='DelawareCity' width='100' height='100' draggable='true' ondragstart='drag(event)'><img id='drag06' src='../static/images/${imageList[5]}' alt='Medora' width='100' height='100' draggable='true' ondragstart='drag(event)'><img id='drag07' src='../static/images/${imageList[6]}' alt='Newport' width='100' height='100' draggable='true' ondragstart='drag(event)'><img id='drag08' src='../static/images/${imageList[7]}' alt='ParkCity' width='100' height='100' draggable='true' ondragstart='drag(event)'><img id='drag09' src='../static/images/${imageList[8]}' alt='Racine' width='100' height='100' draggable='true' ondragstart='drag(event)'>
     <img id='drag10' src='../static/images/${imageList[9]}' alt='Sitka' width='100' height='100' draggable='true' ondragstart='drag(event)'><img id='drag11' src='../static/images/${imageList[10]}' alt='WestPalmBeach' width='100' height='100' draggable='true' ondragstart='drag(event)'><img id='drag12' src='../static/images/${imageList[11]}' alt='Yukon' width='100' height='100' draggable='true' ondragstart='drag(event)'><img id='drag13' src='../static/images/${imageList[12]}' alt='img13' width='100' height='100' draggable='true' ondragstart='drag(event)'></div>`
@@ -42,11 +42,38 @@ function recon_init(){
     linecounter=0
 }
 
+
 function recon_continueButton() {
     document.getElementById('nextButton').style.display = 'block'
-    document.getElementById('nextButton').addEventListener('click', function() {
-        jsPsych.finishTrial(); // End trial on button click
-    }, { once: true });
+        document.getElementById('nextButton').addEventListener('click', function() {
+            if(recon_checkAllConnected()){
+                jsPsych.finishTrial();
+            }else{
+            document.getElementById('nextButton').addEventListener('click', function() {
+            // Create and show message
+            let messageEl = document.createElement('div');
+            messageEl.id = 'proceed-message';
+            messageEl.style.position = 'fixed';
+            messageEl.style.top = '20px';
+            messageEl.style.left = '50%';
+            messageEl.style.transform = 'translateX(-50%)';
+            messageEl.style.backgroundColor = '#d4edda';
+            messageEl.style.color = '#155724';
+            messageEl.style.border = '1px solid #c3e6cb';
+            messageEl.style.padding = '10px 20px';
+            messageEl.style.fontSize = '18px';
+            messageEl.style.fontWeight = 'bold';
+            messageEl.style.borderRadius = '8px';
+            messageEl.style.zIndex = '9999';
+            messageEl.textContent = 'There are unconnected objects';
+            document.body.appendChild(messageEl);
+
+            // Auto-hide after 2 seconds
+            setTimeout(() => {
+                messageEl.remove();
+            }, 2000);})
+            }
+        })
     }
 
 function recon_makeVisible() {
@@ -57,7 +84,7 @@ goalIndex = 0
 
 function recon_initiatep3(){
     recon_makeVisible()
-    document.getElementById('nextButton').style.display = 'none';
+    recon_continueButton()
     $('#displayhelp').show()
 
     // Load only 12 images
@@ -113,38 +140,7 @@ function recon_checkAllConnected() {
 
     let allConnected = Object.values(adjacency).every(neighbors => neighbors.length > 0);
 
-    if (allConnected) {
-        recon_continueButton();
-
-        if (!messageShown) {
-            messageShown = true; // prevent future displays
-
-            // Create and show message
-            let messageEl = document.createElement('div');
-            messageEl.id = 'proceed-message';
-            messageEl.style.position = 'fixed';
-            messageEl.style.top = '20px';
-            messageEl.style.left = '50%';
-            messageEl.style.transform = 'translateX(-50%)';
-            messageEl.style.backgroundColor = '#d4edda';
-            messageEl.style.color = '#155724';
-            messageEl.style.border = '1px solid #c3e6cb';
-            messageEl.style.padding = '10px 20px';
-            messageEl.style.fontSize = '18px';
-            messageEl.style.fontWeight = 'bold';
-            messageEl.style.borderRadius = '8px';
-            messageEl.style.zIndex = '9999';
-            messageEl.textContent = '✅ You can now proceed';
-            document.body.appendChild(messageEl);
-
-            // Auto-hide after 2 seconds
-            setTimeout(() => {
-                messageEl.remove();
-            }, 2000);
-        }
-    } else {
-        document.getElementById('nextButton').style.display = 'none';
-    }
+    return allConnected
 }
 
 
