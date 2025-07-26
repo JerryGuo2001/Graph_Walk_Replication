@@ -570,7 +570,7 @@ var learn_prac1_phase = {
   type: 'html-keyboard-responsefl',
   choices: jsPsych.NO_KEYS,
   response_ends_trial: false,
-  stimulus:create_learning_trial(['GW-Tutorial/object_068.jpg'],['GW-Tutorial/object_029.jpg'],0),
+  stimulus:create_learning_trial(['story_example_01.png'],['story_example_02.png'],0),
   stimulus_duration:3000,
   trial_duration:3000,
   on_load: function(){
@@ -587,7 +587,7 @@ var learn_prac2_phase = {
   type: 'html-keyboard-responsefl',
   choices: jsPsych.NO_KEYS,
   response_ends_trial: false,
-  stimulus:create_learning_trial(['GW-Tutorial/object_229.jpg'],['GW-Tutorial/object_250.jpg'],0),
+  stimulus:create_learning_trial(['story_example_03.png'],['story_example_04.png'],0),
   stimulus_duration:3000,
   trial_duration:3000,
   on_finish: function(data) {
