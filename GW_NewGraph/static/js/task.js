@@ -3,7 +3,6 @@ var debug_mode = 0; // debug mode determines how long the blocks are, 5 sec in d
 var data_save_method = 'csv_server_py';
 
 var part2_sfa= NaN
-let save_final_deter;
 var direct_warning = 0
 var short_warning = 0
 var quickKP = 0;
@@ -178,7 +177,7 @@ var directmemory_phase = {
       timer = 0
     }
 
-    if (data.rt < 300) {
+    if (data.rt && data.rt < 300) {
       jsPsych.addNodeToEndOfTimeline({
         timeline: [too_quick],
         }, jsPsych.resumeExperiment)
@@ -197,7 +196,7 @@ var directmemory_phase = {
     if (!part2_sfa){
       direct_warning +=1
     }
-    directmemory_phase.stimulus=create_direct_trial(direct_base64_up,direct_base64_left,direct_base64_mid,direct_base64_right,curr_direct_trial)
+    directmemory_phase.stimulus=create_direct_trial(room_direct_up,room_direct_left,room_direct_mid,room_direct_right,curr_direct_trial)
     attentioncheck(directmemory_phase,part2_sfa,curr_direct_trial,n_direct_trial,intro_short,phase='direct')
   }
 }
@@ -348,7 +347,7 @@ function create_instruct(instruct,instructnames,instruction_number,prac_attentio
   //practice attention check
 var ac_colorprepare=colorStart()
 var ac_colorstop=colorStop(ac_colorprepare)
-var ac_colorlist=['blue','green','green','blue','green','green','blue','green','blue','blue']
+var ac_colorlist=['blue','yellow','yellow','blue','yellow','yellow','blue','yellow','blue','blue']
 var ac_colornumber=0
 var total_ac = 0
 var correct_ac = 0
@@ -359,7 +358,7 @@ var instruct_lastonebefore_practice={
   choices: ['spacebar'],
   stimulus: `
   <div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>
-  You will have 1 second from when the cross flashes blue or green to respond, so please respond quickly. 
+  You will have 1 second from when the cross flashes blue or yellow to respond, so please respond quickly. 
   If you miss several responses in a row, the experiment will quit early. However, remember that while you should pay attention to the center cross changing colors, 
   it is most important that you memorize the pairs (using the strategy we practiced earlier). You will NOT have to memorize the color changes. The task will begin once you press space.
   <p style= 'font-size:25px;margin-top:100px'>[press the spacebar to start]</p>
@@ -396,8 +395,10 @@ var csfa=[]
 
 //attention check color cross
 function create_color_list(color) {
-  return parse("<p style='position:absolute;top: 50%;right: 50%;transform: translate(50%, -50%);font-size: 125px;color: %s;'>\u002B</p>"
-  ,color)
+  return parse("<p style='position:absolute;top:50%;right:50%;transform:translate(50%, -50%);font-size:125px;color:" + color + ";text-shadow:\
+  -2px -2px 0 #000, 0 -2px 0 #000, 2px -2px 0 #000,\
+  -2px 0 0 #000, 2px 0 0 #000,\
+  -2px 2px 0 #000, 0 2px 0 #000, 2px 2px 0 #000;'>+</p>");
 }
 
 var prac_attentioncheck_colorchange={
@@ -436,7 +437,7 @@ var prac_attentioncheck_thethird={
         jsPsych.addNodeToEndOfTimeline({
           timeline: [prac_attentioncheck_blackplus],
         }, jsPsych.resumeExperiment)
-      }else if (csfa==50&&ac_colorlist[ac_colornumber]=='green'){
+      }else if (csfa==50&&ac_colorlist[ac_colornumber]=='yellow'){
         correct_ac += 1
         jsPsych.addNodeToEndOfTimeline({
           timeline: [prac_attentioncheck_blackplus],
@@ -446,7 +447,7 @@ var prac_attentioncheck_thethird={
         jsPsych.addNodeToEndOfTimeline({
           timeline: [prac_attentioncheck_blackplus],
         }, jsPsych.resumeExperiment)
-      }else if (data.key_press==50&&ac_colorlist[ac_colornumber]=='green'){
+      }else if (data.key_press==50&&ac_colorlist[ac_colornumber]=='yellow'){
         correct_ac += 1
         jsPsych.addNodeToEndOfTimeline({
           timeline: [prac_attentioncheck_blackplus],
@@ -457,7 +458,7 @@ var prac_attentioncheck_thethird={
         }, jsPsych.resumeExperiment)
       }
     }else{
-      if (csfa==49&&ac_colorlist[ac_colornumber]=='blue' || csfa==50&&ac_colorlist[ac_colornumber]=='green' || data.key_press==49&&ac_colorlist[ac_colornumber]=='blue' || data.key_press==49&&ac_colorlist[ac_colornumber]=='green') {
+      if (csfa==49&&ac_colorlist[ac_colornumber]=='blue' || csfa==50&&ac_colorlist[ac_colornumber]=='yellow' || data.key_press==49&&ac_colorlist[ac_colornumber]=='blue' || data.key_press==49&&ac_colorlist[ac_colornumber]=='yellow') {
         correct_ac += 1
       }
       total_ac += 1
@@ -554,7 +555,7 @@ function getACvalues() {
 var helpofattentioncheck={
   type: 'html-keyboard-response',
   choices: ['spacebar'],
-  stimulus: "<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>It seems you got one wrong. Remember, for the cross below:</p><img src= '../static/images/isi.png' width='150' height='150'><p style ='font-size: 30px;line-height:1.5'>If the cross flashes <span style='color: blue;'>blue,</span> press the '1' key on your keyboard, if it flashes <span style='color: green;'>green,</span> press '2'.<p style= 'font-size:25px;margin-top:100px'>[press the spacebar to continue]</p>",
+  stimulus: "<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>It seems you got one wrong. Remember, for the cross below:</p><img src= '../static/images/isi.png' width='150' height='150'><p style ='font-size: 30px;line-height:1.5'>If the cross flashes <span style='color: blue; text-shadow: -1px -1px 0 #000,1px -1px 0 #000,-1px  1px 0 #000,1px  1px 0 #000'>blue,</span> press the '1' key on your keyboard, if it flashes <span style='color: yellow; text-shadow: -1px -1px 0 #000,1px -1px 0 #000,-1px  1px 0 #000,1px  1px 0 #000'>yellow,</span> press '2'.<p style= 'font-size:25px;margin-top:100px'>[press the spacebar to continue]</p>",
   on_finish: function (data) {
     data.trial_type = 'attentioncheck_help';
     data.stimulus='instruct'
@@ -1118,6 +1119,7 @@ var recon_phase3=recon_createPhase3(1)
 //recon phase end
 
 //shortestpath
+correctness = []
 let mem_instruction_number=1
 let intro_mem=create_instruct(mem_instruct,mem_instructnames,mem_instruction_number,phase3[0],a='mem_')
 
@@ -1235,7 +1237,7 @@ var shortestpath_phase = {
       timer = 0
     }
 
-    if (data.rt < 300) {
+    if (data.rt && data.rt < 300) {
       jsPsych.addNodeToEndOfTimeline({
         timeline: [too_quick],
         }, jsPsych.resumeExperiment)
@@ -1255,7 +1257,7 @@ var shortestpath_phase = {
       short_warning +=1
     }
     curr_shortest_trial=curr_shortest_trial+1
-    shortestpath_phase.stimulus=create_shortestpath_trial(shortest_base64_up,shortest_base64_left,shortest_base64_right,curr_shortest_trial)
+    shortestpath_phase.stimulus=create_shortestpath_trial(room_shortest_up,room_shortest_left,room_shortest_right,curr_shortest_trial)
     attentioncheck(shortestpath_phase,part2_sfa,curr_shortest_trial,n_shortest_trial,intro_mem,phase='short')
   }
 }

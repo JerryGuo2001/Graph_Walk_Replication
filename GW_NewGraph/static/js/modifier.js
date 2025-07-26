@@ -4,9 +4,9 @@ if (Math.random()>=0.5){
 }else{sequence = "interleaved"}
 
 //debug moode on/off
-debugmode= false
+debugmode= true
 if (debugmode==true){
-  n_learning_trial=5 //This determine the number of learning trial you want in total
+  n_learning_trial=6 //This determine the number of learning trial you want in total
   n_direct_trial=5 //how many direct trial you want
   n_shortest_trial=5 //how many shortest path you want
   n_goaldir_trial=1 //how many goal directed planning you want
@@ -16,10 +16,11 @@ if (debugmode==true){
   n_shortest_trial=84 //how many shortest path you want
   n_goaldir_trial=33 //how many goal directed planning you want
 }
-
+const num_breaks = 1
+const breaks = [];
 //warningpage
 warning=0 //this is to start the counter of total warning
-warning_1="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5;color:red'>Warning, you are missing too many trials, make sure to press the key '1' when you see a blue cross flash and '2' when you see a green one. If you keep missing trials you will be disqualified.</p>",
+warning_1="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5;color:red'>Warning, you are missing too many trials, make sure to press the key '1' when you see a blue cross flash and '2' when you see a yellow one. If you keep missing trials you will be disqualified.</p>",
 checkfail=0 //this is to start the attentioncheck
 checkthreshold=2 //this is to add the threshold for attentioncheck
 
@@ -62,7 +63,7 @@ instructprac1={instruct_prac_1,instruct_prac_2} // IF you want to add or decreas
 
 instruct_prac2_1="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'><br><br><p style ='font-size: 30px;line-height:1.5'>Were you able to come up with a story or image connecting these items?<br><br>Once you think of one, press next to continue.</p><br>",
 instruct_prac2_2="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>Great! Please continue to come up with a story or image for each trial.<br><br>For example, you might imagine trying to break open the piggy bank with the traffic cone.</p><br>",
-instruct_prac2_3="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>While you are learning to remember the image pairs, you will also see a cross on the center of your screen like the one below:</p><img src= '../static/images/isi.png' width='150' height='150'><p style ='font-size: 30px;line-height:1.5'>To make sure that you are paying attention on each trial, we will have you do a simple color detection task in addition to learning the pairs. If the cross flashes <span style='color: blue;'>blue,</span> press the '1' key on your keyboard, if it flashes <span style='color: green;'>green,</span> press '2'.<br><br>Now we will do a short practice on these color changes. You will be unable to advance until you get enough of the color check trials correct.<p style= 'font-size:25px;margin-top:100px'></p><br>",
+instruct_prac2_3="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>While you are learning to remember the image pairs, you will also see a cross on the center of your screen like the one below:</p><img src= '../static/images/isi.png' width='150' height='150'><p style ='font-size: 30px;line-height:1.5'>To make sure that you are paying attention on each trial, we will have you do a simple color detection task in addition to learning the pairs. If the cross flashes <span style='color: blue; text-shadow: -1px -1px 0 #000,1px -1px 0 #000,-1px  1px 0 #000,1px  1px 0 #000'>blue,</span> press the '1' key on your keyboard, if it flashes <span style='color: yellow; text-shadow: -1px -1px 0 #000,1px -1px 0 #000,-1px  1px 0 #000,1px  1px 0 #000'>yellow,</span> press '2'.<br><br>Now we will do a short practice on these color changes. You will be unable to advance until you get enough of the color check trials correct.<p style= 'font-size:25px;margin-top:100px'></p><br>",
 
 instructprac2names = ["instruct_prac2_1","instruct_prac2_2","instruct_prac2_3"]// IF you want to add or decrease number of page for instruct, just delete or add var name here.
 instructprac2={instruct_prac2_1,instruct_prac2_2,instruct_prac2_3} // IF you want to add or decrease number of page for instruct, just delete or add var here.
@@ -88,7 +89,7 @@ short_instruct={instruct_short_1,instruct_short_2,instruct_short_3,instruct_shor
 instruct_mem_1="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>In this next portion, you use your knowledge of the associations you learned during the study phase to complete the following task.</p><br />",
 instruct_mem_2="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>You will see one image you've studied previously on the left, and another on the right. </p><br /><img src= '../static/images/StLouis.png' width='120' height='150' style='margin-right:500px'></img><img src= '../static/images/Detroit.png' width='120' height='150'></img><p></p><br /><br><br>",
 instruct_mem_3="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>Using your knowledge of the image pairs you studied previously, you will fill in the steps in between to get from the left image to the right image. Your goal is to get from the left image to the right image as efficiently as possible (with the fewest intermediate steps) based on the associations you learned earlier.</p><br />",
-instruct_mem_4="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>Fill in the appropriate steps by selecting the intermediate objects that will allow you to get from the left image to the right image. </p><br /><img src= '../static/images/Instruction11.png' width='750' height='150'></img><p></p><br />",
+instruct_mem_4="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>Fill in the appropriate steps by selecting the intermediate objects that will allow you to get from the left image to the right image. </p><br /><img src= '../static/images/Instruction11.png' width='750' height='200'></img><p></p><br />",
 instruct_mem_5="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>Click and drag the images from the top that you wish to place in the gray container as a part of the itinerary. Then, click on each of the two images to connect them.</p><br />"
 instruct_mem_6="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>To remove a connection, simply click on the two images again and the line will disappear. To remove an image that you have already placed, click on the image and then the return button in the bottom right.</p><br />",
 mem_instructnames = ["instruct_mem_1","instruct_mem_2","instruct_mem_3","instruct_mem_4","instruct_mem_5","instruct_mem_6"]
@@ -149,7 +150,7 @@ let survey_questions = `
 
 //learning phse
 
-let unshuffled_imageList=['GW/gong.jpg','GW/barrel.jpg','GW/basket.jpg','GW/soldier.jpg','GW/camera.jpg','GW/paint.jpg','GW/wheelchair.jpg','GW/dustpan.jpg','GW/snail.jpg','GW/globe.jpg','GW/hat.jpg','GW/jukebox.jpg','GW/teeth.jpg']
+let unshuffled_imageList=['GW/westpalmbeach.png','GW/newhope.png','GW/boulder.png','GW/peoria.png','GW/gatlinburg.png','GW/shreveport.png','GW/hotsprings.png','GW/carmel.png','GW/huntsville.png','GW/racine.png','GW/leesburg.png','GW/cornwall.png','GW/hanover.png']
 let imageList = []
 
 function shuffle(array) {
@@ -1188,7 +1189,7 @@ for (let i = 0; i<allSelectedPairs.length; i++){
 }
 
 //color for the plus sign
-atcheckcolor=['blue','green']
+atcheckcolor=['blue','yellow']
 
 //determinant for the time for the flash color
 function colorStart(){
