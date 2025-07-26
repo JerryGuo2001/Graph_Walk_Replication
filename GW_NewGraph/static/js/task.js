@@ -65,7 +65,7 @@ var welcome = {
   on_finish: function (data) {
     data.sequence = sequence
     data.trial_type = "id_enter"
-    data.stimulus = "id_enter"
+    data.stimulus = "replication"
     data.graphorder = `${imageList.join("; ")}`
     window.useridtouse=data.responses
     window.useridtouse = useridtouse.split('"')[3];
