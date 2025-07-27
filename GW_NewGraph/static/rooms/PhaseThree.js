@@ -122,8 +122,6 @@ function continueButton() {
     bottomArea.removeChild(submitBtn);
     }
 
-    instructionDiv?.parentNode?.insertBefore(submitBtn, instructionDiv);
-
     submitBtn.onclick = () => {
         const droppedImages = Array.from(document.getElementById('div1').children)
         .filter(el => el.tagName === 'IMG' && el.id.startsWith('drag'));
@@ -256,6 +254,7 @@ function continueButton() {
         
                 // Step 8: Allow next submission
                 goal_detor_deter = false;
+                continueButton()
             };
         
             detourDiv.appendChild(warningText);

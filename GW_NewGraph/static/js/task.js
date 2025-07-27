@@ -1122,6 +1122,7 @@ var recon_phase3=recon_createPhase3(1)
 correctness = []
 let mem_instruction_number=1
 let intro_mem=create_instruct(mem_instruct,mem_instructnames,mem_instruction_number,phase3[0],a='mem_')
+correctness = []
 
 var curr_shortest_trial=0
 var shortestpath_phase = {
@@ -1374,7 +1375,8 @@ let intro_prac2_learn=create_instruct(instructprac2,instructprac2names,prac2_num
 
 //time line here
 timeline.push(welcome,enterFullscreen)
-timeline.push(intro_learn)
+// timeline.push(intro_learn)
+timeline.push(phase3[0])
 //debug
 // timelinepushintro(intro_learn,instructnames)
 // timeline.push(prac_attentioncheck_blackplus)
