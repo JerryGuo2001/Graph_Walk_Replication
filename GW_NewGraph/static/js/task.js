@@ -1376,8 +1376,7 @@ let intro_prac2_learn=create_instruct(instructprac2,instructprac2names,prac2_num
 
 //time line here
 timeline.push(welcome,enterFullscreen)
-// timeline.push(intro_learn)
-timeline.push(phase3[0])
+timeline.push(intro_learn)
 //debug
 // timelinepushintro(intro_learn,instructnames)
 // timeline.push(prac_attentioncheck_blackplus)
