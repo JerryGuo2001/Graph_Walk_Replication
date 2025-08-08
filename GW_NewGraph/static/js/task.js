@@ -1349,7 +1349,7 @@ let intro_graph=create_instruct(graph_instruct,graph_instructnames,graph_instruc
 var thank_you = {
   type: 'html-keyboard-response',
   choices: ['space'],
-  stimulus: "<p> Congratulations, you are all done!</p><p>The secret code to enter at the beginning screen is: AJFHBG897</p><p> Please make sure to submit the HIT and email uciccnl@gmail.com if you had any issues! </p>",
+  stimulus: "<p> Congratulations, you are all done!</p><p>The secret code to enter at the beginning screen is: CFQ53IVT</p><p> Please make sure to submit the HIT and email uciccnl@gmail.com if you had any issues! </p>",
   on_start: function(data){
     save_final_deter='final',
     save_data(),
