@@ -236,6 +236,7 @@ var directmem_break= {
   stimulus_duration: 1000,
   trial_duration: 1000,
   stimulus:'<p></p>',
+  record_data: false,
   on_finish: function() {
     
   }
@@ -275,12 +276,13 @@ var enterFullscreen = {
         <p>When you are ready to take the experiment, click 'Enter Fullscreen' to begin.</p> <br />
     `,
   choices: ['Enter Fullscreen'],
+  record_data: false,
   on_finish: function(data) {
       // Trigger fullscreen mode when the button is clicked
       document.documentElement.requestFullscreen().catch(err => {
           console.error(`Error attempting to enable fullscreen mode: ${err.message}`);
       });
-      data.trial_type = 'fullscreen'
+      data.trial_type = 'Replication'
       data.stimulus = 'text'
   }
 };
@@ -293,8 +295,9 @@ function create_instruct(instruct,instructnames,instruction_number,prac_attentio
     button_html: '<button class="jspsych-btn" style="padding: 12px 24px; font-size: 18px; border-radius: 10px; background-color: #4CAF50; color: white; border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 0 10px;">%choice%</button>',
     choices: ['Next'],
     stimulus: instruct[`instruct_`+a+`${instruction_number}`],
+    record_data: false,
     on_finish: function (data) {
-      data.trial_type = 'Instruction';
+      data.trial_type = 'Replication';
       data.stimulus='text';
       // Check which button was pressed
       if (instructnames.length==1){
@@ -384,9 +387,10 @@ var instruct_lastonebefore_practice={
   it is most important that you memorize the pairs (using the strategy we practiced earlier). You will NOT have to memorize the color changes. The task will begin once you press space.
   <p style= 'font-size:25px;margin-top:100px'>[press the spacebar to start]</p>
    `,
+  record_data: false,
   on_finish: function (data) {
-    data.trial_type = 'Instruction';
-    data.stimulus='insttextruct'
+    data.trial_type = 'Replication';
+    data.stimulus='text'
   }
 }
 
@@ -403,8 +407,10 @@ var prac_attentioncheck_blackplus={
   response_ends_trial: false,
   stimulus:create_memory_ten(),
   prompt:parse("<br><br><style>body {background-color: #ffff;}</style>"),
+  record_data: false,
   on_finish: function(data) {
-    data.trial_type='Practice'
+    data.trial_type='Replication'
+    data.phase = 'Practice'
     data.stimulus='text'
     prac_attentioncheck_colorchange.stimulus=create_color_list(ac_colorlist[ac_colornumber])
     jsPsych.addNodeToEndOfTimeline({
@@ -429,8 +435,10 @@ var prac_attentioncheck_colorchange={
   stimulus:create_color_list(ac_colorlist[ac_colornumber]),
   stimulus_duration:ac_colorstop,
   trial_duration:ac_colorstop,
+  record_data: false,
   on_finish: function(data) {
-    data.trial_type = 'Practice';
+    data.trial_type = 'Replication';
+    data.phase = 'Practice'
     data.stimulus = 'text'
     csfa=data.key_press
     jsPsych.addNodeToEndOfTimeline({
@@ -447,10 +455,12 @@ var prac_attentioncheck_thethird={
   stimulus_duration: 2000,
   trial_duration: 2000,
   response_ends_trial: false,
+  record_data: false,
   stimulus:create_memory_ten(),
   prompt:parse("<br><br><style>body {background-color: #ffff;}</style>"),
   on_finish: function(data) {
-    data.trial_type='Practice'
+    data.trial_type='Replication'
+    data.phase = 'Practice'
     data.stimulus='text'
     if(ac_colornumber<ac_colortotal){
       if (csfa==49&&ac_colorlist[ac_colornumber]=='blue'){
@@ -520,6 +530,7 @@ function getACvalues() {
                 </p><br>
               </div>`,
     choices: ['Try Again'],
+    record_data: false,
     button_html: [
       '<button id="retry-button" class ="custom-button" style="font-size: 20px; padding: 10px; margin: 10px;">%choice%</button>',
     ],
@@ -535,9 +546,10 @@ function getACvalues() {
       });
     },
     on_finish: function(data) {
-      data.trial_type = 'Practice';
+      data.trial_type = 'Replication';
+      data.phase = 'Practice'
       data.stimulus = 'text';
-      data.failed_practice = kickout_record
+      data.kickout = kickout_record
     }
   };
 }else{
@@ -552,6 +564,7 @@ function getACvalues() {
                 </p><br>
               </div>`,
     choices: ['Continue'],
+    record_data: false,
     button_html: [
       '<button id="continue-button" class="custom-button" style="font-size: 20px; padding: 10px; margin: 10px;">%choice%</button>'
     ],
@@ -564,7 +577,8 @@ function getACvalues() {
       });
     },
     on_finish: function(data) {
-      data.trial_type = 'Practice';
+      data.trial_type = 'Replication';
+      data.phase = 'Practice'
       data.stimulus = 'text';
     }
   };
@@ -574,9 +588,11 @@ function getACvalues() {
 var helpofattentioncheck={
   type: 'html-keyboard-response',
   choices: ['spacebar'],
+  record_data: false,
   stimulus: "<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>It seems you got one wrong. Remember, for the cross below:</p><img src= '../static/images/isi.png' width='150' height='150'><p style ='font-size: 30px;line-height:1.5'>If the cross flashes <span style='color: blue; text-shadow: -1px -1px 0 #000,1px -1px 0 #000,-1px  1px 0 #000,1px  1px 0 #000'>blue,</span> press the '1' key on your keyboard, if it flashes <span style='color: yellow; text-shadow: -1px -1px 0 #000,1px -1px 0 #000,-1px  1px 0 #000,1px  1px 0 #000'>yellow,</span> press '2'.<p style= 'font-size:25px;margin-top:100px'>[press the spacebar to continue]</p>",
   on_finish: function (data) {
-    data.trial_type = 'Practice';
+    data.trial_type = 'Replication';
+    data.phase = 'Practice'
     data.stimulus='text'
   }
 }
@@ -592,11 +608,13 @@ var learn_prac1_phase = {
   stimulus:create_learning_trial(['story_example_01.png'],['story_example_02.png'],0),
   stimulus_duration:3000,
   trial_duration:3000,
+  record_data: false,
   on_load: function(){
     timeline.push(intro_prac1_learn)  
   },
   on_finish: function(data) {
-    data.trial_type = 'Practice';
+    data.trial_type = 'Replication';
+    data.phase = 'Practice'
     data.stimulus='text'
     attentioncheck(intro_prac1_learn,a=1,1,0,intro_prac1_learn)
   }
@@ -609,8 +627,10 @@ var learn_prac2_phase = {
   stimulus:create_learning_trial(['story_example_03.png'],['story_example_04.png'],0),
   stimulus_duration:3000,
   trial_duration:3000,
+  record_data: false,
   on_finish: function(data) {
-    data.trial_type = 'Practice';
+    data.trial_type = 'Replication';
+    data.phase = 'Practice'
     data.stimulus='text'
     attentioncheck(intro_prac2_learn,a=1,1,0,intro_prac2_learn)
   }
@@ -629,8 +649,8 @@ var warning_page={
   trial_duration:3000,
   stimulus: '<h1 style="color: red;">Please make sure to respond to the questions.</h1><br><h1 style="color: red;">Continued failure to respond will</h1><br><h1 style="color: red;">result in the task ending early</h1><br><h1 style="color: red;">The experiment will resume in 3 seconds</h1>',
   on_finish: function(data) {
-    data.trial_type='No_Response'
-    data.stimulus='text'
+    data.trial_type='Replication'
+    data.stimulus='warning'
     warning=warning+1
   }
 }
@@ -649,10 +669,11 @@ var thecrossant= {
   trial_duration: 500,
   response_ends_trial: false,
   stimulus:create_learningcolor_trial(curr_learning_trial,pluscolor[curr_learning_trial]),
+  record_data: false,
   prompt:parse("<br><br><style>body {background-color: #ffff;}</style>"),
   on_finish: function(data) {
     data.stimulus='text'
-    data.trial_type='Supplemental'
+    data.trial_type='Replication'
     kp=data.key_press
     learn_duration = data.time_elapsed
     learn_rt = data.rt
@@ -670,9 +691,10 @@ var thecrossant_black={
   response_ends_trial: false,
   stimulus:create_memory_ten('black'),
   prompt:parse("<br><br><style>body {background-color: #ffff;}</style>"),
+  record_data: false,
   on_finish: function(data) {
-    data.trial_type ='rt_thecrossant_black'
-    data.stimulus='black_plus_sign'
+    data.trial_type ='Replication'
+    data.stimulus='text'
     op=data.key_press
     if (kp){
       data.rt=null
@@ -774,9 +796,6 @@ var thecrossant_break={
   stimulus:create_memory_ten('black'),
   prompt:parse("<br><br><style>body {background-color: #ffff;}</style>"),
   on_finish: function(data) {
-    data.trial_type='Learning'
-    data.stimulus='text'
-
     data.subject_id = useridtouse
     data.trial_type = "Replication"
     data.condition = sequence
@@ -807,6 +826,7 @@ var thecrossant_break={
     data.accuracy = learn_accuracy
     data.node_correct = NaN // For direct memory and judgement
     data.too_quick = NaN // For direct memory and judgement
+    data.stimulus = 'text'
 
     timetakenforpluswindow=removecolor
     colordetretime=colorStart()
@@ -832,8 +852,9 @@ function createbreak(intro_dir,instructnames,directmemory_phase){
     choices:jsPsych.NO_KEYS,
     trial_duration: 100,
     stimulus:'<p></p>',
+    record_data: false,
     on_finish: function(data) {
-      data.trial_type='Supplemental'
+      data.trial_type='Replication'
       data.stimulus = 'text'
       timelinepresent(intro_dir,instructnames,directmemory_phase)
     }
@@ -848,8 +869,9 @@ var learn_phase = {
   stimulus:create_learning_trial(learn_left,learn_right,curr_learning_trial),
   stimulus_duration:3000,
   trial_duration:3000,
+  record_data: false,
   on_finish: function(data) {
-    data.trial_type = 'Supplemental';
+    data.trial_type = 'Replication';
     data.stimulus='text'
     sfa=1
     img_pres_duration = data.time_elapsed
@@ -863,9 +885,10 @@ var learn_phase_color = {
   stimulus:create_memory_ten(),
   stimulus_duration:removecolor,
   trial_duration:removecolor,
+  record_data: false,
   on_finish: function(data) {
     data.stimulus='text'
-    data.trial_type = 'Supplemental';
+    data.trial_type = 'Replication';
     sfa=1
   }
 }
@@ -884,6 +907,7 @@ learn_phase_break = {
       choices: ['spacebar'],
       trial_duration: 60000, // 60 seconds
       response_ends_trial: true,
+      record_data: false,
   on_load: function() {
     let countdown = 60;
     const countdownEl = document.getElementById('countdown');
@@ -895,7 +919,7 @@ learn_phase_break = {
   },
   on_finish: function(data) {
     data.stimulus='text'
-    data.trial_type = 'Supplemental';
+    data.trial_type = 'Replication';
   }
 }
 
@@ -912,6 +936,7 @@ learn_phase_end_break = {
       `,
       choices: ['spacebar'],
       trial_duration: 60000, // 60 seconds
+      record_data: false,
       response_ends_trial: true,
   on_load: function() {
     let countdown = 60;
@@ -924,7 +949,7 @@ learn_phase_end_break = {
   },
   on_finish: function(data) {
     data.stimulus='text'
-    data.trial_type = 'Supplemental';
+    data.trial_type = 'Replication';
   }
 }
 
@@ -951,7 +976,8 @@ function createPhase3(numberoftrial){
         //   });
         // },
         on_finish: function (data) {
-          data.trial_type='Goal Directed Planning'
+          data.trial_type='Replication'
+          data.phase = "Goal Directed Planning"
           data.stimulus = `GDP-${i}`
           data.imgL_ID = leftName
           data.imgR_ID = rightName
@@ -1030,7 +1056,8 @@ function createPhase3(numberoftrial){
         //   });
         // },
         on_finish: function (data) {
-          data.trial_type='Goal Directed Planning'
+          data.trial_type = "Replication"
+          data.phase='Goal Directed Planning'
           data.stimulus = `GDP-${i}`
           data.imgL_ID = leftName
           data.imgR_ID = rightName
@@ -1132,7 +1159,8 @@ function recon_createPhase3(numberoftrial){
           save_data()
         },
         on_finish: function (data) {
-          data.trial_type='Graph Reconstruction'
+          data.trial_type='Replication'
+          data.phase='Graph Reconstruction'
           data.linedress=''
           for (const key in specificline) {
               data.linedressed += specificline[key].name+':[x1:'+specificline[key].location.x1+' x2:'+specificline[key].location.x2+' y1:'+specificline[key].location.y1+' y2:'+specificline[key].location.y2+']'
@@ -1161,7 +1189,8 @@ function recon_createPhase3(numberoftrial){
         //   });
         // },
         on_finish: function (data) {
-          data.trial_type='Goal Directed Planning'
+          data.trial_type='Replication'
+          data.phase='Goal Directed Planning'
           data.linedress=''
           for (const key in specificline) {
               data.linedressed += specificline[key].name+':[x1:'+specificline[key].location.x1+' x2:'+specificline[key].location.x2+' y1:'+specificline[key].location.y1+' y2:'+specificline[key].location.y2+']'
@@ -1357,8 +1386,8 @@ var end_questions = {
   });
   },
   on_finish: function(data) {
-    data.trial_type = "survey"
-    data.stimulus = "survey-questions"
+    data.trial_type = "Replication"
+    data.stimulus = "survey"
     data.problems = problems
     data.smooth = smooth
     data.distraction  = (distraction  || "").replace(/,/g, ';');
