@@ -5,7 +5,7 @@ if (Math.random()>=0.5){
 //debug moode on/off
 debugmode= true
 if (debugmode==true){
-  n_learning_trial=2 //This determine the number of learning trial you want in total
+  n_learning_trial=5 //This determine the number of learning trial you want in total
   n_direct_trial=5 //how many direct trial you want
   n_shortest_trial=5 //how many shortest path you want
   n_goaldir_trial=1 //how many goal directed planning you want
