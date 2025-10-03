@@ -237,8 +237,9 @@ var directmem_break= {
   trial_duration: 1000,
   stimulus:'<p></p>',
   data: {ignore: true},
-  on_finish: function() {
-    
+  on_finish: function(data) {
+    data.stimulus = 'text'
+    data.trial_type = 'Replication'
   }
 }
 
@@ -1443,6 +1444,7 @@ var thank_you = {
     data.trial_type = 'End';
     data.stimulus = 'text'
     data.detectfocus = detectfocus;
+    jsPsych.data.get().filter({ignore: true}).ignore();
     save_data(true)
   }
 }
