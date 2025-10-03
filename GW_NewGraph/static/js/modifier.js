@@ -2,11 +2,10 @@
 if (Math.random()>=0.5){
   sequence = "blocked"
 }else{sequence = "interleaved"}
-
 //debug moode on/off
-debugmode= false
+debugmode= true
 if (debugmode==true){
-  n_learning_trial=6 //This determine the number of learning trial you want in total
+  n_learning_trial=2 //This determine the number of learning trial you want in total
   n_direct_trial=5 //how many direct trial you want
   n_shortest_trial=5 //how many shortest path you want
   n_goaldir_trial=1 //how many goal directed planning you want
@@ -216,7 +215,7 @@ class Graph {
     console.log(this.adjacencyList);
   }
 
-    // Function to find nodes that are directly connected to the center node (1 edge apart)
+  // Function to find nodes that are directly connected to the center node (1 edge apart)
   getDirectNeighbors(centerNode) {
     return this.adjacencyList[centerNode] || [];
   }
@@ -234,7 +233,7 @@ class Graph {
         nodeIndexMap.set(centerNode, (index + 1) % neighbors.length);
         return neighbor;
     };
-}
+  }
 
   initTriplet() {
       this.correctNodefunc = this.getSingleDirectNeighbor();
@@ -360,7 +359,6 @@ class Graph {
   // Function to find triplets where one node is leftK edges away and another node is rightK edges away from the center node
   getCustomTriplets(leftK, rightK) {
     const triplets = [];
-
     for (const centerNode in this.adjacencyList) {
       const nodesLeftKEdgesApart = this.findNodesKEdgesApart(parseInt(centerNode), leftK);
       const nodesRightKEdgesApart = this.findNodesKEdgesApart(parseInt(centerNode), rightK);
@@ -416,6 +414,35 @@ class Graph {
     // Convert the set back into an array of pairs
     return Array.from(pairs).map(pair => pair.split(',').map(Number));
   }
+
+  // Function to get the number of edges between two nodes (shortest path length)
+  getDistanceBetween(node1, node2) {
+    if (!(node1 in this.adjacencyList) || !(node2 in this.adjacencyList)) {
+      return -1; // Return -1 if either node doesn't exist
+    }
+
+    if (node1 === node2) return 0; // Same node, distance is 0
+
+    const visited = new Set([node1]);
+    const queue = [[node1, 0]]; // [currentNode, distance]
+
+    while (queue.length > 0) {
+      const [currentNode, distance] = queue.shift();
+
+      for (const neighbor of this.adjacencyList[currentNode]) {
+        if (neighbor === node2) {
+          return distance + 1; // Found target
+        }
+        if (!visited.has(neighbor)) {
+          visited.add(neighbor);
+          queue.push([neighbor, distance + 1]);
+        }
+      }
+    }
+
+    return -1; // No path found
+  }
+
 }
 
 // Initialize the graph
@@ -508,20 +535,20 @@ fourth_list_block_right = []
 for (block = 0;block<4;block++){
   for (pair = 0;pair<4;pair++){
     if (block == 0){
-      first_list_block_left.push(imageList[blocked_groups[block][pair][0]-1]) // -1 is for zero indexing
-      first_list_block_right.push(imageList[blocked_groups[block][pair][1]-1])
+      first_list_block_left.push(blocked_groups[block][pair][0]-1) // -1 is for zero indexing
+      first_list_block_right.push(blocked_groups[block][pair][1]-1)
     }
     if (block == 1){
-      second_list_block_left.push(imageList[blocked_groups[block][pair][0]-1])
-      second_list_block_right.push(imageList[blocked_groups[block][pair][1]-1])
+      second_list_block_left.push(blocked_groups[block][pair][0]-1)
+      second_list_block_right.push(blocked_groups[block][pair][1]-1)
     }
     if (block == 2){
-      third_list_block_left.push(imageList[blocked_groups[block][pair][0]-1])
-      third_list_block_right.push(imageList[blocked_groups[block][pair][1]-1])
+      third_list_block_left.push(blocked_groups[block][pair][0]-1)
+      third_list_block_right.push(blocked_groups[block][pair][1]-1)
     }
     if (block == 3){
-      fourth_list_block_left.push(imageList[blocked_groups[block][pair][0]-1])
-      fourth_list_block_right.push(imageList[blocked_groups[block][pair][1]-1])
+      fourth_list_block_left.push(blocked_groups[block][pair][0]-1)
+      fourth_list_block_right.push(blocked_groups[block][pair][1]-1)
     }
   }
 }
@@ -595,8 +622,12 @@ for (i=0;i<compiled_left_list.length;i++){
 }
 inter_arr = shuffle(inter_arr)
 
-inter_left_list = []
-inter_right_list = []
+var inter_left_list = []
+var inter_right_list = []
+var inter_left_node = []
+var inter_right_node = []
+var learn_node_right = []
+var learn_node_left = []
 
 for(i=0;i<inter_arr.length;i++){
   inter_left_list.push(compiled_left_list[inter_arr[i]])
@@ -607,28 +638,39 @@ if (sequence == "blocked"){ // If blocked it takes inputs in the blocked order, 
   for (i=0;i < compiled_left_list.length;i++){
     switch_left_right = Math.random()
     if (switch_left_right < 0.5){
-      learn_left.push(compiled_left_list[i])
-      learn_right.push(compiled_right_list[i])
+      learn_left.push(imageList[compiled_left_list[i]])
+      learn_right.push(imageList[compiled_right_list[i]])
+
+      learn_node_left.push(compiled_left_list[i]+1) // One indexing
+      learn_node_right.push(compiled_right_list[i]+1) // One indexing
+
     } else {
-      learn_left.push(compiled_right_list[i])
-      learn_right.push(compiled_left_list[i])
+      learn_left.push(imageList[compiled_right_list[i]])
+      learn_right.push(imageList[compiled_left_list[i]])
+
+      learn_node_left.push(compiled_right_list[i]+1) // One indexing
+      learn_node_right.push(compiled_left_list[i]+1) // One indexing
     }
   }
-
 }
 else if (sequence == "interleaved") {
     for (i=0;i < inter_left_list.length;i++){
     switch_left_right = Math.random()
     if (switch_left_right < 0.5){
-      learn_left.push(inter_left_list[i])
-      learn_right.push(inter_right_list[i])
+      learn_left.push(imageList[inter_left_list[i]])
+      learn_right.push(imageList[inter_right_list[i]])
+
+      learn_node_left.push(inter_left_list[i]+1) // One indexing
+      learn_node_right.push(inter_right_list[i]+1) // One indexing
     } else {
-      learn_left.push(inter_right_list[i])
-      learn_right.push(inter_left_list[i])
+      learn_left.push(imageList[inter_right_list[i]])
+      learn_right.push(imageList[inter_left_list[i]])
+
+      learn_node_left.push(inter_right_list[i]+1) // One indexing
+      learn_node_right.push(inter_left_list[i]+1) // One indexing
     }
   }
 }
-
 
 //Direct Memory phase
 graph.initTriplet()
@@ -652,7 +694,6 @@ for(let i = 1;i<14;i++){
     directShort.push(shortDirectNodes)
     directFar.push(farDirectNodes)
   }
-  
 }
 
 // Generate directarr as before
@@ -728,14 +769,35 @@ let room_direct_up = [];
 let room_direct_correct = [];
 let room_direct_far = [];
 let room_direct_short = [];
+let node_direct_up = [];
+let node_direct_left = [];
+let node_direct_right = [];
+let node_direct_mid = [];
+let node_direct_correct = [];
+let distance_direct_left = [];
+let distance_direct_mid = [];
+let distance_direct_right = [];
 
 for (let i = 0; i < ordered_directarr.length; i++) {
   let idx = ordered_directarr[i];
   room_direct_up.push(imageList[directUp[idx] - 1]);
+  node_direct_up.push(directUp[idx])
+
   room_direct_left.push(imageList[directLeft[idx] - 1]);
+  node_direct_left.push(directLeft[idx])
+
   room_direct_right.push(imageList[directRight[idx] - 1]);
+  node_direct_right.push(directRight[idx])
+
   room_direct_mid.push(imageList[directMid[idx] - 1]);
+  node_direct_mid.push(directMid[idx])
+
+  distance_direct_left.push(graph.getDistanceBetween(directUp[idx], directLeft[idx]))
+  distance_direct_mid.push(graph.getDistanceBetween(directUp[idx], directMid[idx]))
+  distance_direct_right.push(graph.getDistanceBetween(directUp[idx], directRight[idx]))
+
   room_direct_correct.push(imageList[directCorrect[idx] - 1]);
+  node_direct_correct.push(directCorrect[idx])
   room_direct_short.push(imageList[directShort[idx] - 1]);
   room_direct_far.push(imageList[directFar[idx] - 1]);
 }
@@ -978,6 +1040,8 @@ let upList = [];
 let leftList = [];
 let rightList = [];
 let correctShortList = [];
+let distance_short_left = [];
+let distance_short_right = [];
 
 for (let i = 0; i < ordered_shortestarr.length; i++) {
   let trialIndex = ordered_shortestarr[i];
@@ -985,6 +1049,9 @@ for (let i = 0; i < ordered_shortestarr.length; i++) {
   leftList.push(cumulativediff[trialIndex][0]);
   rightList.push(cumulativediff[trialIndex][2]);
   correctShortList.push(cumulativeCorrect[trialIndex]);
+
+  distance_short_left.push(graph.getDistanceBetween(cumulativediff[trialIndex][1],cumulativediff[trialIndex][0]))
+  distance_short_right.push(graph.getDistanceBetween(cumulativediff[trialIndex][1],cumulativediff[trialIndex][2]))
 }
 
 // Step 4: Convert to image paths
@@ -992,6 +1059,11 @@ let room_shortest_up = upList.map(i => imageList[i - 1]);
 let room_shortest_left = leftList.map(i => imageList[i - 1]);
 let room_shortest_right = rightList.map(i => imageList[i - 1]);
 let room_shortest_correct = correctShortList.map(i => imageList[i - 1]);
+
+let shortest_node_up = upList
+let shortest_node_left = leftList
+let shortest_node_right = rightList
+let shortest_node_correct = correctShortList
 
 
 //Goal Directed Navigation:
