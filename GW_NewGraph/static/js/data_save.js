@@ -131,6 +131,23 @@ if (data_save_method == 'csv_client') {
   saveData(data_file_name, clean_data.csv())
   // Save participant data file on a server side directory via Python (only works with psiTurk)
 }  else if(data_save_method == 'csv_server_py') {
+  var all_trials = jsPsych.data.get().ignore(exclude_keys).values();
+
+  // Filter out trials where ignore is true
+  var filtered_trials = all_trials.filter(trial => trial.ignore !== true);
+
+  // Convert manually to CSV
+  function arrayToCSV(data) {
+    if (data.length === 0) return '';
+    const keys = Object.keys(data[0]);
+    const csvRows = [
+      keys.join(','), // header row
+      ...data.map(row => keys.map(k => JSON.stringify(row[k] ?? '')).join(',')) // rows
+    ];
+    return csvRows.join('\n');
+  }
+
+  var clean_csv = arrayToCSV(filtered_trials);
   $.ajax({
     type: 'POST',
     url: "../save_data_file",
@@ -139,7 +156,7 @@ if (data_save_method == 'csv_client') {
     error: callback,
     data: {
       file_name: data_file_name,
-      file_data: clean_data.csv(),
+      file_data: clean_csv,
     },
   });
 }
