@@ -83,6 +83,12 @@ var welcome = {
     data.dist_1 = NaN
     data.dist_2 = NaN
     data.dist_3 = NaN
+    data.img_l = NaN
+    data.img_c = NaN
+    data.img_r = NaN
+    data.img_1 = NaN
+    data.img_2 = NaN
+    data.img_3 = NaN
     data.trial_timestamp	= NaN
     data.choice_timestamp = NaN
     data.response_timestamp = NaN
@@ -93,6 +99,13 @@ var welcome = {
     data.stimulus = "text"
     data.edge_condition = NaN
     data.specific_pairs = NaN
+    data.problems = NaN
+    data.smooth = NaN
+    data.distraction = NaN
+    data.strategies = NaN
+    data.easier = NaN
+    data.similar = NaN
+    data.comments = NaN
     save_data()
   }
 }
@@ -1441,7 +1454,7 @@ var thank_you = {
     window.removeEventListener("beforeunload", blockUnload);
   },
   on_finish: function (data) {
-    data.trial_type = 'End';
+    data.trial_type = 'Replication';
     data.stimulus = 'text'
     data.detectfocus = detectfocus;
     jsPsych.data.get().filter({ignore: true}).ignore();
