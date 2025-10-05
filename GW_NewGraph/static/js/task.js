@@ -121,7 +121,10 @@ var too_quick={
             '<p style="color: red;font-size: 50px">The experiment will continue in 10 seconds.</p>',
   choices: jsPsych.NO_KEYS, // Prevent responses
   trial_duration: 10000, // Stay on screen for 10 seconds
-  data: {ignore: true}
+  data: {ignore: true},
+  on_finish: function(data){
+    too_quick_num +=1
+  }
 }
 
 
@@ -152,7 +155,6 @@ var directmemory_phase = {
       }, jsPsych.resumeExperiment)
       infKP = -1
       timer = 0;
-      too_quick_num += 1
     } else if ((infKP <= 4 && timer >= 4)){
       infKP = 0
       clearInterval(infINT);
@@ -1021,7 +1023,6 @@ function createPhase3(numberoftrial){
           data.response = NaN
           data.accuracy = NaN
           data.stimulus = "text"
-          data.edge_condition = NaN
           data.specific_pairs = NaN
           data.problems = NaN
           data.smooth = NaN
@@ -1140,7 +1141,6 @@ function createPhase3(numberoftrial){
           data.response = NaN
           data.accuracy = NaN
           data.stimulus = "text"
-          data.edge_condition = NaN
           data.specific_pairs = NaN
           data.problems = NaN
           data.smooth = NaN
@@ -1509,8 +1509,6 @@ var shortestpath_phase = {
     if (!part2_sfa){
       short_warning +=1
     }
-    data.edge_condition = NaN
-    data.specific_pairs = NaN
     data.problems = NaN
     data.smooth = NaN
     data.distraction = NaN
@@ -1568,13 +1566,48 @@ var end_questions = {
   on_finish: function(data) {
     data.trial_type = "Replication"
     data.stimulus = "survey"
-    data.problems = problems
+    data.problems = (problems || []).join('; ');
     data.smooth = smooth
     data.distraction  = (distraction  || "").replace(/,/g, ';');
     data.strategies   = (strategies   || "").replace(/,/g, ';');
     data.easier       = (easier       || "").replace(/,/g, ';');
     data.similar      = (similar      || "").replace(/,/g, ';');
     data.comments     = (comments     || "").replace(/,/g, ';');
+    data.trial_type = 'Replication';
+    data.stimulus = 'text'
+    data.detectfocus = detectfocus;
+    data.subject_id = useridtouse
+    data.condition = sequence
+    data.phase = 'Survey'
+    data.node_l = NaN
+    data.node_c = NaN
+    data.node_r = NaN
+    data.node_1 = NaN
+    data.node_2 = NaN
+    data.node_3 = NaN
+    data.dist_l = NaN
+    data.dist_r = NaN
+    data.dist_1 = NaN
+    data.dist_2 = NaN
+    data.dist_3 = NaN
+    data.img_l = NaN
+    data.img_c = NaN
+    data.img_r = NaN
+    data.img_1 = NaN
+    data.img_2 = NaN
+    data.img_3 = NaN
+    data.trial_timestamp	= data.time_elapsed / 1000
+    data.choice_timestamp = NaN
+    data.response_timestamp = NaN
+    data.response_delay = NaN
+    data.response_key = NaN
+    data.response = NaN
+    data.node_correct = NaN
+    data.accuracy = NaN
+    data.stimulus = "text"
+    data.edge_condition = NaN
+    data.specific_pairs = NaN
+    data.too_quick = too_quick_num
   }
 };
 
