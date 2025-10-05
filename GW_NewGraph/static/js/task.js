@@ -10,7 +10,7 @@ var short_warning = 0
 var quickKP = 0;
 var infKP = 0;
 var timer = 0;
-var too_quick = 0;
+var too_quick_num = 0;
 // Will be set to true when experiment is exiting fullscreen normally, to prevent above end experiment code
 var normal_exit = false;
 var window_height = window.screen.height;
@@ -65,6 +65,7 @@ var welcome = {
   type: 'survey-html-form',
   html: "<label for='worker_id'>Enter your Prolific Worker ID. Please make sure this is correct! </label><br><input type='text' id='worker_id' name='worker_id' required><br><br>",
   on_finish: function (data) {
+    // Data Structure //
     window.useridtouse=data.responses
     window.useridtouse = useridtouse.split('"')[3];
     subject_id=useridtouse
@@ -89,16 +90,18 @@ var welcome = {
     data.img_1 = NaN
     data.img_2 = NaN
     data.img_3 = NaN
-    data.trial_timestamp	= NaN
+    data.trial_timestamp	= data.time_elapsed / 1000
     data.choice_timestamp = NaN
     data.response_timestamp = NaN
     data.response_delay = NaN
     data.response_key = NaN
     data.response = NaN
+    data.node_correct = NaN
     data.accuracy = NaN
     data.stimulus = "text"
     data.edge_condition = NaN
     data.specific_pairs = NaN
+    data.too_quick = too_quick_num
     data.problems = NaN
     data.smooth = NaN
     data.distraction = NaN
@@ -106,6 +109,7 @@ var welcome = {
     data.easier = NaN
     data.similar = NaN
     data.comments = NaN
+    data.detectfocus = detectfocus;
     save_data()
   }
 }
@@ -117,32 +121,7 @@ var too_quick={
             '<p style="color: red;font-size: 50px">The experiment will continue in 10 seconds.</p>',
   choices: jsPsych.NO_KEYS, // Prevent responses
   trial_duration: 10000, // Stay on screen for 10 seconds
-  on_finish: function(data) {
-    data.subject_id = useridtouse
-    data.trial_type = "Replication"
-    data.condition = sequence
-    data.phase = 'Too_Quick'
-    data.node_l = NaN
-    data.node_c = NaN
-    data.node_r = NaN
-    data.node_1 = NaN
-    data.node_2 = NaN
-    data.node_3 = NaN
-    data.dist_l = NaN
-    data.dist_r = NaN
-    data.dist_1 = NaN
-    data.dist_2 = NaN
-    data.dist_3 = NaN
-    data.trial_timestamp	= NaN
-    data.choice_timestamp = NaN
-    data.response_timestamp = NaN
-    data.response_delay = NaN
-    data.response_key = NaN
-    data.response = NaN
-    data.accuracy = NaN
-    data.stimulus = "text"
-    quickKP +=1
-  }
+  data: {ignore: true}
 }
 
 
@@ -173,7 +152,7 @@ var directmemory_phase = {
       }, jsPsych.resumeExperiment)
       infKP = -1
       timer = 0;
-      too_quick += 1
+      too_quick_num += 1
     } else if ((infKP <= 4 && timer >= 4)){
       infKP = 0
       clearInterval(infINT);
@@ -221,7 +200,17 @@ var directmemory_phase = {
       data.accuracy = 0
     }
     data.stimulus = "text"
-    data.too_quick = too_quick
+    data.edge_condition = NaN
+    data.specific_pairs = NaN
+    data.too_quick = too_quick_num
+    data.problems = NaN
+    data.smooth = NaN
+    data.distraction = NaN
+    data.strategies = NaN
+    data.easier = NaN
+    data.similar = NaN
+    data.comments = NaN
+    data.detectfocus = detectfocus;
 
     // Advance Trial Num //
     curr_direct_trial=curr_direct_trial+1;
@@ -810,6 +799,7 @@ var thecrossant_break={
   stimulus:create_memory_ten('black'),
   prompt:parse("<br><br><style>body {background-color: #ffff;}</style>"),
   on_finish: function(data) {
+    // Data Structure //
     data.subject_id = useridtouse
     data.trial_type = "Replication"
     data.condition = sequence
@@ -839,8 +829,18 @@ var thecrossant_break={
     data.response = learn_kp - 1
     data.accuracy = learn_accuracy
     data.node_correct = NaN // For direct memory and judgement
-    data.too_quick = NaN // For direct memory and judgement
     data.stimulus = 'text'
+    data.edge_condition = NaN
+    data.specific_pairs = NaN
+    data.too_quick = too_quick_num
+    data.problems = NaN
+    data.smooth = NaN
+    data.distraction = NaN
+    data.strategies = NaN
+    data.easier = NaN
+    data.similar = NaN
+    data.comments = NaN
+    data.detectfocus = detectfocus;
 
     timetakenforpluswindow=removecolor
     colordetretime=colorStart()
@@ -990,9 +990,48 @@ function createPhase3(numberoftrial){
         //   });
         // },
         on_finish: function (data) {
+          // Data Structure //
           data.trial_type='Replication'
           data.phase = "Goal Directed Planning"
           data.stimulus = `GDP-${i}`
+          data.subject_id = useridtouse
+          data.condition = sequence
+          data.node_l = NaN
+          data.node_c = NaN
+          data.node_r = NaN
+          data.node_1 = NaN
+          data.node_2 = NaN
+          data.node_3 = NaN
+          data.dist_l = NaN
+          data.dist_r = NaN
+          data.dist_1 = NaN
+          data.dist_2 = NaN
+          data.dist_3 = NaN
+          data.img_l = NaN
+          data.img_c = NaN
+          data.img_r = NaN
+          data.img_1 = NaN
+          data.img_2 = NaN
+          data.img_3 = NaN
+          data.trial_timestamp	= data.time_elapsed
+          data.choice_timestamp = NaN
+          data.response_timestamp = NaN
+          data.response_delay = NaN
+          data.response_key = NaN
+          data.response = NaN
+          data.accuracy = NaN
+          data.stimulus = "text"
+          data.edge_condition = NaN
+          data.specific_pairs = NaN
+          data.problems = NaN
+          data.smooth = NaN
+          data.distraction = NaN
+          data.strategies = NaN
+          data.easier = NaN
+          data.similar = NaN
+          data.comments = NaN
+          data.detectfocus = detectfocus;
+          data.too_quick = too_quick_num
           data.imgL_ID = leftName
           data.imgR_ID = rightName
           data.linedress=''
@@ -1070,12 +1109,51 @@ function createPhase3(numberoftrial){
         //   });
         // },
         on_finish: function (data) {
+          // Data Structure // 
           data.trial_type = "Replication"
           data.phase='Goal Directed Planning'
           data.stimulus = `GDP-${i}`
+          data.subject_id = useridtouse
+          data.condition = sequence
+          data.node_l = NaN
+          data.node_c = NaN
+          data.node_r = NaN
+          data.node_1 = NaN
+          data.node_2 = NaN
+          data.node_3 = NaN
+          data.dist_l = NaN
+          data.dist_r = NaN
+          data.dist_1 = NaN
+          data.dist_2 = NaN
+          data.dist_3 = NaN
+          data.img_l = NaN
+          data.img_c = NaN
+          data.img_r = NaN
+          data.img_1 = NaN
+          data.img_2 = NaN
+          data.img_3 = NaN
+          data.trial_timestamp	= data.time_elapsed
+          data.choice_timestamp = NaN
+          data.response_timestamp = NaN
+          data.response_delay = NaN
+          data.response_key = NaN
+          data.response = NaN
+          data.accuracy = NaN
+          data.stimulus = "text"
+          data.edge_condition = NaN
+          data.specific_pairs = NaN
+          data.problems = NaN
+          data.smooth = NaN
+          data.distraction = NaN
+          data.strategies = NaN
+          data.easier = NaN
+          data.similar = NaN
+          data.comments = NaN
+          data.too_quick = too_quick_num
           data.imgL_ID = leftName
           data.imgR_ID = rightName
           data.linedress=''
+          data.detectfocus = detectfocus;
           if (detourLocationMap[i]) {
             // Safely check and log for specificline_saved
             if (specificline_saved && Object.keys(specificline_saved).length > 0) {
@@ -1173,8 +1251,47 @@ function recon_createPhase3(numberoftrial){
           save_data()
         },
         on_finish: function (data) {
+          // Data Structure //
           data.trial_type='Replication'
           data.phase='Graph Reconstruction'
+          data.subject_id = useridtouse
+          data.condition = sequence
+          data.node_l = NaN
+          data.node_c = NaN
+          data.node_r = NaN
+          data.node_1 = NaN
+          data.node_2 = NaN
+          data.node_3 = NaN
+          data.dist_l = NaN
+          data.dist_r = NaN
+          data.dist_1 = NaN
+          data.dist_2 = NaN
+          data.dist_3 = NaN
+          data.img_l = NaN
+          data.img_c = NaN
+          data.img_r = NaN
+          data.img_1 = NaN
+          data.img_2 = NaN
+          data.img_3 = NaN
+          data.trial_timestamp	= data.time_elapsed
+          data.choice_timestamp = NaN
+          data.response_timestamp = NaN
+          data.response_delay = NaN
+          data.response_key = NaN
+          data.response = NaN
+          data.accuracy = NaN
+          data.stimulus = "text"
+          data.edge_condition = NaN
+          data.specific_pairs = NaN
+          data.problems = NaN
+          data.smooth = NaN
+          data.distraction = NaN
+          data.strategies = NaN
+          data.easier = NaN
+          data.similar = NaN
+          data.comments = NaN
+          data.too_quick = too_quick_num
+          data.detectfocus = detectfocus;
           data.linedress=''
           for (const key in specificline) {
               data.linedressed += specificline[key].name+':[x1:'+specificline[key].location.x1+' x2:'+specificline[key].location.x2+' y1:'+specificline[key].location.y1+' y2:'+specificline[key].location.y2+']'
@@ -1203,8 +1320,47 @@ function recon_createPhase3(numberoftrial){
         //   });
         // },
         on_finish: function (data) {
+          // Data Structure //
           data.trial_type='Replication'
           data.phase='Goal Directed Planning'
+          data.subject_id = useridtouse
+          data.condition = sequence
+          data.node_l = NaN
+          data.node_c = NaN
+          data.node_r = NaN
+          data.node_1 = NaN
+          data.node_2 = NaN
+          data.node_3 = NaN
+          data.dist_l = NaN
+          data.dist_r = NaN
+          data.dist_1 = NaN
+          data.dist_2 = NaN
+          data.dist_3 = NaN
+          data.img_l = NaN
+          data.img_c = NaN
+          data.img_r = NaN
+          data.img_1 = NaN
+          data.img_2 = NaN
+          data.img_3 = NaN
+          data.trial_timestamp	= data.time_elapsed
+          data.choice_timestamp = NaN
+          data.response_timestamp = NaN
+          data.response_delay = NaN
+          data.response_key = NaN
+          data.response = NaN
+          data.accuracy = NaN
+          data.stimulus = "text"
+          data.edge_condition = NaN
+          data.specific_pairs = NaN
+          data.problems = NaN
+          data.smooth = NaN
+          data.distraction = NaN
+          data.strategies = NaN
+          data.easier = NaN
+          data.similar = NaN
+          data.comments = NaN
+          data.too_quick = too_quick_num
+          data.detectfocus = detectfocus;
           data.linedress=''
           for (const key in specificline) {
               data.linedressed += specificline[key].name+':[x1:'+specificline[key].location.x1+' x2:'+specificline[key].location.x2+' y1:'+specificline[key].location.y1+' y2:'+specificline[key].location.y2+']'
@@ -1310,7 +1466,7 @@ var shortestpath_phase = {
         timeline: [too_quick],
         }, jsPsych.resumeExperiment)
     }
-
+    // Data Structure //
     data.subject_id = useridtouse
     data.trial_type = "Replication"
     data.condition = sequence
@@ -1346,12 +1502,22 @@ var shortestpath_phase = {
       data.accuracy = 0
     }
     data.stimulus = "text"
-    data.too_quick = too_quick
+    data.too_quick = too_quick_num
+    data.detectfocus = detectfocus;
 
     part2_sfa=data.key_press
     if (!part2_sfa){
       short_warning +=1
     }
+    data.edge_condition = NaN
+    data.specific_pairs = NaN
+    data.problems = NaN
+    data.smooth = NaN
+    data.distraction = NaN
+    data.strategies = NaN
+    data.easier = NaN
+    data.similar = NaN
+    data.comments = NaN
     curr_shortest_trial=curr_shortest_trial+1
     shortestpath_phase.stimulus=create_shortestpath_trial(room_shortest_up,room_shortest_left,room_shortest_right,curr_shortest_trial)
     attentioncheck(shortestpath_phase,part2_sfa,curr_shortest_trial,n_shortest_trial,intro_mem,phase='short')
@@ -1454,8 +1620,50 @@ var thank_you = {
     window.removeEventListener("beforeunload", blockUnload);
   },
   on_finish: function (data) {
+    // Data Structure
     data.trial_type = 'Replication';
     data.stimulus = 'text'
+    data.detectfocus = detectfocus;
+    data.subject_id = useridtouse
+    data.trial_type = "Replication"
+    data.condition = sequence
+    data.phase = 'End'
+    data.node_l = NaN
+    data.node_c = NaN
+    data.node_r = NaN
+    data.node_1 = NaN
+    data.node_2 = NaN
+    data.node_3 = NaN
+    data.dist_l = NaN
+    data.dist_r = NaN
+    data.dist_1 = NaN
+    data.dist_2 = NaN
+    data.dist_3 = NaN
+    data.img_l = NaN
+    data.img_c = NaN
+    data.img_r = NaN
+    data.img_1 = NaN
+    data.img_2 = NaN
+    data.img_3 = NaN
+    data.trial_timestamp	= data.time_elapsed / 1000
+    data.choice_timestamp = NaN
+    data.response_timestamp = NaN
+    data.response_delay = NaN
+    data.response_key = NaN
+    data.response = NaN
+    data.node_correct = NaN
+    data.accuracy = NaN
+    data.stimulus = "text"
+    data.edge_condition = NaN
+    data.specific_pairs = NaN
+    data.too_quick = too_quick_num
+    data.problems = NaN
+    data.smooth = NaN
+    data.distraction = NaN
+    data.strategies = NaN
+    data.easier = NaN
+    data.similar = NaN
+    data.comments = NaN
     data.detectfocus = detectfocus;
     jsPsych.data.get().filter({ignore: true}).ignore();
     save_data(true)
