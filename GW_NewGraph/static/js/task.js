@@ -1021,6 +1021,7 @@ function createPhase3(numberoftrial){
           data.response_delay = NaN
           data.response_key = NaN
           data.response = NaN
+          data.node_correct = NaN
           data.accuracy = NaN
           data.stimulus = "text"
           data.specific_pairs = NaN
@@ -1139,6 +1140,7 @@ function createPhase3(numberoftrial){
           data.response_delay = NaN
           data.response_key = NaN
           data.response = NaN
+          data.node_correct = NaN
           data.accuracy = NaN
           data.stimulus = "text"
           data.specific_pairs = NaN
@@ -1279,6 +1281,7 @@ function recon_createPhase3(numberoftrial){
           data.response_delay = NaN
           data.response_key = NaN
           data.response = NaN
+          data.node_correct = NaN
           data.accuracy = NaN
           data.stimulus = "text"
           data.edge_condition = NaN
@@ -1348,6 +1351,7 @@ function recon_createPhase3(numberoftrial){
           data.response_delay = NaN
           data.response_key = NaN
           data.response = NaN
+          data.node_correct = NaN
           data.accuracy = NaN
           data.stimulus = "text"
           data.edge_condition = NaN
@@ -1653,7 +1657,7 @@ var thank_you = {
     window.removeEventListener("beforeunload", blockUnload);
   },
   on_finish: function (data) {
-    // Data Structure
+    // Data Structure //
     data.trial_type = 'Replication';
     data.stimulus = 'text'
     data.detectfocus = detectfocus;
