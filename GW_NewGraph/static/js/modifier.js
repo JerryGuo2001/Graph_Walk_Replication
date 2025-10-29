@@ -149,7 +149,7 @@ let survey_questions = `
 
 //learning phse
 
-let unshuffled_imageList=['GW/westpalmbeach.png','GW/newhope.png','GW/boulder.png','GW/peoria.png','GW/gatlinburg.png','GW/shreveport.png','GW/hotsprings.png','GW/carmel.png','GW/huntsville.png','GW/racine.png','GW/leesburg.png','GW/cornwall.png','GW/hanover.png']
+let unshuffled_imageList=['GW/Buffalo.png','GW/Cactus.png','GW/Canoe.png','GW/Wheel.png','GW/Fish.png','GW/Football.png','GW/Leaf.png','GW/Pool.png','GW/Potato.png','GW/Ship.png','GW/Skis.png','GW/Train.png','GW/Tree.png']
 let imageList = []
 
 function shuffle(array) {
