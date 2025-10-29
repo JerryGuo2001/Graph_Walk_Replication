@@ -470,11 +470,12 @@ function initiatep3() {
     logAction('start_trial');
   }
 
-  if (detourLocationMap[goalIndex]) {
+  if (detourLocationMap[goalIndex] !== null && detourLocationMap[goalIndex] !== undefined) {
     goal_detor_deter = true;
   } else {
     goal_detor_deter = false;
   }
+
 
   makeVisible();
   continueButton();
