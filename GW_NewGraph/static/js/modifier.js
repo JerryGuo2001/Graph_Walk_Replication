@@ -2,7 +2,7 @@
 // if (Math.random()>=0.5){
 //   sequence = "blocked"
 // }else{sequence = "interleaved"}
-sequence = "blocked"
+sequence = "interleaved"
 //debug moode on/off
 debugmode= true
 if (debugmode==true){
