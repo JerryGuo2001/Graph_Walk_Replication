@@ -1215,13 +1215,15 @@ function createPhase3(numberoftrial){
 
             data.detour_trial = false;
           }
-          if (goaldirIndex[numberoftrial] < twoEdgePair.length){
+          if (goaldirIndex[i] < twoEdgePair.length) {
+            data.edge_condition = 'Two Edge Diff'
+          } else if (goaldirIndex[i] < twoEdgePair.length + threeEdgePair.length) {
             data.edge_condition = 'Three Edge Diff'
-          } else if (goaldirIndex[numberoftrial] >= twoEdgePair.length && goaldirIndex[numberoftrial] < twoEdgePair.length + threeEdgePair.length){
+          } else if (goaldirIndex[i] < twoEdgePair.length + threeEdgePair.length + fourEdgePair.length) {
             data.edge_condition = 'Four Edge Diff'
-          } else if (goaldirIndex[numberoftrial] >=twoEdgePair.length + threeEdgePair.length &&  goaldirIndex[numberoftrial] < twoEdgePair.length + threeEdgePair.length + fourEdgePair.length){
+          } else if (goaldirIndex[i] < twoEdgePair.length + threeEdgePair.length + fourEdgePair.length + fiveEdgePair.length) {
             data.edge_condition = 'Five Edge Diff'
-          }else if (goaldirIndex[numberoftrial] >= threeEdgePair.length + fourEdgePair.length + fiveEdgePair.length+twoEdgePair.length){
+          } else {
             data.edge_condition = 'Six Edge Diff'
           }
           gdp_init(),
@@ -1342,13 +1344,15 @@ function createPhase3(numberoftrial){
             data.detour_trial = false;
           }
           
-          if (goaldirIndex[numberoftrial] < twoEdgePair.length){
+          if (goaldirIndex[i] < twoEdgePair.length) {
+            data.edge_condition = 'Two Edge Diff'
+          } else if (goaldirIndex[i] < twoEdgePair.length + threeEdgePair.length) {
             data.edge_condition = 'Three Edge Diff'
-          } else if (goaldirIndex[numberoftrial] >= twoEdgePair.length && goaldirIndex[numberoftrial] < twoEdgePair.length + threeEdgePair.length){
+          } else if (goaldirIndex[i] < twoEdgePair.length + threeEdgePair.length + fourEdgePair.length) {
             data.edge_condition = 'Four Edge Diff'
-          } else if (goaldirIndex[numberoftrial] >=twoEdgePair.length + threeEdgePair.length &&  goaldirIndex[numberoftrial] < twoEdgePair.length + threeEdgePair.length + fourEdgePair.length){
+          } else if (goaldirIndex[i] < twoEdgePair.length + threeEdgePair.length + fourEdgePair.length + fiveEdgePair.length) {
             data.edge_condition = 'Five Edge Diff'
-          }else if (goaldirIndex[numberoftrial] >= threeEdgePair.length + fourEdgePair.length + fiveEdgePair.length+twoEdgePair.length){
+          } else {
             data.edge_condition = 'Six Edge Diff'
           }
           gdp_init(),
