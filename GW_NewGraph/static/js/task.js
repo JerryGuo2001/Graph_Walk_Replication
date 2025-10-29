@@ -101,6 +101,14 @@ var welcome = {
     data.stimulus = "text"
     data.edge_condition = NaN
     data.specific_pairs = NaN
+    data.GDP_response= NaN
+    data.GDP_response_detour =NaN
+    data.GDP_action= NaN
+    data.GDP_action_detour = NaN
+    data.detour_type = NaN
+    data.blocked_city= NaN
+    data.Recon_response= NaN
+    data.Recon_action= NaN
     data.too_quick = too_quick_num
     data.problems = NaN
     data.smooth = NaN
@@ -371,6 +379,88 @@ function create_instruct(instruct,instructnames,instruction_number,prac_attentio
   }
   return intro_learn
 }
+
+//specific action recorder
+
+// ===== Pack/unpack full action log as a single string =====
+
+// Turn the full actions array into one storable string (keeps original order)
+// 1) Get a compact JSON string of the whole actions array
+function actionsToJSONString(actions) {
+  if (!Array.isArray(actions) || actions.length === 0) return "[]";
+  // No spaces/newlines so it’s compact and CSV-friendly
+  return JSON.stringify(actions);
+}
+
+// 2) Append into your existing var (keeps previous trials using " || " as delimiter)
+function appendActionsJSON(existing, actions) {
+  const json = actionsToJSONString(actions);
+  return (existing && existing.length) ? `${existing} || ${json}` : json;
+}
+
+// Recover an array of trials, each trial is the original actions array
+function unpackAllActionsPacked(stored) {
+  if (typeof stored !== "string" || !stored.trim()) return [];
+  return stored
+    .split(" || ")
+    .filter(Boolean)
+    .map(s => {
+      const payload = s.includes(":") ? s.slice(s.indexOf(":") + 1) : s;
+      const json = decodeURIComponent(escape(atob(payload)));
+      return JSON.parse(json); // -> original action array
+    });
+}
+
+//specific action recorder end.
+
+
+//Specific line recorder
+// ---------- paste these helpers once ----------
+function _fmtNum(v) {
+  return (typeof v === "number") ? Number(v.toFixed(2)) : v;
+}
+function _fmtLoc(loc) {
+  if (!loc) return "";
+  const { x1, y1, x2, y2 } = loc;
+  return ` [x1:${_fmtNum(x1)} y1:${_fmtNum(y1)} x2:${_fmtNum(x2)} y2:${_fmtNum(y2)}]`;
+}
+function _asStrName(name) {
+  // Old: string. New: array like ['imgLdrag09']
+  if (Array.isArray(name)) return name.join("|");
+  return name == null ? "" : String(name);
+}
+function _joinArr(label, arr) {
+  // Only show when array exists and is non-empty
+  if (!Array.isArray(arr) || arr.length === 0) return "";
+  return ` {${label}:${arr.join("->")}}`;
+}
+function _serializeLine(lineObj) {
+  // Works for both old and new shapes
+  const name = _asStrName(lineObj.name);
+  const cities = _joinArr("cities", lineObj.cities);
+  const ids = _joinArr("ids", lineObj.ids);
+  const loc = _fmtLoc(lineObj.location);
+  return `${name}${cities}${ids}${loc}`;
+}
+
+/**
+ * Append serialized specific lines to an existing string.
+ * - Keeps old behavior if only {name, location} exist.
+ * - Adds {cities:...} and {ids:...} when present (new schema).
+ * - Preserves numeric-key order (0,1,2,...).
+ *
+ * @param {string} existing - existing string (e.g., data.GDP_response_detour)
+ * @param {object} linesObj - e.g., specificline
+ * @returns {string} updated string
+ */
+function appendSpecificLines(existing, linesObj) {
+  if (!linesObj || Object.keys(linesObj).length === 0) return existing || "";
+  const parts = [];
+  const keys = Object.keys(linesObj).sort((a, b) => Number(a) - Number(b));
+  for (const k of keys) parts.push(_serializeLine(linesObj[k]));
+  return (existing ? existing + " ; " : "") + parts.join(" ; ");
+}
+//specific line recorder end
 
 
   //practice attention check
@@ -1040,47 +1130,57 @@ function createPhase3(numberoftrial){
           if (detourLocationMap[i]) {
             // Safely check and log for specificline_saved
             if (specificline_saved && Object.keys(specificline_saved).length > 0) {
-              for (const key in specificline_saved) {
-                data.linedressed += specificline_saved[key].name + 
-                  ':[x1:' + specificline_saved[key].location.x1 + 
-                  ' x2:' + specificline_saved[key].location.x2 + 
-                  ' y1:' + specificline_saved[key].location.y1 + 
-                  ' y2:' + specificline_saved[key].location.y2 + ']';
-              }
+              data.GDP_response = data.GDP_response || "";
+              data.GDP_response = (appendSpecificLines(data.GDP_response, specificline_saved)|| "").replace(/,/g, ';');
+              console.log(data.GDP_response)
             } else {
               console.log(`specificline_saved is empty or undefined in trial ${i}`);
             }
-          
-            // Safely check and log for specificline
-            if (specificline && Object.keys(specificline).length > 0) {
-              for (const key in specificline) {
-                data.linedressed_detor += specificline[key].name + 
-                  ':[x1:' + specificline[key].location.x1 + 
-                  ' x2:' + specificline[key].location.x2 + 
-                  ' y1:' + specificline[key].location.y1 + 
-                  ' y2:' + specificline[key].location.y2 + ']';
-              }
+
+            if (action_phase3 && Object.keys(action_phase3).length > 0) {
+              data.GDP_action = (appendActionsJSON(data.GDP_action || "", action_phase3)|| "").replace(/,/g, ';');
+              console.log(data.GDP_action);
             } else {
-              console.log(`specificline is empty or undefined in trial ${i}`);
+              console.log(`action_phase3 is empty or undefined in trial ${i}`);
             }
-          
+
+            // Safely check and log for specificline
+            if (specificline_detour && Object.keys(specificline_detour).length > 0) {
+              data.GDP_response_detour = data.GDP_response_detour || "";
+              data.GDP_response_detour = (appendSpecificLines(data.GDP_response_detour, specificline_detour)|| "").replace(/,/g, ';');
+              console.log(data.GDP_response_detour)
+            } else {
+              console.log(`specificline_detour is empty or undefined in trial ${i}`);
+            }
+
+            if (action_phase3_detour && Object.keys(action_phase3_detour).length > 0) {
+              data.GDP_action_detour = (appendActionsJSON(data.GDP_action_detour || "", action_phase3_detour)|| "").replace(/,/g, ';');
+              console.log(data.GDP_action_detour);
+            } else {
+              console.log(`action detour is empty or undefined in trial ${i}`);
+            }
+            data.detour_type= detour_info.type
+            data.blocked_city= detour_info.hiddenCity
             data.detour_trial = true;
             console.log(`Trial ${i} is a detour trial`);
             
           } else {
             // Safely check and log for specificline
             if (specificline && Object.keys(specificline).length > 0) {
-              for (const key in specificline) {
-                data.linedressed += specificline[key].name + 
-                  ':[x1:' + specificline[key].location.x1 + 
-                  ' x2:' + specificline[key].location.x2 + 
-                  ' y1:' + specificline[key].location.y1 + 
-                  ' y2:' + specificline[key].location.y2 + ']';
-              }
+              data.GDP_response = data.GDP_response || "";
+              data.GDP_response = (appendSpecificLines(data.GDP_response, specificline)|| "").replace(/,/g, ';');
+              console.log(data.GDP_response)
             } else {
               console.log(`specificline is empty or undefined in trial ${i}`);
             }
-          
+
+            if (action_phase3 && Object.keys(action_phase3).length > 0) {
+              data.GDP_action = (appendActionsJSON(data.GDP_action || "", action_phase3)|| "").replace(/,/g, ';');
+              console.log(data.GDP_action);
+            } else {
+              console.log(`action_phase3 is empty or undefined in trial ${i}`);
+            }
+
             data.detour_trial = false;
           }
           if (goaldirIndex[numberoftrial] < twoEdgePair.length){
@@ -1158,48 +1258,55 @@ function createPhase3(numberoftrial){
           data.detectfocus = detectfocus;
           if (detourLocationMap[i]) {
             // Safely check and log for specificline_saved
+            if (specificline_detour && Object.keys(specificline_detour).length > 0) {
+              data.GDP_response_detour = data.GDP_response_detour || "";
+              data.GDP_response_detour = (appendSpecificLines(data.GDP_response_detour, specificline_detour)|| "").replace(/,/g, ';');
+            } else {
+              console.log(`specificline_detour is empty or undefined in trial ${i}`);
+            }
+
+            if (action_phase3 && Object.keys(action_phase3).length > 0) {
+              data.GDP_action = (appendActionsJSON(data.GDP_action || "", action_phase3)|| "").replace(/,/g, ';');
+              console.log(data.GDP_action);
+            } else {
+              console.log(`action_phase3 is empty or undefined in trial ${i}`);
+            }
+
+            // Safely check and log for specificline
             if (specificline_saved && Object.keys(specificline_saved).length > 0) {
-              for (const key in specificline_saved) {
-                data.linedressed += specificline_saved[key].name + 
-                  ':[x1:' + specificline_saved[key].location.x1 + 
-                  ' x2:' + specificline_saved[key].location.x2 + 
-                  ' y1:' + specificline_saved[key].location.y1 + 
-                  ' y2:' + specificline_saved[key].location.y2 + ']';
-              }
+              data.GDP_response = data.GDP_response || "";
+              data.GDP_response = (appendSpecificLines(data.GDP_response, specificline_saved)|| "").replace(/,/g, ';');
             } else {
               console.log(`specificline_saved is empty or undefined in trial ${i}`);
             }
-          
-            // Safely check and log for specificline
-            if (specificline && Object.keys(specificline).length > 0) {
-              for (const key in specificline) {
-                data.linedressed_detor += specificline[key].name + 
-                  ':[x1:' + specificline[key].location.x1 + 
-                  ' x2:' + specificline[key].location.x2 + 
-                  ' y1:' + specificline[key].location.y1 + 
-                  ' y2:' + specificline[key].location.y2 + ']';
-              }
+
+            if (action_phase3_detour && Object.keys(action_phase3_detour).length > 0) {
+              data.GDP_action_detour = (appendActionsJSON(data.GDP_action_detour || "", action_phase3_detour)|| "").replace(/,/g, ';');
+              console.log(data.GDP_action_detour);
             } else {
-              console.log(`specificline is empty or undefined in trial ${i}`);
+              console.log(`action detour is empty or undefined in trial ${i}`);
             }
-          
+
+            data.detour_type= detour_info.type
+            data.blocked_city= detour_info.hiddenCity
             data.detour_trial = true;
             console.log(`Trial ${i} is a detour trial`);
-            
           } else {
             // Safely check and log for specificline
             if (specificline && Object.keys(specificline).length > 0) {
-              for (const key in specificline) {
-                data.linedressed += specificline[key].name + 
-                  ':[x1:' + specificline[key].location.x1 + 
-                  ' x2:' + specificline[key].location.x2 + 
-                  ' y1:' + specificline[key].location.y1 + 
-                  ' y2:' + specificline[key].location.y2 + ']';
-              }
+              data.GDP_response = data.GDP_response || "";
+              data.GDP_response = (appendSpecificLines(data.GDP_response, specificline)|| "").replace(/,/g, ';');
             } else {
               console.log(`specificline is empty or undefined in trial ${i}`);
             }
-          
+
+            if (action_phase3 && Object.keys(action_phase3).length > 0) {
+              data.GDP_action = (appendActionsJSON(data.GDP_action || "", action_phase3)|| "").replace(/,/g, ';');
+              console.log(data.GDP_action);
+            } else {
+              console.log(`action_phase3 is empty or undefined in trial ${i}`);
+            }
+
             data.detour_trial = false;
           }
           
@@ -1296,9 +1403,11 @@ function recon_createPhase3(numberoftrial){
           data.too_quick = too_quick_num
           data.detectfocus = detectfocus;
           data.linedress=''
-          for (const key in specificline) {
-              data.linedressed += specificline[key].name+':[x1:'+specificline[key].location.x1+' x2:'+specificline[key].location.x2+' y1:'+specificline[key].location.y1+' y2:'+specificline[key].location.y2+']'
-          }
+          data.Recon_response = data.Recon_response || "";
+          data.Recon_response = (appendSpecificLines(data.Recon_response, specificline)|| "").replace(/,/g, ';');
+          data.Recon_action = (appendActionsJSON(data.Recon_action || "", action_recon)|| "").replace(/,/g, ';');
+          console.log(data.Recon_action);
+          console.log(data.Recon_response)
           // if (goaldirIndex[numberoftrial] < threeEdgePair.length){
           //   data.condition = 'Three Edge Diff'
           // } else if (goaldirIndex[numberoftrial] >= threeEdgePair.length && goaldirIndex[numberoftrial] < threeEdgePair.length + fourEdgePair.length){
@@ -1366,9 +1475,11 @@ function recon_createPhase3(numberoftrial){
           data.too_quick = too_quick_num
           data.detectfocus = detectfocus;
           data.linedress=''
-          for (const key in specificline) {
-              data.linedressed += specificline[key].name+':[x1:'+specificline[key].location.x1+' x2:'+specificline[key].location.x2+' y1:'+specificline[key].location.y1+' y2:'+specificline[key].location.y2+']'
-          }
+          data.Recon_response = data.Recon_response || "";
+          data.Recon_response = (appendSpecificLines(data.Recon_response, specificline)|| "").replace(/,/g, ';');
+          data.Recon_action = (appendActionsJSON(data.Recon_action || "", action_recon)|| "").replace(/,/g, ';');
+          console.log(data.Recon_action);
+          console.log(data.Recon_response)
           recon_init(),
           jsPsych.addNodeToEndOfTimeline({
             timeline: [recon_phase3[i+1]],
@@ -1718,8 +1829,9 @@ let intro_prac2_learn=create_instruct(instructprac2,instructprac2names,prac2_num
 
 //time line here
 timeline.push(welcome,enterFullscreen)
-timeline.push(intro_learn)
+// timeline.push(intro_learn)
 //debug
+timeline.push(phase3[0])
 // timelinepushintro(intro_learn,instructnames)
 // timeline.push(prac_attentioncheck_blackplus)
 // timeline.push(learn_phase)
