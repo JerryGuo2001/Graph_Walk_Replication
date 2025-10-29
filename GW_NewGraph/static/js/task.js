@@ -32,24 +32,40 @@ function blockUnload(event) {
 document.addEventListener("keydown", blockRefresh);
 window.addEventListener("beforeunload", blockUnload);
 
-//this is to test if the user leave the webpage
-var detectfocus=0
-var isinfocus=1
-document.addEventListener('mouseleave', e=>{
-  detectfocus=detectfocus+1
-  isinfocus=0
-  //this is to see if user are focus or not
-})
-document.addEventListener('visibilitychange', e=>{
-   if (document.visibilityState === 'visible') {
- //report that user is in focus
- isinfocus=1
+var detectfocus = 0;
+var isinfocus = true;
+
+// Helper function to handle loss of focus
+function handleBlur() {
+  if (isinfocus) {       // Only increment if user was previously in focus
+    detectfocus += 1;
+    isinfocus = false;
+    console.log("User left page and is in console. Will check for suspicious data");
+    console.log("Return the task or you will be rejected");
+  }
+}
+
+// Helper function to handle regaining focus
+function handleFocus() {
+  if (!isinfocus) {
+    isinfocus = true;
+  }
+}
+
+// Tab visibility changes
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') {
+    handleBlur();
   } else {
-  detectfocus=detectfocus+1
-  isinfocus=0
-  //this is to see if user are focus or not
-  }  
-})
+    handleFocus();
+  }
+});
+
+// Mouse leaves window
+document.addEventListener('mouseleave', handleBlur);
+
+// Optional: mouse re-enters window
+document.addEventListener('mouseenter', handleFocus);
 
 // Randomly generate an 8-character alphanumeric subject ID via jsPsych
 var subject_id = jsPsych.randomization.randomID(8);
@@ -1656,6 +1672,14 @@ var shortestpath_phase = {
     if (!part2_sfa){
       short_warning +=1
     }
+    data.GDP_response= NaN
+    data.GDP_response_detour =NaN
+    data.GDP_action= NaN
+    data.GDP_action_detour = NaN
+    data.detour_type = NaN
+    data.blocked_city= NaN
+    data.Recon_response= NaN
+    data.Recon_action= NaN
     data.problems = NaN
     data.smooth = NaN
     data.distraction = NaN
