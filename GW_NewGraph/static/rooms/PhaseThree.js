@@ -507,7 +507,6 @@ function initiatep3() {
   sideElement(document.getElementById('imgR'));
   goalIndex++;
 }
-window.initiatep3 = initiatep3;
 
 // ---------------------------------------------
 // City-name resolver (readable edges)
