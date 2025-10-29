@@ -1192,7 +1192,7 @@ function createPhase3(numberoftrial){
               console.log(`action detour is empty or undefined in trial ${i}`);
             }
             data.detour_type= detour_info.type
-            data.blocked_img= detour_info.hiddenimg
+            data.blocked_img= detour_info.hiddenCity
             data.detour_trial = true;
             console.log(`Trial ${i} is a detour trial`);
             
@@ -1229,7 +1229,7 @@ function createPhase3(numberoftrial){
             timeline: [intro_graph],
           }, jsPsych.resumeExperiment)
           specificline_saved={};
-          detourimg_name=[];
+          detourcity_name=[];
         }
       }
     }else{
@@ -1320,7 +1320,7 @@ function createPhase3(numberoftrial){
             }
 
             data.detour_type= detour_info.type
-            data.blocked_img= detour_info.hiddenimg
+            data.blocked_img= detour_info.hiddenCity
             data.detour_trial = true;
             console.log(`Trial ${i} is a detour trial`);
           } else {
@@ -1361,7 +1361,7 @@ function createPhase3(numberoftrial){
             timeline: [phase3[i+1]],
           }, jsPsych.resumeExperiment)
           specificline_saved={};
-          detourimg_name=[];
+          detourcity_name=[];
         }
       }
     }
