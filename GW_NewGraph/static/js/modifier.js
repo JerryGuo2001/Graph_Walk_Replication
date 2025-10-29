@@ -1282,13 +1282,13 @@ var randomDelay = Math.floor(Math.random() * (2500 - 100 + 1)) + 100;
 
 
 //detour Map
-const detourLocationMap = {};
+const valueToPos = new Map(goaldirIndex.map((v, i) => [v, i]));
 
-goaldirIndex.forEach(index => {
-  const pos = detour_Sequence.indexOf(index);
-  if (pos !== -1) {
-    detourLocationMap[index] = pos;
-  } else {
-    detourLocationMap[index] = null; // or -1 if you prefer
-  }
-});
+// Position-indexed map: position in goaldirIndex -> detour value (or null)
+const detourLocationMap = Array(goaldirIndex.length).fill(null);
+
+for (const d of detour_Sequence) {
+  const pos = valueToPos.get(d);
+  if (pos !== undefined) detourLocationMap[pos] = d;
+}
+
