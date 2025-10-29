@@ -532,7 +532,7 @@ function drawLine(img1, img2) {
   // block direct L<->R
   if ((img1.id === 'imgL' && img2.id === 'imgR') || (img1.id === 'imgR' && img2.id === 'imgL')) {
     logAction('invalid_direct_connection_attempt', { a: img1.id, b: img2.id });
-    showWarning("There is no direct flight between these cities. Pick at least one in-between city to start with.");
+    showWarning("There is no direct connection between these cities. Pick at least one in-between city to start with.");
     return;
   }
 

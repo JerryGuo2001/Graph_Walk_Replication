@@ -122,7 +122,7 @@ var welcome = {
     data.GDP_action= NaN
     data.GDP_action_detour = NaN
     data.detour_type = NaN
-    data.blocked_city= NaN
+    data.blocked_img= NaN
     data.Recon_response= NaN
     data.Recon_action= NaN
     data.too_quick = too_quick_num
@@ -233,7 +233,7 @@ var directmemory_phase = {
     data.GDP_action= NaN
     data.GDP_action_detour = NaN
     data.detour_type = NaN
-    data.blocked_city= NaN
+    data.blocked_img= NaN
     data.Recon_response= NaN
     data.Recon_action= NaN
     data.too_quick = too_quick_num
@@ -953,7 +953,7 @@ var thecrossant_break={
     data.GDP_action= NaN
     data.GDP_action_detour = NaN
     data.detour_type = NaN
-    data.blocked_city= NaN
+    data.blocked_img= NaN
     data.Recon_response= NaN
     data.Recon_action= NaN
     data.too_quick = too_quick_num
@@ -1036,7 +1036,7 @@ learn_phase_break = {
       stimulus:  `
         <div id="break-container" style="font-size: 24px; max-width: 800px; margin: auto; text-align: center;">
           <p><strong>Please take a short (up to 60 seconds) break.</strong></p>
-          <p>Use this time to stretch and reset. After the break, you will continue to learn more flights.</p>
+          <p>Use this time to stretch and reset. After the break, you will continue to learn more pairings.</p>
           <p>If you would like to resume without a break, press the <strong>spacebar</strong>.</p>
           <p>Otherwise, the screen will advance automatically after 60 seconds.</p><br><br><br>
           <p><strong>Time remaining: <span id="countdown">60</span> seconds</strong></p>
@@ -1192,7 +1192,7 @@ function createPhase3(numberoftrial){
               console.log(`action detour is empty or undefined in trial ${i}`);
             }
             data.detour_type= detour_info.type
-            data.blocked_city= detour_info.hiddenCity
+            data.blocked_img= detour_info.hiddenimg
             data.detour_trial = true;
             console.log(`Trial ${i} is a detour trial`);
             
@@ -1229,7 +1229,7 @@ function createPhase3(numberoftrial){
             timeline: [intro_graph],
           }, jsPsych.resumeExperiment)
           specificline_saved={};
-          detourcity_name=[];
+          detourimg_name=[];
         }
       }
     }else{
@@ -1320,7 +1320,7 @@ function createPhase3(numberoftrial){
             }
 
             data.detour_type= detour_info.type
-            data.blocked_city= detour_info.hiddenCity
+            data.blocked_img= detour_info.hiddenimg
             data.detour_trial = true;
             console.log(`Trial ${i} is a detour trial`);
           } else {
@@ -1352,16 +1352,16 @@ function createPhase3(numberoftrial){
             data.edge_condition = 'Six Edge Diff'
           }
           gdp_init(),
-          phase3[i+1].stimulus = `<div id='displayhelp' style='display:none'><p>Click and drag the locations to the gray box to make your flight plans`
-            +`<br /> you can 'book' flights by clicking on the two cities in order <br> You can remove flights by clicking on a city and clicking the return arrow on the bottom right of the gray box <br> once you are finished, press the 'submit' button to book the next client</p></div><button id='batman' style='display: block;margin: 0 auto;padding: 10px 20px;background-color: #4CAF50;color: black;border: none;border-radius: 8px;font-size: 16px;cursor: pointer;box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);transition: background-color 0.3s ease;', onclick='initiatep3()'>Click to start</button><div id='spiderman' style='display: none;'><button id='nextButton' style='display: block; padding: 10px 20px; background-color: #4CAF50; color: black; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); transition: background-color 0.3s ease;'>Submit</button>`
-            +`<div id='Phase3Body'><br><div id='div2'  style='width: 700px; margin: 0 auto; position: relative; bottom: 10%; border: 1px solid #aaaaaa;'><img id='drag01' src='../static/images/${imageList[0]}' alt='Aliance'width='100' height='120' draggable='true' ondragstart='drag(event)'><img id='drag02' src='../static/images/${imageList[1]}' alt='Boulder'width='100' height='120' draggable='true' ondragstart='drag(event)'><img id='drag03' src='../static/images/${imageList[2]}' alt='Cornwall'width='100' height='120' draggable='true' ondragstart='drag(event)'><img id='drag04' src='../static/images/${imageList[3]}' alt='Custer'width='100' height='120' draggable='true' ondragstart='drag(event)'><img id='drag05' src='../static/images/${imageList[4]}' alt='DelawareCity'width='100' height='120' draggable='true' ondragstart='drag(event)'><img id='drag06' src='../static/images/${imageList[5]}' alt='Medora'width='100' height='120' draggable='true' ondragstart='drag(event)'><img id='drag07' src='../static/images/${imageList[6]}' alt='Newport'width='100' height='120' draggable='true' ondragstart='drag(event)'><img id='drag08' src='../static/images/${imageList[7]}' alt='ParkCity'width='100' height='120' draggable='true' ondragstart='drag(event)'><img id='drag09' src='../static/images/${imageList[8]}' alt='Racine'width='100' height='120' draggable='true' ondragstart='drag(event)'><img id='drag10' src='../static/images/${imageList[9]}' alt='Sitka'width='100' height='120' draggable='true' ondragstart='drag(event)'><img id='drag11' src='../static/images/${imageList[10]}' alt='WestPalmBeach'width='100' height='120' draggable='true' ondragstart='drag(event)'><img id='drag12' src='../static/images/${imageList[11]}' alt='Yukon'width='100' height='120' draggable='true' ondragstart='drag(event)'>`
+          phase3[i+1].stimulus = `<div id='displayhelp' style='display:none'><p>Click and drag the images from the top that you wish to place in the gray container when creating your full path.`
+            +`<br /> Then, click on each of the two images to connect them. <br> You can remove connections by clicking on an image and clicking the return arrow on the bottom right of the gray box <br> once you are finished, press the 'submit' button to move on to the next trial.</p></div><button id='batman' style='display: block;margin: 0 auto;padding: 10px 20px;background-color: #4CAF50;color: black;border: none;border-radius: 8px;font-size: 16px;cursor: pointer;box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);transition: background-color 0.3s ease;', onclick='initiatep3()'>Click to start</button><div id='spiderman' style='display: none;'><button id='nextButton' style='display: block; padding: 10px 20px; background-color: #4CAF50; color: black; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); transition: background-color 0.3s ease;'>Submit</button>`
+            +`<div id='Phase3Body'><br><div id='div2'  style='width: 700px; margin: 0 auto; position: relative; bottom: 10%; border: 1px solid #aaaaaa;'><img id='drag01' src='../static/images/${imageList[0]}' alt='Aliance'width='100' height='120' draggable='true' ondragstart='drag(event)'><img id='drag02' src='../static/images/${imageList[1]}' alt='Boulder'width='100' height='120' draggable='true' ondragstart='drag(event)'><img id='drag03' src='../static/images/${imageList[2]}' alt='Cornwall'width='100' height='120' draggable='true' ondragstart='drag(event)'><img id='drag04' src='../static/images/${imageList[3]}' alt='Custer'width='100' height='120' draggable='true' ondragstart='drag(event)'><img id='drag05' src='../static/images/${imageList[4]}' alt='Delawareimg'width='100' height='120' draggable='true' ondragstart='drag(event)'><img id='drag06' src='../static/images/${imageList[5]}' alt='Medora'width='100' height='120' draggable='true' ondragstart='drag(event)'><img id='drag07' src='../static/images/${imageList[6]}' alt='Newport'width='100' height='120' draggable='true' ondragstart='drag(event)'><img id='drag08' src='../static/images/${imageList[7]}' alt='Parkimg'width='100' height='120' draggable='true' ondragstart='drag(event)'><img id='drag09' src='../static/images/${imageList[8]}' alt='Racine'width='100' height='120' draggable='true' ondragstart='drag(event)'><img id='drag10' src='../static/images/${imageList[9]}' alt='Sitka'width='100' height='120' draggable='true' ondragstart='drag(event)'><img id='drag11' src='../static/images/${imageList[10]}' alt='WestPalmBeach'width='100' height='120' draggable='true' ondragstart='drag(event)'><img id='drag12' src='../static/images/${imageList[11]}' alt='Yukon'width='100' height='120' draggable='true' ondragstart='drag(event)'>`
             +`<img id='drag13' src='../static/images/${imageList[12]}' alt='Yukon'width='100' height='120' draggable='true' ondragstart='drag(event)'></div><div id='div1' style='width: 1200px; height: 400px; margin: 0 auto; position: relative; bottom: 10%; border: 1px solid #aaaaaa; background-color: lightgray;'ondrop='drop(event)' ondragover='allowDrop(event)'><div id='div3' style='width: 1200px; height: 400px; margin: 0 auto; position: relative; '></div><img id='imgL' style='position:relative;right:450px;bottom: 250px;border:2px solid blue' width='100' height='120'><img id='imgR' style='position:relative;left:450px;bottom: 250px;border:2px solid blue' width='100' height='120'><img id='return' src='../static/images/return.png' style='position: relative;left: 450px;bottom: 100px ;border: 2px solid black' width='50'height='50'> <button id='nextButton' style='display: none; padding: 10px 20px; background-color: #4CAF50; color: black; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); transition: background-color 0.3s ease;'>Submit</button></div></div></div>`
           ,        
           jsPsych.addNodeToEndOfTimeline({
             timeline: [phase3[i+1]],
           }, jsPsych.resumeExperiment)
           specificline_saved={};
-          detourcity_name=[];
+          detourimg_name=[];
         }
       }
     }
@@ -1430,7 +1430,7 @@ function recon_createPhase3(numberoftrial){
           data.GDP_action= NaN
           data.GDP_action_detour = NaN
           data.detour_type = NaN
-          data.blocked_city= NaN
+          data.blocked_img= NaN
           data.Recon_response= NaN
           data.Recon_action= NaN
           data.problems = NaN
@@ -1510,7 +1510,7 @@ function recon_createPhase3(numberoftrial){
           data.GDP_action= NaN
           data.GDP_action_detour = NaN
           data.detour_type = NaN
-          data.blocked_city= NaN
+          data.blocked_img= NaN
           data.Recon_response= NaN
           data.Recon_action= NaN
           data.problems = NaN
@@ -1677,7 +1677,7 @@ var shortestpath_phase = {
     data.GDP_action= NaN
     data.GDP_action_detour = NaN
     data.detour_type = NaN
-    data.blocked_city= NaN
+    data.blocked_img= NaN
     data.Recon_response= NaN
     data.Recon_action= NaN
     data.problems = NaN
@@ -1783,7 +1783,7 @@ var end_questions = {
     data.GDP_action= NaN
     data.GDP_action_detour = NaN
     data.detour_type = NaN
-    data.blocked_city= NaN
+    data.blocked_img= NaN
     data.Recon_response= NaN
     data.Recon_action= NaN
     data.too_quick = too_quick_num
@@ -1873,7 +1873,7 @@ var thank_you = {
     data.GDP_action= NaN
     data.GDP_action_detour = NaN
     data.detour_type = NaN
-    data.blocked_city= NaN
+    data.blocked_img= NaN
     data.Recon_response= NaN
     data.Recon_action= NaN
     data.too_quick = too_quick_num
