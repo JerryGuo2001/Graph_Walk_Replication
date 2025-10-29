@@ -168,9 +168,12 @@ for (let i = 0; i < unshuffled_imageList.length; i++) {
 }
 shuffle(image_arr);
 
-for (let i = 0; i < unshuffled_imageList.length; i++) {
-  imageList.push(unshuffled_imageList[image_arr[i]])
-}
+// for (let i = 0; i < unshuffled_imageList.length; i++) {
+//   imageList.push(unshuffled_imageList[image_arr[i]])
+// }
+
+// For fixed trials
+imageList = unshuffled_imageList
 
 var correctNode = []
 var correctDirectNodes = 0
