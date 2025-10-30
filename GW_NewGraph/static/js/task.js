@@ -1056,7 +1056,6 @@ learn_phase_break = {
   },
   on_finish: function(data) {
     data.stimulus='text'
-    data.trial_type = 'Replication';
   }
 }
 
@@ -1209,15 +1208,15 @@ function createPhase3(numberoftrial){
             data.detour_trial = false;
           }
           if (goaldirIndex[i] < twoEdgePair.length) {
-            data.edge_condition = 'Two Edge Diff'
+            data.edge_condition = 'Two Edge Dist'
           } else if (goaldirIndex[i] < twoEdgePair.length + threeEdgePair.length) {
-            data.edge_condition = 'Three Edge Diff'
+            data.edge_condition = 'Three Edge Dist'
           } else if (goaldirIndex[i] < twoEdgePair.length + threeEdgePair.length + fourEdgePair.length) {
-            data.edge_condition = 'Four Edge Diff'
+            data.edge_condition = 'Four Edge Dist'
           } else if (goaldirIndex[i] < twoEdgePair.length + threeEdgePair.length + fourEdgePair.length + fiveEdgePair.length) {
-            data.edge_condition = 'Five Edge Diff'
+            data.edge_condition = 'Five Edge Dist'
           } else {
-            data.edge_condition = 'Six Edge Diff'
+            data.edge_condition = 'Six Edge Dist'
           }
           gdp_init(),
           jsPsych.addNodeToEndOfTimeline({
@@ -1336,15 +1335,15 @@ function createPhase3(numberoftrial){
           }
           
           if (goaldirIndex[i] < twoEdgePair.length) {
-            data.edge_condition = 'Two Edge Diff'
+            data.edge_condition = 'Two Edge Dist'
           } else if (goaldirIndex[i] < twoEdgePair.length + threeEdgePair.length) {
-            data.edge_condition = 'Three Edge Diff'
+            data.edge_condition = 'Three Edge Dist'
           } else if (goaldirIndex[i] < twoEdgePair.length + threeEdgePair.length + fourEdgePair.length) {
-            data.edge_condition = 'Four Edge Diff'
+            data.edge_condition = 'Four Edge Dist'
           } else if (goaldirIndex[i] < twoEdgePair.length + threeEdgePair.length + fourEdgePair.length + fiveEdgePair.length) {
-            data.edge_condition = 'Five Edge Diff'
+            data.edge_condition = 'Five Edge Dist'
           } else {
-            data.edge_condition = 'Six Edge Diff'
+            data.edge_condition = 'Six Edge Dist'
           }
           gdp_init(),
           jsPsych.addNodeToEndOfTimeline({
