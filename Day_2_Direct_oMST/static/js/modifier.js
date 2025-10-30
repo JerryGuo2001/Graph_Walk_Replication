@@ -48,7 +48,7 @@ style.innerHTML = `
 document.head.appendChild(style); // Append the styles to the document head
 
 //Text for direct memory instruction
-instruct_dir_1="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>A few days ago you were asked to study different item pairs and learn which item goes with what. Today, we are checking your memory of these objects. You will see an object that you studied earlier, with 3 objects below it. Use the '1', '2', and '3' buttons on your keyboard to select the object that was directly paired with the top object during the study phase. Use '1' to select the left object, '2' to select the middle object, and '3' to select the right object.</p><p style= 'font-size:25px;margin-top:100px'></p><br>",
+instruct_dir_1="<div style='margin-left:200px ;margin-right: 200px ;text-justify: auto'><p style ='font-size: 30px;line-height:1.5'>In a previous session you were asked to study different item pairs and learn which item goes with what. Today, we are checking your memory of these objects. You will see an object that you studied earlier, with 3 objects below it. Use the '1', '2', and '3' buttons on your keyboard to select the object that was directly paired with the top object during the study phase. Use '1' to select the left object, '2' to select the middle object, and '3' to select the right object.</p><p style= 'font-size:25px;margin-top:100px'></p><br>",
 dir_instructnames = ["instruct_dir_1"] //Same for above, if you want to delete or add, just decrease or add the var
 dir_instruct={instruct_dir_1} //same for above
 
