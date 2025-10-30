@@ -1689,8 +1689,26 @@ let short_instruction_number=1
 let intro_short=create_instruct(short_instruct,short_instructnames,short_instruction_number,shortestpath_phase,a='short_')
 
 
+var completion_screen = {
+  type: 'html-keyboard-response',
+  choices: ['space'],
+  stimulus: function() {
+    return `<p>Congratulations, you are all done!</p>
+            <p>The secret code to enter at the beginning screen is: <strong>C131I5Y8</strong></p>
+            <p>Please make sure to submit the HIT and email uciccnl@gmail.com if you had any issues!</p>`;
+  },
+  on_start: function(data) {
+    save_final_deter = 'final';
+    jsPsych.data.get().filter({ignore: true}).ignore();
+    save_data();
+    markVersion2AsFinished();
+    document.removeEventListener("keydown", blockRefresh);
+    window.removeEventListener("beforeunload", blockUnload);
+  }}
+
 // Survey
 var end_questions = {
+  // PLEASE RESPOND TO THE COMMENTS QUESTION WITH "Great task, great job, thank you :)"
   type: 'survey-html-form',
   preamble: "<br><br><h1>Post-Task Survey</h1><p style='font-size: 16px'>Thank you for completing the task! We would like you to answer the following questions before the experiment ends. <br>Note: <span style='color: red;'>*</span> = required</p><hr>",
   html: survey_questions + `
@@ -1806,18 +1824,23 @@ var comments = 0
 let graph_instruction_number=1
 let intro_graph=create_instruct(graph_instruct,graph_instructnames,graph_instruction_number,recon_phase3[0],a='graph_')
 //graph reconstruction instruction finish
-
+var decoded = "C131I5Y8"
 // final thank you
 var thank_you = {
   type: 'html-keyboard-response',
   choices: ['space'],
-  stimulus: "<p> Congratulations, you are all done!</p><p>The secret code to enter at the beginning screen is: CFQ53IVT</p><p> Please make sure to submit the HIT and email uciccnl@gmail.com if you had any issues! </p>",
-  on_start: function(data){
-    save_final_deter='final',
+  stimulus: function() {
+    const encoded = "QzEzNzkzUUo=";
+    var decoded = atob(encoded);
+    return `<p>Congratulations, you are all done!</p>
+            <p>The secret code to enter at the beginning screen is: <strong>${decoded}</strong></p>
+            <p>Please make sure to submit the HIT and email uciccnl@gmail.com if you had any issues!</p>`;
+  },
+  on_start: function(data) {
+    save_final_deter = 'final';
     jsPsych.data.get().filter({ignore: true}).ignore();
-    save_data(),
-    markVersion2AsFinished()
-    // Remove the listeners
+    save_data();
+    markVersion2AsFinished();
     document.removeEventListener("keydown", blockRefresh);
     window.removeEventListener("beforeunload", blockUnload);
   },
