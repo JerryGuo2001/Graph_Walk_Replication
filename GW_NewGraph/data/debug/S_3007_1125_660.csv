@@ -1,0 +1,7 @@
+rt,responses,trial_type,time_elapsed,sequence,stimulus,graphorder,button_pressed,imgL_ID,imgR_ID,linedress,linedressed,detour_trial,condition,response
+6607.5,{worker_id:3007},id_enter,6610,interleaved,id_enter,GW/dustpan.jpg; GW/hat.jpg; GW/paint.jpg; GW/basket.jpg; GW/globe.jpg; GW/camera.jpg; GW/soldier.jpg; GW/snail.jpg; GW/wheelchair.jpg; GW/gong.jpg; GW/jukebox.jpg; GW/teeth.jpg; GW/barrel.jpg,,,,,,,,
+4007.2999992370605,,fullscreen,10622,,fullscreen,,0,,,,,,,
+,,Goal Directed Planning,51240,,GDP-0,,,gong,barrel,,undefinedimgLdrag04:[x1:74.20001220703125 x2:570.5999908447266 y1:210 y2:167.78753662109375]drag04imgR:[x1:570.5999908447266 x2:1074.2000274658203 y1:167.78750610351562 y2:210.00003051757812],false,Five Edge Diff,
+10370.400000572205,,intro_1,61622,,instruct,,0,,,,,,,
+1534.3000001907349,,intro_2,63159,,instruct,,1,,,,,,,Next
+982.6999998092651,,intro_3,64145,,instruct,,1,,,,,,,Next
