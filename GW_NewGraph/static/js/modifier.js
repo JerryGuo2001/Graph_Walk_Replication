@@ -1204,27 +1204,6 @@ function getRandomSample(array, n) {
 
   return result;
 }
-
-function generateSequence() {
-  const group1 = [...Array(9).keys()];         // 0–8
-  const group2 = [...Array(9).keys()].map(i => i + 9);   // 9–17
-  const group3 = [...Array(6).keys()].map(i => i + 18);  // 18–23
-  const group4 = [...Array(6).keys()].map(i => i + 24);  // 24–29
-  const group5 = [...Array(3).keys()].map(i => i + 30);  // 30–32
-
-  const sample1 = getRandomSample(group1, 3);
-  const sample2 = getRandomSample(group2, 3);
-  const sample3 = getRandomSample(group3, 2);
-  const sample4 = getRandomSample(group4, 2);
-  const sample5 = getRandomSample(group5, 1);
-
-  const finalSequence = [...sample1, ...sample2, ...sample3, ...sample4, ...sample5];
-  return finalSequence;
-}
-
-var detour_Sequence= generateSequence()
-
-
 // Select 4 unique pairs for distances 2–5, and 3 for distance 6
 let selectedPairs = {
     2: selectBestCoveragePairs(graph, graph.getPairsKEdgesApart(2), 9), // fallback if needed
@@ -1282,6 +1261,110 @@ function colorStop(colordetretime){
 
 //randomDelay for Direct Memory Test and Shortest Path Judgement
 var randomDelay = Math.floor(Math.random() * (2500 - 100 + 1)) + 100;
+
+
+
+// ================= DETOUR SEQUENCE (post-goaldirIndex/allSelectedPairs) =================
+// Keep 11 trials with mix (3,3,2,2,1) for distances (2,3,4,5,6).
+// For distance==2: pick EXACTLY 3 pairs that DO NOT touch any leaf node.
+// If that's impossible (pool < 3), throw an error (do not backfill).
+
+(function buildDetoursStrictD2() {
+  // helpers
+  function sampleK(arr, k) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a.slice(0, Math.min(k, a.length));
+  }
+  function shuffleInPlace(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // convenience mappers
+  const posToUn = (pos) => goaldirIndex[pos];     // unshuffled id expected by detour_Sequence
+  const posToPair = (pos) => allSelectedPairs[pos]; // [u,v]
+
+  // leaves
+  const LEAFS = new Set(
+    Object.entries(graph.adjacencyList)
+      .filter(([, nbrs]) => (nbrs?.length || 0) === 1)
+      .map(([k]) => Number(k))
+  );
+
+  // bucket UNshuffled ids by distance
+  const byDistUn = { 2: [], 3: [], 4: [], 5: [], 6: [] };
+
+  for (let pos = 0; pos < allSelectedPairs.length; pos++) {
+    const un = posToUn(pos);
+    const [u, v] = posToPair(pos);
+    const d = graph.getDistanceBetween(u, v);
+    if (!(d in byDistUn)) continue;
+
+    if (d === 2) {
+      // Only keep d=2 pairs where neither endpoint is a leaf
+      if (!(LEAFS.has(u) || LEAFS.has(v))) {
+        byDistUn[2].push(un);
+      }
+    } else {
+      byDistUn[d].push(un);
+    }
+  }
+
+  // --- STRICT d=2: must have 3 non-leaf items ---
+  if (byDistUn[2].length < 3) {
+    console.error('[detour] Not enough non-leaf distance-2 pairs to select 3.');
+    console.error('Available non-leaf d=2 count:', byDistUn[2].length, 'Required: 3');
+    throw new Error('Detour selection failed: need 3 non-leaf distance-2 pairs, but pool is smaller.');
+  }
+  const take2 = sampleK(byDistUn[2], 3); // exactly 3, all non-leaf by construction
+
+  // Other distances (no special rules)
+  const take3 = sampleK(byDistUn[3], 3);
+  const take4 = sampleK(byDistUn[4], 2);
+  const take5 = sampleK(byDistUn[5], 2);
+  const take6 = sampleK(byDistUn[6], 1);
+
+  // Build full set (should be 11). If some other bucket is too small, throw too.
+  const counts = {3:3,4:2,5:2,6:1};
+  if (take3.length !== counts[3] || take4.length !== counts[4] ||
+      take5.length !== counts[5] || take6.length !== counts[6]) {
+    console.error('[detour] One of the non-d2 buckets is too small.',
+      { have: {d3:take3.length, d4:take4.length, d5:take5.length, d6:take6.length}, need: counts });
+    throw new Error('Detour selection failed: insufficient pairs for distances 3–6 to hit (3,2,2,1).');
+  }
+
+  let detour_Sequence = [].concat(take2, take3, take4, take5, take6);
+  // randomize trial order
+  shuffleInPlace(detour_Sequence);
+
+  // Map unshuffled id -> position in goaldirIndex
+  const valueToPos = new Map(goaldirIndex.map((v, i) => [v, i]));
+  const detourLocationMap = Array(goaldirIndex.length).fill(null);
+  for (const un of detour_Sequence) {
+    const pos = valueToPos.get(un);
+    if (pos !== undefined) detourLocationMap[pos] = un;
+  }
+
+  // expose for other modules
+  window.detour_Sequence = detour_Sequence;
+  window.detourLocationMap = detourLocationMap;
+
+  // Optional sanity logs:
+  // console.log('detour_Sequence (unshuffled ids):', detour_Sequence);
+  // console.log('detour distances:', detour_Sequence.map(un => {
+  //   const pos = valueToPos.get(un); const [u,v] = allSelectedPairs[pos];
+  //   return graph.getDistanceBetween(u,v);
+  // }));
+})();
+
+
 
 
 //detour Map
