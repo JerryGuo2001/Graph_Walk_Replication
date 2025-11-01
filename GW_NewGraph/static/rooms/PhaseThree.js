@@ -943,22 +943,83 @@ function removeObjectByKey(obj, key) {
   if (obj.hasOwnProperty(key)) { delete obj[key]; }
 }
 
+// ========== Helpers (place these above chooseMiddleImageForMemory) ==========
+
+// Map element id <-> node index
+function elIdToNodeIndex(elId) {
+  const m = String(elId || "").match(/^drag(\d{2})$/);
+  return m ? parseInt(m[1], 10) : null;
+}
+function idxToElId(idx) {
+  if (idx == null || isNaN(idx)) return null;
+  return idx < 10 ? `drag0${idx}` : `drag${idx}`;
+}
+
+// Compute articulation points (bridges/cut-vertices) of the TRUE graph once
+let __ARTICULATION_SET = null;
+function getArticulationSet() {
+  if (__ARTICULATION_SET) return __ARTICULATION_SET;
+
+  // Build 1-based adjacency from your graph.adjacencyList (already 1..13)
+  const adj = {};
+  for (const k in graph.adjacencyList) {
+    const u = Number(k);
+    adj[u] = (graph.adjacencyList[k] || []).slice();
+  }
+
+  const N = Object.keys(adj).map(Number);
+  const disc = {}, low = {}, parent = {};
+  let time = 0;
+  const AP = new Set();
+
+  function dfs(u, root) {
+    disc[u] = low[u] = ++time;
+    let childCount = 0;
+
+    for (const v of adj[u]) {
+      if (!disc[v]) {
+        parent[v] = u;
+        childCount++;
+        dfs(v, root);
+        low[u] = Math.min(low[u], low[v]);
+
+        // Articulation rules:
+        // 1) root with >1 child
+        if (u === root && childCount > 1) AP.add(u);
+        // 2) non-root with low[v] >= disc[u]
+        if (u !== root && low[v] >= disc[u]) AP.add(u);
+      } else if (v !== parent[u]) {
+        low[u] = Math.min(low[u], disc[v]);
+      }
+    }
+  }
+
+  for (const u of N) {
+    if (!disc[u]) {
+      parent[u] = -1;
+      dfs(u, u);
+    }
+  }
+  __ARTICULATION_SET = AP;
+  return __ARTICULATION_SET;
+}
+
+
 // ---------------------------------------------
 // Memory-choice helpers (unchanged but used to set detour type)
-// ---------------------------------------------
 function chooseMiddleImageForMemory() {
+  // Build the set of TRUE edges (for "correct_connection" detection)
   const trueEdges = graph.getEdges().map(pair => {
-    const a = pair[0] < 10 ? `drag0${pair[0]}` : `drag${pair[0]}`;
-    const b = pair[1] < 10 ? `drag0${pair[1]}` : `drag${pair[1]}`;
+    const a = idxToElId(pair[0]);
+    const b = idxToElId(pair[1]);
     return new Set([a, b]);
   });
-  const isTrueConnection = (a, b) => {
-    return trueEdges.some(edge => edge.has(a) && edge.has(b));
-  };
+  const isTrueConnection = (a, b) => trueEdges.some(edge => edge.has(a) && edge.has(b));
 
-  const { store } = getLineStore(); // current (pre-detour) store
-  const validConnections = [];
-  const allDrawnNodes = new Set();
+  // Current (pre-detour) drawn structure
+  const { store } = getLineStore();
+  const validConnections = [];     // [[idA,idB], ...] that are TRUE edges
+  const allDrawnNodes = new Set(); // all non-side nodes that appear in any drawn edge
 
   for (let key in store) {
     const entry = store[key];
@@ -973,46 +1034,88 @@ function chooseMiddleImageForMemory() {
     if (a !== "imgL" && a !== "imgR") allDrawnNodes.add(a);
     if (b !== "imgL" && b !== "imgR") allDrawnNodes.add(b);
 
+    // Only internal connections are candidates for "correct_connection"
     if (a === "imgL" || a === "imgR" || b === "imgL" || b === "imgR") continue;
 
-    const connection = [a, b];
-    if (isTrueConnection(a, b)) {
-      validConnections.push(connection);
-    }
+    if (isTrueConnection(a, b)) validConnections.push([a, b]);
   }
+
+  // --- Leaf detection for THIS TRIAL (based on TRUE graph degrees) ---
+  const LEAFS = new Set(
+    Object.entries(graph.adjacencyList)
+      .filter(([, nbrs]) => (nbrs?.length || 0) === 1)
+      .map(([k]) => Number(k))
+  );
+  const drawnHasLeaf = Array.from(allDrawnNodes).some(id => LEAFS.has(elIdToNodeIndex(id)));
+
+  // --- Bridge (articulation) detection on the TRUE graph ---
+  const ART = getArticulationSet();
+  const isBridgeNode = (elId) => {
+    const idx = elIdToNodeIndex(elId);
+    return idx != null && ART.has(idx);
+  };
+
+  // Utility: pick a random element from a non-empty array
+  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+  // Build primary candidate list from valid connections (prefer these first)
+  // Convert to individual node candidates (flatten)
+  const primaryCandidates = [];
+  validConnections.forEach(([a, b]) => {
+    primaryCandidates.push(a, b);
+  });
+
+  // De-dup while preserving order
+  const seen = new Set();
+  const uniquePrimary = primaryCandidates.filter(id => (id && !seen.has(id) && (seen.add(id), true)));
 
   let selectedImageID = null;
   let sourceType = null;
 
-  if (validConnections.length > 0) {
-    const selectedPair = validConnections[Math.floor(Math.random() * validConnections.length)];
-    selectedImageID = selectedPair[Math.floor(Math.random() * 2)];
-    sourceType = "correct_connection";
-  } else if (allDrawnNodes.size > 0) {
-    const fallbackArray = Array.from(allDrawnNodes);
-    selectedImageID = fallbackArray[Math.floor(Math.random() * fallbackArray.length)];
-    sourceType = "random_fallback_node";
-  }
-
-  window.selected_middle_image = selectedImageID;
-  window.selected_middle_image_index = null;
-  window.selected_middle_image_type = sourceType;
-
-  if (selectedImageID) {
-    const match = selectedImageID.match(/drag(\d{2})/);
-    if (match) {
-      window.selected_middle_image_index = parseInt(match[1], 10);
+  if (drawnHasLeaf) {
+    // Prefer NON-BRIDGE nodes first
+    const nonBridgeFromPrimary = uniquePrimary.filter(id => !isBridgeNode(id));
+    if (nonBridgeFromPrimary.length > 0) {
+      selectedImageID = pick(nonBridgeFromPrimary);
+      sourceType = "correct_connection_nonbridge";
+    } else {
+      // Then any NON-BRIDGE from all drawn nodes
+      const nonBridgeFromAll = Array.from(allDrawnNodes).filter(id => !isBridgeNode(id));
+      if (nonBridgeFromAll.length > 0) {
+        selectedImageID = pick(nonBridgeFromAll);
+        sourceType = "random_fallback_nonbridge";
+      } else if (uniquePrimary.length > 0) {
+        // Only bridges available among valid connections → take one
+        selectedImageID = pick(uniquePrimary);
+        sourceType = "correct_connection_bridge_only";
+      } else if (allDrawnNodes.size > 0) {
+        // Only bridges available overall → fall back to any drawn node
+        selectedImageID = pick(Array.from(allDrawnNodes));
+        sourceType = "random_fallback_bridge_only";
+      }
+    }
+  } else {
+    // Original behavior (no leaf present): prefer valid connection, else any drawn
+    if (uniquePrimary.length > 0) {
+      selectedImageID = pick(uniquePrimary);
+      sourceType = "correct_connection";
+    } else if (allDrawnNodes.size > 0) {
+      selectedImageID = pick(Array.from(allDrawnNodes));
+      sourceType = "random_fallback_node";
     }
   }
 
-  console.log("Selected image from connection:", window.selected_middle_image);
-  console.log("Selected image index:", window.selected_middle_image_index);
-  console.log("Connection type:", window.selected_middle_image_type);
+  // Export results
+  window.selected_middle_image = selectedImageID || null;
+  window.selected_middle_image_index = null;
+  window.selected_middle_image_type = sourceType || null;
 
-  if (!window.selected_middle_image) {
-    console.warn("No image could be selected. (This should never happen if user drew anything)");
+  if (selectedImageID) {
+    const m = selectedImageID.match(/drag(\d{2})/);
+    if (m) window.selected_middle_image_index = parseInt(m[1], 10);
   }
 }
+
 
 // generic DFS (kept for completeness)
 function findPath(graph, start, end) {
