@@ -1265,20 +1265,26 @@ var randomDelay = Math.floor(Math.random() * (2500 - 100 + 1)) + 100;
 
 
 // ================= DETOUR SEQUENCE (post-goaldirIndex/allSelectedPairs) =================
-// Keep 11 trials with mix (3,3,2,2,1) for distances (2,3,4,5,6).
-// For distance==2: pick EXACTLY 3 pairs that DO NOT touch any leaf node.
-// If that's impossible (pool < 3), throw an error (do not backfill).
+// Target mix (by distance): 2→3, 3→3, 4→2, 5→2, 6→1  (total = 11)
+// For distance==2: EXACTLY 3 pairs that DO NOT touch any leaf node.
+// If any bucket is too small, throw (no backfill).
 
 (function buildDetoursStrictD2() {
-  // helpers
+  // -------- helpers --------
+  const COUNTS = { 2: 3, 3: 3, 4: 2, 5: 2, 6: 1 }; // tweak here if needed
+
   function sampleK(arr, k) {
+    if (arr.length < k) {
+      throw new Error(`[detour] Insufficient pool: need ${k}, have ${arr.length}`);
+    }
     const a = arr.slice();
     for (let i = a.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [a[i], a[j]] = [a[j], a[i]];
     }
-    return a.slice(0, Math.min(k, a.length));
+    return a.slice(0, k);
   }
+
   function shuffleInPlace(a) {
     for (let i = a.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -1287,18 +1293,17 @@ var randomDelay = Math.floor(Math.random() * (2500 - 100 + 1)) + 100;
     return a;
   }
 
-  // convenience mappers
-  const posToUn = (pos) => goaldirIndex[pos];     // unshuffled id expected by detour_Sequence
-  const posToPair = (pos) => allSelectedPairs[pos]; // [u,v]
+  const posToUn = (pos) => goaldirIndex[pos];       // unshuffled id expected by detour_Sequence
+  const posToPair = (pos) => allSelectedPairs[pos]; // [u, v]
 
-  // leaves
+  // -------- identify leaves once --------
   const LEAFS = new Set(
     Object.entries(graph.adjacencyList)
       .filter(([, nbrs]) => (nbrs?.length || 0) === 1)
       .map(([k]) => Number(k))
   );
 
-  // bucket UNshuffled ids by distance
+  // -------- bucket unshuffled ids by distance (filtering d=2 non-leaf) --------
   const byDistUn = { 2: [], 3: [], 4: [], 5: [], 6: [] };
 
   for (let pos = 0; pos < allSelectedPairs.length; pos++) {
@@ -1308,43 +1313,36 @@ var randomDelay = Math.floor(Math.random() * (2500 - 100 + 1)) + 100;
     if (!(d in byDistUn)) continue;
 
     if (d === 2) {
-      // Only keep d=2 pairs where neither endpoint is a leaf
-      if (!(LEAFS.has(u) || LEAFS.has(v))) {
-        byDistUn[2].push(un);
-      }
+      // Keep only if neither endpoint is a leaf
+      if (!(LEAFS.has(u) || LEAFS.has(v))) byDistUn[2].push(un);
     } else {
       byDistUn[d].push(un);
     }
   }
 
-  // --- STRICT d=2: must have 3 non-leaf items ---
-  if (byDistUn[2].length < 3) {
-    console.error('[detour] Not enough non-leaf distance-2 pairs to select 3.');
-    console.error('Available non-leaf d=2 count:', byDistUn[2].length, 'Required: 3');
-    throw new Error('Detour selection failed: need 3 non-leaf distance-2 pairs, but pool is smaller.');
+  // -------- preflight pool sizes --------
+  for (const d of [2, 3, 4, 5, 6]) {
+    const need = COUNTS[d] || 0;
+    if (need > 0 && byDistUn[d].length < need) {
+      const msg = d === 2
+        ? `[detour] Need ${need} non-leaf d=2 pairs but have only ${byDistUn[2].length}.`
+        : `[detour] Need ${need} pairs for d=${d} but have only ${byDistUn[d].length}.`;
+      console.error(msg);
+      throw new Error(`Detour selection failed (distance ${d}).`);
+    }
   }
-  const take2 = sampleK(byDistUn[2], 3); // exactly 3, all non-leaf by construction
 
-  // Other distances (no special rules)
-  const take3 = sampleK(byDistUn[3], 3);
-  const take4 = sampleK(byDistUn[4], 2);
-  const take5 = sampleK(byDistUn[5], 2);
-  const take6 = sampleK(byDistUn[6], 1);
-
-  // Build full set (should be 11). If some other bucket is too small, throw too.
-  const counts = {3:3,4:2,5:2,6:1};
-  if (take3.length !== counts[3] || take4.length !== counts[4] ||
-      take5.length !== counts[5] || take6.length !== counts[6]) {
-    console.error('[detour] One of the non-d2 buckets is too small.',
-      { have: {d3:take3.length, d4:take4.length, d5:take5.length, d6:take6.length}, need: counts });
-    throw new Error('Detour selection failed: insufficient pairs for distances 3–6 to hit (3,2,2,1).');
-  }
+  // -------- sample per-distance, then combine & shuffle --------
+  const take2 = sampleK(byDistUn[2], COUNTS[2]);
+  const take3 = sampleK(byDistUn[3], COUNTS[3]);
+  const take4 = sampleK(byDistUn[4], COUNTS[4]);
+  const take5 = sampleK(byDistUn[5], COUNTS[5]);
+  const take6 = sampleK(byDistUn[6], COUNTS[6]);
 
   let detour_Sequence = [].concat(take2, take3, take4, take5, take6);
-  // randomize trial order
-  shuffleInPlace(detour_Sequence);
+  shuffleInPlace(detour_Sequence); // randomize trial order
 
-  // Map unshuffled id -> position in goaldirIndex
+  // -------- build position-indexed map: position in goaldirIndex -> detour value (or null) --------
   const valueToPos = new Map(goaldirIndex.map((v, i) => [v, i]));
   const detourLocationMap = Array(goaldirIndex.length).fill(null);
   for (const un of detour_Sequence) {
@@ -1352,19 +1350,43 @@ var randomDelay = Math.floor(Math.random() * (2500 - 100 + 1)) + 100;
     if (pos !== undefined) detourLocationMap[pos] = un;
   }
 
-  // expose for other modules
-  window.detour_Sequence = detour_Sequence;
-  window.detourLocationMap = detourLocationMap;
+  // -------- validate guarantees (defensive) --------
+  // 1) distribution
+  const tally = { 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+  for (const un of detour_Sequence) {
+    const pos = valueToPos.get(un);
+    const [u, v] = posToPair(pos);
+    const d = graph.getDistanceBetween(u, v);
+    if (d in tally) tally[d]++;
+  }
+  for (const d of Object.keys(COUNTS)) {
+    if (tally[d] !== COUNTS[d]) {
+      console.error('[detour] Distribution mismatch:', { expected: COUNTS, got: tally });
+      throw new Error('Detour validation failed: wrong distance mix.');
+    }
+  }
+  // 2) strict non-leaf constraint for d=2
+  for (const un of detour_Sequence) {
+    const pos = valueToPos.get(un);
+    const [u, v] = posToPair(pos);
+    const d = graph.getDistanceBetween(u, v);
+    if (d === 2 && (LEAFS.has(u) || LEAFS.has(v))) {
+      console.error('[detour] Found a leaf endpoint in a d=2 trial:', { u, v });
+      throw new Error('Detour validation failed: d=2 includes a leaf node.');
+    }
+  }
 
-  // Optional sanity logs:
+  // -------- expose --------
+  window.detour_Sequence = detour_Sequence;       // array of UNshuffled ids (values from goaldirIndex)
+  window.detourLocationMap = detourLocationMap;   // position-indexed map aligned to goaldirIndex
+
+  // // Optional sanity logging:
   // console.log('detour_Sequence (unshuffled ids):', detour_Sequence);
   // console.log('detour distances:', detour_Sequence.map(un => {
-  //   const pos = valueToPos.get(un); const [u,v] = allSelectedPairs[pos];
-  //   return graph.getDistanceBetween(u,v);
+  //   const pos = valueToPos.get(un); const [u,v] = posToPair(pos);
+  //   return graph.getDistanceBetween(u, v);
   // }));
 })();
-
-
 
 
 //detour Map
